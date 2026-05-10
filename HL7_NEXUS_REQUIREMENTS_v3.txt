@@ -1,0 +1,1648 @@
+
+================================================================================
+  HL7_NEXUS // NEURAL EXCHANGE & UNIVERSAL STANDARDS SYSTEM
+  HACKATHON REQUIREMENTS SPECIFICATION — TEAM: SEMICOLONS
+  VERSION: 3.0 | TRI-ENGINE ARCHITECTURE | IRON COUNCIL THEME
+================================================================================
+
+PROJECT CODENAME    : HL7_NEXUS
+FULL TITLE          : HL7 Neural Exchange & Universal Standards System
+HACKATHON TRACK     : AI-Powered Healthcare Infrastructure
+TARGET STACK        : React + Tailwind CSS + FastAPI + WebSockets + Claude AI + Ollama
+DOCUMENT TYPE       : Full-Stack Implementation Requirements (AI Agent Ready)
+UI THEME            : Iron Council — Corporate Command Interface (WHITE / LIGHT)
+VERSION NOTES       : v3.0 — Complete rewrite with tri-engine mode + Iron Council design
+
+================================================================================
+  SECTION 0 // EXECUTIVE SUMMARY & CORE ARCHITECTURE CONCEPT
+================================================================================
+
+HL7_NEXUS is a corporate command-grade HL7 message intelligence platform
+built around one defining architectural idea: the ENGINE_MODE system.
+Every single operation — generation, parsing, validation, auto-fix — routes
+through one of three selectable processing engines. The user picks the engine.
+The entire UI reconfigures around that choice.
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                       ENGINE_MODE SELECTOR                           │
+  │                                                                       │
+  │   ┌────────────────────────────────────┐   ┌───────────────────────┐│
+  │   │         [  AI ENGINE MODE  ]        │   │  [ ALGORITHM MODE ]  ││
+  │   │                                    │   │                       ││
+  │   │  Sub-mode A: ☁ CLOUD AI            │   │  Pure deterministic   ││
+  │   │               Claude API (Anthropic)│   │  code. No AI calls.   ││
+  │   │                                    │   │  No internet needed.  ││
+  │   │  Sub-mode B: ⬡ LOCAL AI            │   │  Rule engine +        ││
+  │   │               Ollama (localhost)    │   │  FSM + PEG parser.    ││
+  │   │               Any compatible model │   │                       ││
+  │   └────────────────────────────────────┘   └───────────────────────┘│
+  └─────────────────────────────────────────────────────────────────────┘
+
+This tells judges:
+  - The team understands real enterprise constraints (offline, air-gapped,
+    cost-control environments don't always have cloud AI)
+  - Complex engineering exists at every layer, not just the AI wrapper
+  - The system degrades gracefully and is production-honest
+
+WHAT CHANGES PER ENGINE MODE:
+  - Left panel agent monitors swap out entirely (AI agents vs algo processors)
+  - Right panel intelligence monitor adapts (AI metrics vs algo metrics)
+  - Center panel tabs enable/disable context-sensitively (NL_INPUT tab is
+    only active in AI mode; it is greyed and locked in Algorithm mode)
+  - Event bus terminal shows engine-specific event types
+  - Processing pipeline in the backend routes to a completely different
+    code path
+  - The ENGINE_MODE badge in the global header changes color and label
+
+================================================================================
+  SECTION 1 // UI DESIGN SYSTEM — IRON COUNCIL THEME (CORPORATE WHITE)
+================================================================================
+
+This is the most important section for the implementing agent. The UI must
+match the aesthetic described here precisely. The reference image shows a
+corporate command interface — not a dark terminal. It is WHITE and LIGHT,
+with deep red structural accents, dark slate headers, and brutalist edges.
+Do not use a dark theme. The "system terminal" feeling comes from sharp
+edges, dense micro-typography, and data-richness — not from dark backgrounds.
+
+--------------------------------------------------------------------------------
+1.1 LAYOUT — THREE FLOATING COLUMN ARCHITECTURE
+--------------------------------------------------------------------------------
+
+The root layout is always three vertical columns floating over a light
+backdrop. Think of it as three physical hardware panels sitting on a desk.
+
+BACKDROP:
+  Background color   : Light cool gray with a slight lavender tint
+  CSS value          : #E0E7FF or Tailwind bg-slate-100 / bg-indigo-50
+  CRT Scanlines      : A CSS pseudo-element (::after or ::before) overlaid
+                       on the entire app background renders horizontal
+                       scanlines using repeating-linear-gradient. These are
+                       very subtle — low opacity (3–5%) — purely aesthetic.
+                       They must not interfere with readability.
+                       Implementation:
+                         background: repeating-linear-gradient(
+                           to bottom,
+                           transparent 0px,
+                           transparent 3px,
+                           rgba(0,0,0,0.03) 3px,
+                           rgba(0,0,0,0.03) 4px
+                         );
+                         pointer-events: none;
+                         position: fixed;
+                         inset: 0;
+                         z-index: 9999;
+
+COLUMN STRUCTURE:
+  Left Column        : OPERATIONAL_MONITOR — fixed width ~280px
+  Center Column      : COMMAND_INTERFACE — flex-grow, takes remaining space
+  Right Column       : INTELLIGENCE_MONITOR — fixed width ~300px
+  Column gap         : 0px (columns sit flush against each other)
+  Column shadows     : Each column has shadow-xl or shadow-2xl
+                       (soft diffused drop shadow — NOT a hard offset shadow)
+  Column backgrounds : bg-white (main column bodies)
+  Column borders     : Each column has a thin outer border: border border-gray-200
+
+GLOBAL HEADER (above all three columns, full width):
+  The global app-level header sits above the three-column layout.
+  Background  : bg-white
+  Border-bottom: 2px solid #af0a0f (thick red structural divider)
+  Contents    :
+    - Left: App logo text "HL7_NEXUS" in deep red, font-mono, tracking-widest
+    - Center: ENGINE_MODE selector (described in Section 3)
+    - Right: Connection status LED + label + session timer
+
+--------------------------------------------------------------------------------
+1.2 COLOR PALETTE (STRICT — DO NOT DEVIATE)
+--------------------------------------------------------------------------------
+
+APP BACKDROP       : #E0E7FF (cool gray, lavender tint)
+COLUMN BODIES      : #FFFFFF (pure white)
+PANEL HEADERS      : #0f172a (dark slate / navy) with white text
+PRIMARY ACCENT     : #af0a0f (deep red) — used for:
+                       - App logo text
+                       - Main title text in center panel header
+                       - Primary action buttons (GENERATE, VALIDATE, SEND)
+                       - Thick red horizontal dividers between major sections
+                       - Alert/warning icon badges (!)
+                       - Active tab underline indicators
+                       - ENGINE_MODE AI badge color
+SECONDARY BG       : #f8fafc (bg-slate-50) — used for recessed areas,
+                       terminal watchdog body, inner data panels
+BORDERS OUTER      : border-2 border-black — for interactive elements,
+                       agent cards, data input fields
+BORDERS INNER      : border border-gray-300 — for row dividers,
+                       inner section separators
+TEXT PRIMARY       : #0f172a (dark slate) — for readable body content
+TEXT MONO          : #0f172a (dark slate) — for all monospace system text
+TEXT MUTED         : #64748b (slate-500) — for labels, subtitles
+TEXT ACCENT        : #af0a0f (deep red) — for emphasis values
+
+THOUGHT STREAM (AI inner reasoning display):
+  Background         : #1e1b4b (deep indigo)
+  Text color         : #a5b4fc (pale blue / lavender)
+  Font               : font-mono
+  Border             : border-l-4 border-indigo-400
+  Used for           : AI agent reasoning output, NL generator thought process
+
+AGENT MONITOR STATE COLORS (for the agent card backgrounds):
+  IDLE state         : bg-white (white background)
+  DECIDING state     : bg-gray-100 (light gray background)
+  THINKING state     : bg-yellow-50 (pale yellow) with text-amber-700
+  ALERT / ERROR      : bg-red-50 with text-red-700
+  CLEAR / PASS       : bg-green-50 with text-green-700
+  PROCESSING (algo)  : bg-blue-50 with text-blue-700
+
+ENGINE MODE BADGE COLORS:
+  CLOUD AI active    : bg-[#af0a0f] text-white label: "CLOUD AI — ANTHROPIC"
+  LOCAL AI active    : bg-amber-600 text-white label: "LOCAL AI — OLLAMA"
+  ALGORITHM active   : bg-slate-700 text-white label: "ALGORITHM ENGINE"
+
+STATUS LED DOTS (hardware indicator lights in headers):
+  Connected          : solid green circle, 8px diameter
+  Processing         : solid amber/yellow circle, blinking CSS animation
+  Disconnected       : solid red circle
+  Idle               : solid gray circle
+
+--------------------------------------------------------------------------------
+1.3 TYPOGRAPHY (STRICT TWO-FONT SYSTEM)
+--------------------------------------------------------------------------------
+
+FONT A — READABLE (for dialogue, messages, human-readable output):
+  Family             : font-sans (Inter, Arial, system-ui)
+  Usage              : Main chat body text, parsed human-readable HL7 output,
+                       description paragraphs, validation error messages
+
+FONT B — TECHNICAL/SYSTEM (for everything else):
+  Family             : font-mono (JetBrains Mono, Courier New, monospace)
+  Usage              : Panel headers, timestamps, agent names, terminal logs,
+                       raw HL7 message display, metric values, tab labels,
+                       button text, all system labels
+
+MICRO-TYPOGRAPHY (used heavily throughout):
+  Size               : text-[9px] to text-[11px]
+  Style              : uppercase font-bold tracking-widest font-mono
+  Usage              : Hardware indicator labels (DISK, NEURAL, EGO, PHYS,
+                       NET, HEART), data metric keys, section sub-labels,
+                       status tags, column header supplementary text
+  Example            : "OBS" "ORI" "DEC" "RCL" "GEN" "OUT" above the
+                       metric bars on agent monitor cards
+
+HEADING SIZES:
+  App title          : text-2xl font-mono font-bold tracking-widest text-[#af0a0f]
+  Column titles      : text-[11px] font-mono font-bold uppercase tracking-widest
+                       text-white (on dark slate panel headers)
+  Section headers    : text-[10px] font-mono uppercase tracking-widest
+                       text-slate-500 — prefixed with "// "
+  Body text          : text-sm font-sans text-slate-800
+
+--------------------------------------------------------------------------------
+1.4 BORDERS, CORNERS, AND DEPTH
+--------------------------------------------------------------------------------
+
+CORNERS: STRICTLY ZERO. No rounded corners anywhere.
+  - All divs, panels, cards, buttons, inputs, badges: rounded-none
+  - This is the single most important visual rule for the theme
+  - It creates the machined, brutalist, hardware-panel feeling
+
+OUTER BORDERS (interactive elements, cards, terminals):
+  border-2 border-black
+
+STRUCTURAL DIVIDERS (between major sections):
+  border-y-2 border-[#af0a0f] — thick red horizontal rule
+
+INNER DIVIDERS (between rows, sub-sections):
+  border-b border-gray-300
+
+COLUMN PANEL HEADER (top of each left/right panel):
+  background  : bg-slate-900 (#0f172a)
+  text        : text-white
+  padding     : px-3 py-2
+  border-bottom: 2px solid #af0a0f
+  Contains    : Column title left-aligned, status LED + label right-aligned
+
+SHADOWS:
+  Main columns: shadow-xl (soft diffused) — no hard offset
+  Agent cards : shadow-sm
+  Terminal box: recessed look via bg-gray-100 + inner border
+
+--------------------------------------------------------------------------------
+1.5 INTERACTIVE ELEMENTS
+--------------------------------------------------------------------------------
+
+PRIMARY BUTTON (GENERATE, VALIDATE, SEND, INITIATE):
+  bg-[#af0a0f] text-white border-2 border-black
+  font-mono uppercase font-bold tracking-widest
+  text-[11px] px-4 py-2 rounded-none
+  hover: bg-red-800
+
+SECONDARY BUTTON (EXPORT, COPY, TEMPLATE, CLEAR):
+  bg-white text-black border-2 border-black
+  font-mono uppercase font-bold tracking-widest
+  text-[11px] px-4 py-2 rounded-none
+  hover: bg-gray-100
+
+DANGER BUTTON (RESET, CLEAR ALL):
+  bg-black text-white border-2 border-black
+  font-mono uppercase font-bold tracking-widest
+  text-[11px] px-4 py-2 rounded-none
+
+TEXT INPUTS AND TEXTAREAS:
+  border-2 border-black bg-white font-mono text-sm
+  focus: outline-none border-[#af0a0f]
+  rounded-none — no border radius
+
+SELECT DROPDOWNS:
+  border-2 border-black bg-white font-mono text-sm rounded-none
+  Custom styled to remove browser default rounding
+
+ENGINE MODE TOGGLE:
+  Not a checkbox or a slider — rendered as a segmented button control.
+  Two segments side by side: [  AI ENGINE  ] [  ALGORITHM  ]
+  Active segment: bg-slate-900 text-white border-2 border-black
+  Inactive segment: bg-white text-slate-500 border-2 border-black
+  No gap between segments, no border radius
+
+AI SUB-MODE SELECTOR (visible only when AI ENGINE is active):
+  Two pill-style buttons: [ ☁ CLOUD AI ] [ ⬡ LOCAL OLLAMA ]
+  Rendered exactly like the Engine Mode toggle, smaller text
+  Active sub: bg-[#af0a0f] text-white
+  Inactive sub: bg-white text-slate-400
+
+TABS (in center panel):
+  Bottom-border-only tab style
+  Active tab: border-b-2 border-[#af0a0f] text-[#af0a0f] font-bold
+  Inactive tab: text-slate-400
+  Disabled tab (NL_INPUT in algo mode): text-slate-200 cursor-not-allowed
+                                        line-through
+  No background color on tabs, no border radius
+
+STATUS BADGES (inline, next to headers):
+  border border-black text-[9px] font-mono uppercase tracking-widest px-1
+  VALID    : border-green-600 text-green-700 bg-green-50
+  INVALID  : border-red-600 text-red-700 bg-red-50
+  WARNING  : border-amber-600 text-amber-700 bg-amber-50
+  PASS     : border-green-600 text-green-700
+  FAIL     : border-red-600 text-red-700
+
+================================================================================
+  SECTION 2 // GLOBAL HEADER SPECIFICATION
+================================================================================
+
+The global header spans the full width of the app, above the three columns.
+
+LAYOUT:
+  height: fixed, approx 56px
+  background: bg-white
+  border-bottom: border-b-2 border-[#af0a0f] (thick red line below header)
+  display: flex align-items:center justify-content:between
+  padding: px-4
+
+LEFT SECTION:
+  "HL7_NEXUS" in text-[#af0a0f] font-mono text-xl font-bold tracking-widest
+  Followed by separator: "//" in text-slate-300
+  Followed by "COMMAND_INTERFACE" in text-[11px] font-mono text-slate-400
+                                     uppercase tracking-widest
+
+CENTER SECTION — ENGINE MODE SELECTOR:
+  Label: "ENGINE_MODE:" text-[9px] font-mono uppercase tracking-widest
+                        text-slate-400 mr-2
+  Segmented toggle: [ AI ENGINE ] [ ALGORITHM ]
+  When AI ENGINE active: show AI sub-mode selector to the right:
+    [ ☁ CLOUD AI ] [ ⬡ LOCAL OLLAMA ]
+  When ALGORITHM active: show algo badge:
+    [ ⬡ RULE ENGINE v2.1 ] — static, not clickable
+
+  React state: engineMode = 'cloud_ai' | 'local_ai' | 'algorithm'
+  On change: dispatch to global Zustand store, all panels react
+
+RIGHT SECTION:
+  SESSION_CLOCK: "SESSION: 00:17:51" font-mono text-[11px] text-slate-500
+  Status LED + "CONNECTED" or "DISCONNECTED" text
+  Current engine label badge (colored per engine mode)
+
+================================================================================
+  SECTION 3 // LEFT PANEL — OPERATIONAL_MONITOR
+================================================================================
+
+PANEL HEADER:
+  Background    : bg-slate-900
+  Left text     : "OPERATIONAL_MONITOR_v2.0" text-white font-mono
+                  text-[11px] uppercase tracking-widest
+  Right         : LED dot + "CONNECTED" text-[9px] text-green-400 font-mono
+  Border-bottom : 2px solid #af0a0f
+
+SECTION 3.1 — HARDWARE STATUS INDICATORS
+  Six colored square/rectangle blocks in a 3x2 grid.
+  Each block has:
+    A solid colored square (red/dark gray/black — use the reference image colors)
+    A micro-label below: "DISK", "NEURAL", "EGO", "PHYS", "NET", "HEART"
+    Label style: text-[9px] uppercase font-mono tracking-widest text-slate-600
+  The NEURAL block should be a different color (red/alert) to draw the eye.
+  This is purely aesthetic — it signals "system health panel" to any observer.
+
+SECTION 3.2 — MISSION CLOCK + ENTROPY BAR
+  Clock display:
+    Large monospace timestamp: "00:17:51" in a bordered box
+    border-2 border-black bg-white
+    text-3xl font-mono font-bold text-slate-900
+    Label above: "MISSION_CLOCK" text-[9px] uppercase tracking-widest text-slate-400
+  Entropy bar (next to clock):
+    Label: "ENTROPY" text-[9px] uppercase
+    A thin progress bar (bg-black fill) with "0%" right-aligned
+    Shows overall system processing load, animated via WebSocket events
+
+SECTION 3.3 — CHANNEL STATUS
+  A bordered box with red border on warning state:
+    border border-[#af0a0f]
+    Inside: "⬡ CHANNEL LOCKED: [current_mode]" font-mono text-[10px]
+    Below : "CLICK TO SWITCH MODE" text-[9px] text-slate-400 underline cursor-pointer
+    Clicking opens the engine mode selector if it is not already visible
+    This mirrors the "CHANNEL LOCKED: analyst_logic" box in the reference image
+
+SECTION 3.4 — AGENT_MONITORS (DYNAMIC — CHANGES PER ENGINE MODE)
+
+  Section header: "// AGENT_MONITORS" text-[10px] font-mono uppercase
+                  tracking-widest text-slate-400
+  Right of header: engine-mode-specific label "FULL_MATRIX" or "RULE_ENGINE"
+                   text-[9px] font-mono text-slate-400
+
+  ════════════════════════════════════════════
+  WHEN ENGINE_MODE = CLOUD AI or LOCAL AI:
+  ════════════════════════════════════════════
+  Show four AI agent cards. Two per row, 2x2 grid.
+
+  Each agent card:
+    Outer border: border-2 border-black
+    Background: varies by current state (see color palette section 1.2)
+    Top-left: Red alert dot (●) or empty depending on alert state
+    Agent name: "/AGENT_NAME/" font-mono text-[11px] font-bold uppercase
+    Micro bars row: six small colored bars labeled OBS ORI DEC RCL GEN OUT
+      Each bar: ~18px wide, 3px tall, colored based on activity level
+      Bar colors: black (active), gray-300 (inactive)
+      Labels: text-[7px] font-mono uppercase tracking-widest text-slate-400
+    Status text: e.g. "IDLE / Standing by." or "THINKING / Formulating..."
+      font-mono text-[10px]
+    State coloring of the card background per state (see 1.2 agent states)
+
+  FOUR AI AGENTS (top-left → top-right → bottom-left → bottom-right):
+
+    Card 1 — /SYNTAX_AGENT/
+      Role         : Structural HL7 validation
+      Cloud mode   : Calls Claude API with syntax-check system prompt
+      Local mode   : Calls Ollama with same system prompt
+      States       : IDLE → SCANNING → CLEAR or ALERT
+      Alert badge  : Shows red "!" in top-right of card if errors found
+
+    Card 2 — /SEMANTIC_AGENT/
+      Role         : Clinical data coherence validation
+      Cloud mode   : Calls Claude API with semantic system prompt
+      Local mode   : Calls Ollama with same system prompt
+      States       : IDLE → ANALYZING → CLEAR or WARNING
+      Alert badge  : Shows red "!" if semantic warnings found
+
+    Card 3 — /COMPLIANCE_AGENT/
+      Role         : Standards conformance audit
+      Cloud mode   : Calls Claude API with compliance system prompt
+      Local mode   : Calls Ollama with same system prompt
+      States       : IDLE → AUDITING → COMPLIANT or VIOLATION
+      Alert badge  : Shows red "!" if compliance violations found
+
+    Card 4 — /AI_ENGINE/
+      Role         : Master AI engine status and connection monitor
+      Shows        : Current model (claude-sonnet-4-20250514 or ollama model name)
+                     Connection latency, active API calls count
+      In cloud mode: Shows Claude API connection status
+      In local mode : Shows Ollama connection status (localhost:11434)
+                      Shows which model is currently loaded
+      States        : IDLE / PROCESSING / ERROR / CONNECTED
+
+  ═══════════════════════════════════════════════
+  WHEN ENGINE_MODE = ALGORITHM:
+  ═══════════════════════════════════════════════
+  Replace all four AI agent cards with four PROCESSOR cards.
+  Same two-column 2x2 grid, same card dimensions.
+  Card background is always bg-blue-50 when active, bg-white when idle.
+  No "THINKING" state (no AI). Replace with "PROCESSING" and "COMPLETE".
+
+  FOUR ALGORITHM PROCESSORS:
+
+    Card 1 — /LEXER_PROC/
+      Role         : Character-level HL7 tokenizer
+      What it does : Reads raw HL7 character by character, identifies
+                     delimiter chars (MSH.1, MSH.2), emits token stream
+      Metrics shown: tokens/sec, current segment being lexed
+      States       : IDLE / LEXING / COMPLETE / ERROR
+
+    Card 2 — /PARSER_PROC/
+      Role         : PEG grammar parser, builds segment AST
+      What it does : Consumes token stream, applies HL7 grammar rules,
+                     constructs Abstract Syntax Tree of message structure
+      Metrics shown: nodes built, parse depth, grammar version
+      States       : IDLE / PARSING / COMPLETE / ERROR
+
+    Card 3 — /VALIDATOR_PROC/
+      Role         : Rule engine — deterministic validation
+      What it does : Walks the AST, applies 1,240+ compiled validation
+                     rules (required fields, data types, table lookups,
+                     segment sequences, cardinality)
+      Metrics shown: rules evaluated, rules passed, rules failed
+      States       : IDLE / VALIDATING / COMPLETE / VIOLATIONS
+
+    Card 4 — /GENERATOR_PROC/
+      Role         : Template-based HL7 message generator
+      What it does : Takes a JSON param object, selects a pre-built
+                     template, performs field interpolation, escapes
+                     special characters, applies delimiter encoding
+      Metrics shown: template loaded, fields filled, bytes generated
+      States       : IDLE / GENERATING / COMPLETE / ERROR
+
+SECTION 3.5 — TERMINAL WATCHDOG (MINI FEED, BOTTOM OF LEFT PANEL)
+  A small recessed terminal box showing the last 5 event bus events.
+  Background: bg-gray-100 border-2 border-black (recessed look)
+  Header: "[ TERMINAL_WATCHDOG ] — BUSY" font-mono text-[9px] uppercase
+  Each line: "[HH:MM:SS] [EventBus] EventType.XXX" font-mono text-[9px]
+  Bottom stats row: "MEM: 64.2MB OK" and "UPTIME: 10715" font-mono text-[9px]
+  This always shows regardless of engine mode.
+  Events just change type labels (AI events vs ALGO events).
+
+================================================================================
+  SECTION 4 // CENTER PANEL — COMMAND_INTERFACE
+================================================================================
+
+PANEL HEADER:
+  Full-width red title bar:
+    "HL7_NEXUS // COMMAND_INTERFACE" centered
+    font-mono text-2xl font-bold text-[#af0a0f] tracking-widest
+    border-b-2 border-[#af0a0f] py-3
+
+TABS ROW (below the title bar):
+  Tab list: [GENERATE] [PARSE] [VALIDATE] [DIFF] [BATCH] [TEMPLATES] [NL_INPUT]
+  Style: font-mono text-[11px] uppercase tracking-widest
+  Active: border-b-2 border-[#af0a0f] text-[#af0a0f]
+  Inactive: text-slate-400
+  NL_INPUT tab:
+    In AI mode (cloud or local): enabled, normal
+    In ALGORITHM mode: text-slate-200, cursor-not-allowed, text has line-through
+    Show tooltip on hover in algo mode: "Natural language input requires AI engine"
+
+SECTION 4.1 — GENERATE TAB
+
+  Sub-tabs (inside Generate): [FORM_BUILDER] [RAW_EDITOR] [NL_INPUT*]
+  *NL_INPUT sub-tab also disabled in algo mode
+
+  FORM_BUILDER sub-tab:
+    A multi-section structured form. Each section is a collapsible block
+    with a red-accented section header ("// MESSAGE_HEADER", "// PATIENT_INFO", etc.)
+    All inputs: border-2 border-black font-mono text-sm rounded-none
+
+    Section 1 — MESSAGE_HEADER:
+      Fields: HL7 Version (dropdown: v2.1 through v2.7)
+              Message Type (dropdown: ADT, ORU, ORM, MDM, SIU, DFT, RAS, ACK)
+              Trigger Event (auto-populates: A01, R01, O01, etc.)
+              Sending Application (text)
+              Sending Facility (text)
+              Message Control ID (auto-generate or manual)
+
+    Section 2 — PATIENT_INFO:
+      Fields: MRN / Patient ID, Last Name, First Name, Middle Name,
+              Date of Birth (YYYYMMDD), Gender (dropdown), Race (dropdown),
+              Address fields
+
+    Section 3 — VISIT_INFO:
+      Fields: Attending Physician, Admission Date/Time, Patient Class,
+              Assigned Location (Room/Bed), Admit Source, Diagnosis Code
+
+    Section 4 — CLINICAL_DATA (shown/hidden based on message type):
+      For ORU: OBX observation fields (LOINC code, value, units, normal range)
+      For ORM: Order fields (order number, placer ID, order date)
+      For SIU: Appointment fields (slot ID, duration, resource)
+
+    Action buttons row:
+      [GENERATE HL7] — primary red button
+      [RANDOMIZE FIELDS] — secondary button (fills form with synthetic data)
+      [CLEAR FORM] — secondary button
+      [LOAD TEMPLATE] — secondary button
+
+    ENGINE MODE awareness on the button:
+      In AI mode: button label "[AI] GENERATE HL7"
+      In algo mode: button label "[ALGO] GENERATE HL7"
+      Both work, both produce valid HL7 — just different engines
+
+  RAW_EDITOR sub-tab:
+    A full-width monospace code editor (CodeMirror 6)
+    Custom HL7 syntax highlighting:
+      Segment names (MSH, PID, PV1, etc.): bold dark slate
+      Field separators (|): amber/gold color
+      Component separators (^): slate-400
+      Repetition separators (~): slate-400
+    Line numbers in left gutter
+    Right gutter: per-line validation icon (✓ green / ✗ red / ⚠ amber)
+    These icons appear after any validation run
+    Toolbar above editor:
+      [VALIDATE NOW] [AUTO-FIX] [COPY] [CLEAR] [DOWNLOAD .hl7]
+    Error squiggle underlines on invalid segments/fields
+
+  NL_INPUT sub-tab (AI MODES ONLY):
+    Large textarea:
+      Placeholder: "// NATURAL LANGUAGE INPUT — Describe the clinical event
+                    in plain English. Example: Admit John Doe, 45M, to ICU
+                    for acute myocardial infarction..."
+      border-2 border-black font-sans text-sm
+      min-height: 120px
+    Button: [GENERATE FROM LANGUAGE] — primary red button
+    Below button: Confidence score display "AI CONFIDENCE: 94%"
+    THOUGHT STREAM panel (below confidence score):
+      This appears only when the AI is processing or has just responded.
+      Background: #1e1b4b (deep indigo)
+      Text: #a5b4fc (pale lavender)
+      font-mono text-[11px]
+      border-l-4 border-indigo-400
+      Padding: p-3
+      Shows the AI's internal reasoning as it constructs the message.
+      This is streamed token by token from the API response.
+      Header line: "> [THOUGHT_STREAM]" in pale indigo
+      Content: the AI's step-by-step reasoning
+      This panel is the same aesthetic as the reference image's indigo
+      thought stream boxes visible in the chat messages.
+
+SECTION 4.2 — PARSE TAB
+
+  Input area:
+    Textarea: paste raw HL7 message (pipe-delimited or MLLP-wrapped)
+    OR: [UPLOAD FILE] button (accepts .hl7, .txt, .er7)
+    border-2 border-black font-mono text-sm
+
+  [PARSE MESSAGE] button — primary red
+
+  Output area (tabbed): [SEGMENT_TREE] [HUMAN_READABLE] [JSON] [FHIR_R4]
+
+  SEGMENT_TREE output:
+    Interactive collapsible tree rendered as nested bordered boxes
+    Each segment is a row with sharp borders:
+      Segment name (MSH, PID, etc.) — dark slate, font-mono font-bold
+      Field index (MSH.1, MSH.2...) — text-slate-500 font-mono text-[11px]
+      Field value — font-sans text-sm
+      Data type label — text-[9px] font-mono text-slate-400
+      Valid/invalid icon — green check or red X
+    Clicking a segment row expands to show component/subcomponent breakdown
+    Search bar above the tree: border-2 border-black
+    Jump-to-segment dropdown
+
+  HUMAN_READABLE output:
+    Two-column key-value table (no rounded corners)
+    Left: field label in font-mono text-[11px] text-slate-500 uppercase
+    Right: field value in font-sans text-sm text-slate-900
+    Sections grouped by: Patient Info, Visit Info, Clinical Data
+    border-b border-gray-200 between each row
+
+  JSON output:
+    Syntax-highlighted JSON in a dark-background bordered box
+    border-2 border-black bg-slate-900 text-green-400
+    font-mono text-[11px]
+    Copy button in top-right corner
+
+  FHIR_R4 output:
+    Same styling as JSON output
+    Shows the FHIR Bundle converted from the HL7 message
+    Resource type badges next to each resource (Patient, Encounter, etc.)
+    [DOWNLOAD FHIR JSON] button
+
+SECTION 4.3 — VALIDATE TAB
+
+  Input: same textarea + file upload as Parse tab
+  Profile selector: "CONFORMANCE PROFILE:" dropdown (list of loaded schemas)
+  [INITIATE VALIDATION] button — primary red
+    In AI mode: triggers all three AI agents in parallel
+    In ALGO mode: triggers VALIDATOR_PROC rule engine
+
+  Results display (after validation runs):
+    TOP ROW: Three score boxes side by side (no gap, sharp borders)
+      Each box: large number (0-100) + label below
+      Box 1: SYNTAX_SCORE — border-2 border-black, colored number
+      Box 2: SEMANTIC_SCORE — same style
+      Box 3: COMPLIANCE_SCORE — same style
+      Box 4: OVERALL_SCORE — bg-slate-900 text-white (inverted)
+      Score color: green ≥90, amber 70–89, red <70
+
+    MIDDLE ROW: Error list table
+      Columns: SEVERITY | SEGMENT | FIELD | CODE | MESSAGE
+      Header row: bg-slate-900 text-white font-mono text-[10px] uppercase
+      Data rows: alternating bg-white / bg-gray-50
+      SEVERITY column: badge (ERROR=red, WARNING=amber, INFO=blue)
+      All borders: border border-gray-200
+      Sortable columns (click header to sort)
+      Filterable: small filter input above table
+
+    BOTTOM ROW (if AI mode and errors found):
+      [AUTO-FIX AVAILABLE] badge in red
+      [RUN AUTO-FIX] primary button
+      "AI will suggest fixes for X of Y errors"
+      In ALGO mode, auto-fix uses the deterministic rule-based fixer instead
+
+  AUTO-FIX DIFF VIEW (appears after auto-fix runs):
+    Side-by-side: ORIGINAL | CORRECTED
+    Each pane: bordered box, font-mono text-[11px]
+    Changed lines highlighted:
+      Removed: bg-red-50 with left border border-l-4 border-red-500
+      Added  : bg-green-50 with left border border-l-4 border-green-500
+    Per-fix accept/reject buttons: [ACCEPT] [REJECT] for each changed block
+    [ACCEPT ALL] [REJECT ALL] master buttons
+    In AI mode: each fix shows a "CONFIDENCE: XX%" and AI reasoning tooltip
+    In ALGO mode: each fix shows "RULE: R0142 — DATE FORMAT NORMALIZATION"
+
+SECTION 4.4 — DIFF TAB
+  Two equal-width text areas side by side: [MESSAGE A] [MESSAGE B]
+  [COMPARE] button — primary red
+  Results below: segment-level diff with color highlighting (same as auto-fix)
+  Summary stats: "N segments added, M fields changed, P segments removed"
+  [EXPORT DIFF REPORT] button
+
+SECTION 4.5 — BATCH TAB
+  Drag-and-drop upload zone:
+    border-2 border-dashed border-black bg-slate-50
+    Center text: "DROP .HL7 OR .TXT FILE HERE" font-mono uppercase
+    Sub-text: "or click to browse"
+  Configuration row:
+    Batch size: number input
+    Stop on first error: checkbox
+    Profile: dropdown
+  [INITIATE BATCH] button — primary red
+  Progress display (after batch starts):
+    Large progress bar: border-2 border-black, red fill
+    "XXX / YYY MESSAGES PROCESSED" font-mono font-bold
+    Processing rate: "XX MSG/SEC" font-mono text-[11px]
+    Error rate: "X.X% ERRORS" font-mono text-[11px]
+    Estimated time remaining: "ETA: XX SEC" font-mono text-[11px]
+  Results table (same style as validate results table)
+  [DOWNLOAD BATCH REPORT] button
+
+SECTION 4.6 — TEMPLATES TAB
+  Grid of template cards (two columns, sharp borders)
+  Each card: border-2 border-black bg-white
+    Title: message type (ADT^A01) font-mono font-bold
+    Description: short plain-english description font-sans text-sm
+    Category badge: font-mono text-[9px] uppercase
+    [USE TEMPLATE] button — secondary style
+  Category filter tabs above grid: ALL, PATIENT, LAB, PHARMACY, SCHEDULING
+  Search input: border-2 border-black
+
+SECTION 4.7 — MESSAGE OUTPUT AREA (below center panel tabs, always visible)
+  This is a persistent bottom area of the center panel that shows the
+  current message (whatever was last generated or loaded).
+  Header: "// ACTIVE_MESSAGE" with message type badge and valid/invalid badge
+  The raw HL7 message displayed in monospace in a recessed area:
+    bg-gray-100 border-2 border-black
+    font-mono text-[11px] text-slate-800
+    line numbers in left gutter
+    segment name highlighted in the gutter
+  Action buttons in a row below:
+    [COPY] [DOWNLOAD .HL7] [VALIDATE NOW] [BRIDGE TO FHIR] [SAVE TO LIBRARY]
+
+================================================================================
+  SECTION 5 // RIGHT PANEL — INTELLIGENCE_MONITOR
+================================================================================
+
+PANEL HEADER:
+  Background    : bg-slate-900
+  Left text     : "INTELLIGENCE_MONITOR_v2.0" text-white font-mono
+                  text-[11px] uppercase tracking-widest
+  Right         : "SESSION_SYNC" text-[9px] text-green-400 font-mono
+                  with blinking dot animation
+  Border-bottom : 2px solid #af0a0f
+
+The right panel content changes significantly based on ENGINE_MODE.
+
+  ═══════════════════════════════════════════
+  WHEN ENGINE_MODE = CLOUD AI (Claude API)
+  ═══════════════════════════════════════════
+
+  BLOCK 1 — NEURAL_LINK_MONITOR:
+    Header: "// NEURAL_LINK_MONITOR" text-[10px] font-mono text-slate-400
+    Right of header: "● PROCESSING" text-[9px] text-[#af0a0f] with blink
+    Connection line: "LINK: [claude-api] ACCESSING ..."
+      font-mono text-[10px] text-slate-600
+    The circular arc gauge (as seen in the reference image):
+      Render a partial arc SVG in the corner of this block
+      The arc fills from 0% to current SYNAPTIC_LOAD percentage
+      Arc color: #af0a0f (red)
+      Label below arc: "IGNITING_FLUX..."
+      Sub-label: "SYNAPTIC_FLUX // INTENSITY"
+    Key-value metrics table below:
+      SYNAPTIC_LOAD    : progress bar + percentage (100% when calling API)
+      MODEL_ID         : "claude-sonnet-4-20250514" font-mono text-[9px]
+      ACTIVE_LINKS     : number
+      PENDING_LINKS    : number
+      QUEUE_LAG        : "CALCULATING..." animated
+      IN_TOK           : input tokens used this session
+      OUT_TOK          : output tokens used this session
+      TOTAL            : combined token count
+    Bottom: "SIGNAL: LOW / MEDIUM / HIGH" + "NEURAL_PROTO_LINK v2.1"
+      font-mono text-[9px] text-slate-400
+
+  ═══════════════════════════════════════════
+  WHEN ENGINE_MODE = LOCAL AI (Ollama)
+  ═══════════════════════════════════════════
+
+  BLOCK 1 — OLLAMA_LINK_MONITOR:
+    Same visual layout as NEURAL_LINK_MONITOR but adapted:
+    Header: "// OLLAMA_LINK_MONITOR"
+    Connection line shows: "LINK: [localhost:11434] ACCESSING ..."
+    If Ollama is not running/reachable:
+      Show red alert box: "OLLAMA OFFLINE — START WITH: ollama serve"
+      border-2 border-[#af0a0f] bg-red-50
+    If Ollama is running:
+      Show model selector dropdown: which model to use
+        (e.g. llama3, mistral, codellama, phi3, orca-mini)
+      PULL STATUS: if model not downloaded, show [PULL MODEL] button
+      MODEL_LOADED: yes/no
+      MODEL_SIZE: disk size of loaded model
+      VRAM_USED: if detectable
+      CONTEXT_LEN: model's context window
+      INFERENCE_SPEED: tokens/sec (measured live)
+    Same arc gauge showing inference load
+
+  ═══════════════════════════════════════════
+  WHEN ENGINE_MODE = ALGORITHM
+  ═══════════════════════════════════════════
+
+  BLOCK 1 — RULE_ENGINE_MONITOR:
+    Header: "// RULE_ENGINE_MONITOR"
+    No arc gauge (no AI inference)
+    Instead: system specs display
+    Key-value table:
+      ENGINE_VERSION   : "NEXUS_ALGO v2.1"
+      RULES_LOADED     : 1,240
+      TABLES_LOADED    : 945 (HL7 table count)
+      GRAMMAR_VERSION  : "HL7_PEG v2.7"
+      MODE             : "DETERMINISTIC"
+      AI_CALLS         : 0 (always zero — display prominently)
+      INTERNET_REQ     : "NONE"
+      PROCESSING_SPEED : XX ms/msg (live)
+    A "ZERO AI DEPENDENCIES" badge — this is a selling point for the
+    algo mode. Show it prominently in amber: border-2 border-amber-600
+    bg-amber-50 text-amber-700 font-mono text-[10px] uppercase
+
+  SHARED BLOCKS (all three engine modes show these):
+
+  BLOCK 2 — STRATAGEM_PLOTTER / VALIDATION_TIMELINE:
+    Header: "// VALIDATION_TIMELINE"
+    A small chart panel with two sub-panels side by side:
+    Left sub-panel: "STRATAGEM_PLOTTER" (same label as reference image)
+      Shows a mini sparkline chart of last 20 validation scores
+      Drawn as an SVG line/area chart
+      background: bg-gray-50 border-2 border-black
+    Right sub-panel: "SYSTEM_PROTOCOL_LEDG" (same label as reference image)
+      Shows last 4 AI or algo decisions as short text entries
+      With percentage changes (e.g. "A: -10% Full audit phased out...")
+      font-mono text-[9px] text-slate-700
+      background: bg-amber-50 border-2 border-black (amber tint as in reference)
+      This looks like a tactical ledger / decision log
+      Each entry: delta value | short text description
+      Max 4 visible entries, scrollable
+
+  BLOCK 3 — COMPLIANCE_MATRIX:
+    Header: "// COMPLIANCE_MATRIX"
+    Shows the scores of the most recent validation run:
+      SYNTAX    : XXX%
+      SEMANTIC  : XXX%
+      COMPLIANCE: XXX%
+      OVERALL   : XXX%
+    Each as a bar + number, no rounded corners
+    Bar colors: red/amber/green based on threshold
+
+  BLOCK 4 — SOCIAL_MATRIX (segment dependency display):
+    Header: "// SOCIAL_MATRIX"
+    A bordered table (same as the reference image's social matrix table):
+      Columns: ID | a | d | m | l
+      Rows: one per major segment (msh, pid, pv1, obx, obr...)
+      Values: positive/negative integers showing field dependencies
+              and inter-segment relationships
+      Positive values: text-green-600
+      Negative values: text-red-600
+      Header row: bg-slate-900 text-white
+    The values update after each parse/validate operation
+    In AI mode: these represent AI confidence deltas per segment
+    In algo mode: these represent rule evaluation scores per segment
+    This panel is data-rich and looks impressively complex
+
+  BLOCK 5 — SUBCONSCIOUS_LOG:
+    Header: "// SUBCONSCIOUS_LOG" + right-aligned "EXPORT_TXT" link
+    In AI mode: shows the AI's last 5 internal decisions with confidence %
+    In algo mode: shows the last 5 rule engine decisions with rule codes
+    font-mono text-[9px] text-slate-600
+    Each entry: timestamp | decision description | confidence/rule
+
+================================================================================
+  SECTION 6 // BOTTOM PANEL — TERMINAL_WATCHDOG (FULL WIDTH)
+================================================================================
+
+Spans the full width below the three columns.
+Recessed look: bg-gray-200 border-t-2 border-black
+Height: approximately 160px
+Always visible regardless of engine mode.
+
+HEADER BAR:
+  Left  : "[ TERMINAL_WATCHDOG ]" font-mono font-bold text-[11px] uppercase
+  Right : "— BUSY" or "— IDLE" text-[11px] font-mono
+  Divider: bg-black h-[2px] full width (thick black line)
+
+TERMINAL BODY:
+  bg-gray-100 (recessed, darker than main panels)
+  border-2 border-black on the inner scrollable area
+  font-mono text-[11px] text-slate-700
+  Auto-scroll to bottom on new event
+  Each line format:
+    [HH:MM:SS] [EventBus] publishing EventType.{TYPE} → {detail}
+  Timestamp: text-slate-400
+  Event type in brackets: text-[#af0a0f] when AI events in AI mode
+                          text-slate-600 when ALGO events in algo mode
+  Event detail: text-slate-700
+
+EVENT TYPES BY ENGINE MODE:
+
+  CLOUD AI / LOCAL AI:
+    EventType.MSG_GENERATED       EventType.AI_CALL_START
+    EventType.MSG_PARSED          EventType.AI_CALL_COMPLETE
+    EventType.VALIDATION_START    EventType.AI_CALL_ERROR
+    EventType.AGENT_STATUS        EventType.AUTO_FIX_SUGGESTED
+    EventType.VALIDATION_ERROR    EventType.FHIR_CONVERTED
+    EventType.VALIDATION_PASS     EventType.BATCH_PROGRESS
+    EventType.NL_INPUT_RECEIVED   EventType.EXPORT_COMPLETE
+
+  ALGORITHM MODE:
+    EventType.LEXER_START         EventType.RULE_PASS
+    EventType.LEXER_COMPLETE      EventType.RULE_FAIL
+    EventType.PARSER_START        EventType.TEMPLATE_LOADED
+    EventType.PARSER_COMPLETE     EventType.FIELDS_INTERPOLATED
+    EventType.VALIDATOR_START     EventType.GENERATOR_COMPLETE
+    EventType.VALIDATOR_COMPLETE  EventType.EXPORT_COMPLETE
+
+BOTTOM STATUS BAR:
+  Horizontal bar below terminal content:
+  Left : "MEM: XX.X MB OK" font-mono text-[9px] text-slate-500
+  Center: current engine mode badge
+  Right : "UPTIME: XXXXX" font-mono text-[9px] text-slate-500
+         "BUFFER_SIZE: XXX KB" font-mono text-[9px]
+
+CONTROLS (top-right of terminal header):
+  [PAUSE] [RESUME] [CLEAR] [EXPORT LOG] — all secondary button style
+  text-[9px] font-mono uppercase border border-black px-2 py-1
+
+================================================================================
+  SECTION 7 // ENGINE MODE — DETAILED PROCESSING SPECIFICATIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+7.1 CLOUD AI MODE (Claude API — Anthropic)
+--------------------------------------------------------------------------------
+CONFIGURATION:
+  Environment variable: ANTHROPIC_API_KEY
+  Model: claude-sonnet-4-20250514
+  Max tokens: 4096 per call
+  Temperature: 0.1 (low, structured output)
+  Timeout: 30s per agent call
+  Parallel calls: yes (Promise.all / asyncio.gather for 3 agents)
+
+FEATURE AVAILABILITY:
+  HL7 Generation (form-based)      : YES
+  HL7 Generation (natural language): YES — this mode's exclusive feature
+  HL7 Parsing                      : YES (AI-enhanced with semantic labels)
+  Validation (3-agent parallel)    : YES
+  Auto-fix                         : YES (AI-suggested fixes)
+  FHIR Conversion                  : YES (AI-assisted mapping)
+  Batch processing                  : YES (AI validates each message)
+  Template library                  : YES
+  Synthetic data generation         : YES
+
+NATURAL LANGUAGE GENERATOR PROMPT:
+  System: "You are an expert HL7 message generator. Convert the user's natural
+           language clinical description into a valid HL7 v2.5.1 pipe-delimited
+           message. Rules: (1) Return ONLY the raw HL7 message, no explanation,
+           no markdown, no code blocks. (2) Use | as field separator, ^ as
+           component separator, ~ as repetition separator. (3) Always include
+           MSH as the first segment. (4) Use YYYYMMDDHHMMSS for timestamps.
+           (5) Generate realistic synthetic values for any unspecified fields.
+           (6) Choose the most appropriate message type for the described event."
+
+SYNTAX AGENT PROMPT:
+  System: "You are SYNTAX_AGENT, an HL7 structural validator. Analyze the
+           provided HL7 message for structural errors. Return ONLY a JSON
+           object: { agent:'SYNTAX_AGENT', status:'CLEAR|WARNING|ALERT',
+           score:0-100, errors:[{line:N, segment:'XXX', field:N, code:'E001',
+           severity:'ERROR|WARNING', message:'description'}],
+           checks_passed:N, checks_failed:N }"
+
+SEMANTIC AGENT PROMPT:
+  System: "You are SEMANTIC_AGENT, an HL7 clinical coherence validator.
+           Analyze for semantic errors: HL7 table value validity, date logic
+           coherence, gender-specific field logic, LOINC code validity,
+           ICD code format. Return ONLY a JSON object: { agent:'SEMANTIC_AGENT',
+           status:'CLEAR|WARNING|ALERT', score:0-100, errors:[...],
+           checks_passed:N, checks_failed:N }"
+
+COMPLIANCE AGENT PROMPT:
+  System: "You are COMPLIANCE_AGENT, an HL7 standards conformance auditor.
+           Check against the specified HL7 version profile. Return ONLY a
+           JSON object: { agent:'COMPLIANCE_AGENT',
+           status:'COMPLIANT|WARNING|VIOLATION', score:0-100,
+           profile_matched:'HL7 v2.5.1 Base', errors:[{segment:'XXX',
+           field:N, code:'C001', severity:'ERROR|WARNING', message:'...',
+           reference:'HL7 v2.5.1 Chapter X.Y.Z'}], checks_passed:N,
+           checks_failed:N }"
+
+AUTO-FIX PROMPT:
+  System: "You are AUTOFIX_AGENT. Given an HL7 message and validation errors,
+           return a corrected message. Return ONLY JSON: { corrected_message:
+           'raw HL7', fixes_applied:[{error_code:'E001', description:'...',
+           original_value:'...', corrected_value:'...', confidence:0-100}],
+           unfixable_errors:['list'] }"
+
+--------------------------------------------------------------------------------
+7.2 LOCAL AI MODE (Ollama)
+--------------------------------------------------------------------------------
+CONFIGURATION:
+  Base URL: http://localhost:11434
+  API endpoint: POST /api/generate (Ollama native API)
+  Default model: llama3 (user-configurable in right panel)
+  Fallback if model not found: show error, offer model pull via [PULL MODEL]
+  Timeout: 120s (local models are slower)
+  Parallel calls: configurable (local hardware may not support 3 parallel)
+
+OLLAMA API CALL FORMAT:
+  POST http://localhost:11434/api/generate
+  {
+    "model": "llama3",
+    "prompt": "[system_prompt]\n\nUser: [user_input]\nAssistant:",
+    "stream": false,
+    "options": { "temperature": 0.1, "num_predict": 4096 }
+  }
+
+FEATURE AVAILABILITY:
+  Same as Cloud AI mode, EXCEPT:
+  - Response quality depends on local model size and capability
+  - Smaller models (7B) may produce less reliable structured JSON
+  - Add JSON schema enforcement: if JSON parsing fails, retry up to 3 times
+    with a corrective prompt: "Your response must be valid JSON only.
+    Previous response was not valid JSON. Try again."
+  - Natural language generation: YES but quality varies by model
+  - Batch processing: slower (sequential, not parallel, for small machines)
+
+CONNECTION HEALTH CHECK:
+  On startup and on mode switch to LOCAL AI:
+    GET http://localhost:11434/api/tags
+    If 200: Ollama running, parse available models list
+    If connection refused: show OLLAMA OFFLINE warning in right panel
+    Retry every 10 seconds automatically
+    Show [RETRY CONNECTION] manual button
+
+BACKEND ABSTRACTION:
+  Create an LLMProvider interface/class:
+    class LLMProvider:
+      async def generate(prompt: str, system: str) -> str
+    class ClaudeLLMProvider(LLMProvider):
+      # uses anthropic SDK
+    class OllamaLLMProvider(LLMProvider):
+      # uses httpx to call localhost:11434
+  All agent code calls LLMProvider.generate() — never directly calls
+  Claude or Ollama. Switching engine mode just swaps the provider instance.
+
+--------------------------------------------------------------------------------
+7.3 ALGORITHM MODE (Pure Deterministic — Zero AI)
+--------------------------------------------------------------------------------
+This is the mode that shows genuine engineering depth. Every operation
+that the AI would do in AI mode is replicated by a deterministic algorithm.
+No LLM calls, no API keys, no internet required.
+
+HL7 LEXER (LEXER_PROC):
+  Input: raw HL7 string
+  Algorithm:
+    Step 1: Read first 3 characters — must be "MSH"
+    Step 2: Read character at index 3 — this is FIELD_SEPARATOR (usually |)
+    Step 3: Read characters 4-7 — these are ENCODING_CHARS (^~\&)
+    Step 4: Split the entire message by CARRIAGE_RETURN (\r or \r\n)
+            to get segment strings
+    Step 5: For each segment string, split by FIELD_SEPARATOR to get fields
+    Step 6: For each field, split by COMPONENT_SEPARATOR (^) to get components
+    Step 7: For each component, split by SUBCOMPONENT_SEPARATOR (&)
+    Step 8: Handle escape sequences: \F\ \S\ \E\ \R\ \T\ \H\ \N\
+    Output: A nested token tree (Segment[] → Field[] → Component[] → Sub[])
+  Error conditions:
+    Missing MSH: throw LexerError("Message must begin with MSH segment")
+    No field separator at position 3: throw LexerError("Invalid MSH.1")
+    Truncated message: throw LexerError("Unexpected end of message")
+
+HL7 PEG PARSER (PARSER_PROC):
+  Input: token tree from Lexer
+  Algorithm:
+    A Parsing Expression Grammar (PEG) for each supported message type.
+    The grammar is encoded as a JavaScript/Python object tree:
+      Grammar = {
+        'ADT_A01': ['MSH', 'EVN', 'PID', 'PD1?', 'NK1*', 'PV1', 'PV2?', ...],
+        'ORU_R01': ['MSH', 'PATIENT_RESULT+', 'DSC?'],
+        'ORM_O01': ['MSH', 'NTE*', 'PATIENT?', 'ORDER+'],
+        ...
+      }
+    '?' = optional (0 or 1)
+    '*' = zero or more
+    '+' = one or more
+    Groups in brackets = logical groups (like the PATIENT_RESULT group in ORU)
+    Parser walks the token tree against the grammar:
+      If a required segment is missing: ParserError with segment name
+      If segments are out of order: ParserError with expected vs found
+      If an unknown segment (Z-segment): flag as warning, not error
+    Output: Abstract Syntax Tree (AST) with full message structure
+    Also extracts: message type, version, sending app, timestamp
+
+HL7 RULE ENGINE VALIDATOR (VALIDATOR_PROC):
+  Input: AST from Parser + selected conformance profile
+  Algorithm:
+    A compiled rule set. Each rule is a function:
+      Rule = { id, severity, segment, field, check_fn, error_message }
+    Rules are organized into categories:
+
+    CATEGORY A — Required Field Rules (automatically generated from spec):
+      For each segment in HL7 spec: enumerate required fields (R) vs optional (O)
+      Rule: if field is R and value is empty → ERROR E001
+      Pre-compiled into lookup table: REQUIRED_FIELDS[segment][field_index]
+
+    CATEGORY B — Data Type Rules:
+      DT  : must match /^\d{8}$/ (YYYYMMDD) or be empty
+      DTM : must match /^\d{8,14}$/ (YYYYMMDDHHMMSS with variable length)
+      TM  : must match /^\d{4,10}(\.\d{4})?([+-]\d{4})?$/
+      NM  : must match /^-?\d+(\.\d+)?$/
+      SI  : must match /^\d+$/
+      IS  : value must be in specified HL7 table (loaded from bundled tables)
+      CWE : three-component structure: code^display^codeSystem
+      CE  : similar to CWE (older version)
+      ID  : value must be in specified HL7 table
+      ST  : any string, max length check
+      TX  : any text, max length per spec
+
+    CATEGORY C — Table Validation Rules:
+      Bundle the complete set of HL7 defined tables (0001–0945) as a JSON
+      file in the project. For each IS/ID field, look up the value in the
+      appropriate table. Unknown values: WARNING W001.
+      Tables include:
+        0001: Administrative Sex (F, M, O, U, A, N, C)
+        0004: Patient Class (E, I, O, P, R, B, C, N, U)
+        0076: Message Type (all HL7 message types)
+        0003: Event Type codes
+        0005: Race codes
+        0069: Hospital Service codes
+        ... all 945 tables
+
+    CATEGORY D — Segment Sequence Rules:
+      After the PEG parser validates structure, re-check optional rules:
+      e.g. PV2 can only appear after PV1
+           OBX can only appear after OBR in ORU messages
+      Cross-segment field consistency:
+        PID.7 (DOB) must be before MSH.7 (message timestamp)
+        PV1.44 (admit date) must be before PV1.45 (discharge date) if both set
+
+    CATEGORY E — Encoding and Length Rules:
+      Field length check against HL7 spec max lengths
+      Special character encoding check (| ^ ~ \ & must be escaped)
+      Null value representation check ('' vs two double quotes)
+
+    Rule execution:
+      Apply all applicable rules to each segment/field
+      Collect results: { passed: Rule[], failed: { rule, segment, field, value } [] }
+      Compute score: (passed.length / (passed.length + failed.length)) * 100
+
+HL7 GENERATOR (GENERATOR_PROC):
+  Input: JSON parameter object from the form UI
+  Algorithm:
+    Step 1: Load the appropriate template for the message type
+    Step 2: A template is a JavaScript/Python object defining segment structure:
+      Template = {
+        segments: [
+          { name: 'MSH', fields: [
+            { index: 3, source: 'params.sendingApp',     default: 'HIS' },
+            { index: 4, source: 'params.sendingFacility', default: 'FACILITY' },
+            { index: 7, source: 'datetime.now()',         format: 'DTM' },
+            { index: 9, source: 'STATIC:ADT^A01^ADT_A01' },
+            { index: 10, source: 'uuid.short()' },
+            { index: 12, source: 'params.version',       default: '2.5.1' },
+          ]},
+          { name: 'EVN', fields: [
+            { index: 2, source: 'datetime.now()', format: 'DTM' },
+          ]},
+          { name: 'PID', fields: [
+            { index: 3,  source: 'params.mrn + "^^^FACILITY^MR"' },
+            { index: 5,  source: 'params.lastName+"^"+params.firstName' },
+            { index: 7,  source: 'params.dob', format: 'DT' },
+            { index: 8,  source: 'params.gender' },
+          ]},
+          ...
+        ]
+      }
+    Step 3: Walk the template, resolve each field's source expression,
+            apply formatting, handle empty/optional fields (leave empty vs omit)
+    Step 4: Join fields with FIELD_SEPARATOR, join segments with \r
+    Step 5: Run the Lexer + Parser on the result to validate before returning
+    Step 6: If validation fails: re-examine template, apply field corrections
+    Output: Valid HL7 pipe-delimited string
+
+HL7 DETERMINISTIC AUTO-FIX:
+  Input: raw HL7 message + list of validation errors from rule engine
+  Algorithm:
+    For each error, apply a fix function:
+      E_DATE_FORMAT      : parse the date value, reformat to YYYYMMDD or YYYYMMDDHHMMSS
+      E_REQUIRED_MISSING : insert a placeholder value appropriate for the data type
+      E_INVALID_TABLE    : look up closest valid table value by string similarity
+      E_LENGTH_EXCEEDED  : truncate the value to spec max length
+      E_MISSING_SEGMENT  : insert the missing required segment with default values
+      E_DELIMITER_ESCAPE : re-escape any unescaped delimiter characters in values
+    Fix functions that are too risky (ambiguous data change): mark as
+    MANUAL_REVIEW and do not auto-apply
+    Output: corrected HL7 string + list of changes made
+
+FHIR BRIDGE IN ALGO MODE:
+  No AI call. Use a hard-coded transformation map:
+    ADT PID segment → FHIR Patient resource (field-by-field mapping)
+    ADT PV1 segment → FHIR Encounter resource
+    ORU OBX segment → FHIR Observation resource
+    ORU OBR segment → FHIR DiagnosticReport resource
+    ORM OBR segment → FHIR ServiceRequest resource
+  Each mapping is a list of rules:
+    { hl7_segment: 'PID', hl7_field: 5, fhir_resource: 'Patient',
+      fhir_path: 'name[0].family', transform: 'split("^")[0]' }
+  Bundle the mapped resources into a FHIR R4 Bundle JSON structure.
+
+BACKEND ABSTRACTION (mirror of AI mode):
+  Same LLMProvider interface concept, but for the algorithm engine:
+    class AlgoEngine:
+      def generate(params: dict) -> str
+      def parse(raw_hl7: str) -> AST
+      def validate(ast: AST, profile: str) -> ValidationResult
+      def autofix(raw_hl7: str, errors: list) -> FixResult
+  All routing code checks engineMode and calls either LLMProvider
+  or AlgoEngine — never both.
+
+================================================================================
+  SECTION 8 // REST API + WEBSOCKET SPECIFICATION
+================================================================================
+
+BASE URL: http://localhost:8000/api/v1
+
+ALL ENDPOINTS ACCEPT engine_mode HEADER OR QUERY PARAM:
+  X-Engine-Mode: cloud_ai | local_ai | algorithm
+  This tells the backend which processing path to use.
+  Frontend always sends the current engine mode with every request.
+
+POST /api/v1/generate
+  Headers  : X-Engine-Mode
+  Body     : { mode: "form|natural_language", version, message_type,
+               trigger_event, natural_language_input, params: {} }
+  Response : { hl7_message, message_id, confidence, engine_used,
+               generated_at, ai_reasoning?, template_used? }
+
+POST /api/v1/parse
+  Headers  : X-Engine-Mode
+  Body     : { hl7_message }
+  Response : { message_id, message_type, version, segments:[...],
+               human_readable:{...}, fhir_bundle:{...},
+               engine_used, parse_time_ms }
+
+POST /api/v1/validate
+  Headers  : X-Engine-Mode
+  Body     : { hl7_message, profile }
+  Response : { message_id, overall_status, overall_score,
+               agents|processors: { syntax:{...}, semantic:{...}, compliance:{...} },
+               total_errors, total_warnings, autofix_available,
+               engine_used, validation_time_ms }
+
+POST /api/v1/autofix
+  Headers  : X-Engine-Mode
+  Body     : { hl7_message, validation_errors:[...] }
+  Response : { corrected_message, fixes_applied:[...],
+               unfixable_errors:[...], engine_used }
+
+POST /api/v1/transform/fhir
+  Headers  : X-Engine-Mode
+  Body     : { hl7_message }
+  Response : { fhir_bundle:{...}, resources:[...], engine_used }
+
+POST /api/v1/batch
+  Headers  : X-Engine-Mode
+  Body     : { messages:[...], profile, batch_size, stop_on_error }
+  Response : streamed via WebSocket (progress events), final summary on complete
+
+GET  /api/v1/schemas
+  Response : list of available conformance profiles
+
+GET  /api/v1/engine/status
+  Response : {
+    cloud_ai: { available: bool, api_key_configured: bool },
+    local_ai:  { available: bool, ollama_running: bool, models: [...] },
+    algorithm: { available: true, rules_loaded: 1240, version: "2.1" }
+  }
+
+GET  /api/v1/audit?from=&to=&limit=100
+  Response : paginated audit log
+
+WebSocket /ws/eventbus
+  Server pushes JSON event objects:
+  {
+    "type": "EventType.VALIDATION_ERROR",
+    "timestamp": "HH:MM:SS.mmm",
+    "engine": "cloud_ai|local_ai|algorithm",
+    "agent|processor": "SYNTAX_AGENT|VALIDATOR_PROC",
+    "detail": "segment OBX[2] field 3 — required field missing",
+    "severity": "ERROR|WARNING|INFO"
+  }
+
+================================================================================
+  SECTION 9 // BACKEND DATABASE SCHEMA
+================================================================================
+
+TABLE: messages
+  id            TEXT PRIMARY KEY (UUID)
+  created_at    TEXT (ISO8601)
+  operation     TEXT (GENERATE | PARSE | VALIDATE | BATCH | EXPORT)
+  engine_mode   TEXT (cloud_ai | local_ai | algorithm)
+  hl7_version   TEXT
+  message_type  TEXT
+  raw_message   TEXT
+  parsed_json   TEXT (JSON)
+  source        TEXT (FORM | NL | FILE | API)
+  session_id    TEXT
+
+TABLE: validation_results
+  id                TEXT PRIMARY KEY
+  message_id        TEXT (FK → messages.id)
+  engine_mode       TEXT
+  overall_score     INTEGER
+  overall_status    TEXT
+  syntax_score      INTEGER
+  semantic_score    INTEGER
+  compliance_score  INTEGER
+  errors_json       TEXT (JSON array of error objects)
+  profile_used      TEXT
+  processing_ms     INTEGER
+  created_at        TEXT
+
+TABLE: schemas
+  id            TEXT PRIMARY KEY
+  name          TEXT
+  version       TEXT
+  message_types TEXT (JSON array)
+  profile_xml   TEXT
+  created_at    TEXT
+  is_default    INTEGER (0 or 1)
+
+TABLE: events
+  id           INTEGER PRIMARY KEY AUTOINCREMENT
+  session_id   TEXT
+  engine_mode  TEXT
+  event_type   TEXT
+  timestamp    TEXT
+  agent        TEXT
+  detail       TEXT
+  severity     TEXT
+
+TABLE: audit_log
+  id           INTEGER PRIMARY KEY AUTOINCREMENT
+  session_id   TEXT
+  operation    TEXT
+  engine_mode  TEXT
+  message_type TEXT
+  outcome      TEXT (PASS | FAIL | WARNING)
+  error_count  INTEGER
+  warning_count INTEGER
+  duration_ms  INTEGER
+  created_at   TEXT
+
+================================================================================
+  SECTION 10 // FRONTEND STATE MANAGEMENT (ZUSTAND STORE)
+================================================================================
+
+Store shape:
+  engineMode        : 'cloud_ai' | 'local_ai' | 'algorithm'
+  activeTab         : 'generate' | 'parse' | 'validate' | 'diff' | 'batch' | 'templates'
+  activeSubTab      : 'form_builder' | 'raw_editor' | 'nl_input'
+  currentMessage    : string (raw HL7)
+  parsedMessage     : object | null
+  validationResult  : object | null
+  agents            : {
+    syntax    : { status, score, errors, lastUpdated },
+    semantic  : { status, score, errors, lastUpdated },
+    compliance: { status, score, errors, lastUpdated }
+  }
+  processors        : {
+    lexer     : { status, metrics },
+    parser    : { status, metrics },
+    validator : { status, metrics },
+    generator : { status, metrics }
+  }
+  eventBus          : EventEntry[] (last 200 events)
+  sessionClock      : number (seconds since session start)
+  ollamaStatus      : { running, models, activeModel }
+  engineApiStatus   : { cloud_ai, local_ai, algorithm }
+  batchJob          : { active, progress, total, errors, results }
+  auditLog          : AuditEntry[]
+
+Actions:
+  setEngineMode(mode)     — switches engine, resets agent/processor states,
+                            triggers engine health check, updates header badge
+  setActiveTab(tab)       — also enforces NL_INPUT disabled in algo mode
+  setCurrentMessage(msg)  — updates raw message display
+  receiveWsEvent(event)   — appends to eventBus, updates relevant agent/proc
+  runValidation()         — dispatches to correct backend path per engineMode
+  runGenerate(params)     — dispatches to correct backend path per engineMode
+
+================================================================================
+  SECTION 11 // PROJECT FILE STRUCTURE
+================================================================================
+
+hl7-nexus/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── layout/
+│   │   │   │   ├── GlobalHeader.jsx        (engine mode selector + logo)
+│   │   │   │   ├── LeftPanel.jsx           (OPERATIONAL_MONITOR)
+│   │   │   │   ├── CenterPanel.jsx         (COMMAND_INTERFACE)
+│   │   │   │   ├── RightPanel.jsx          (INTELLIGENCE_MONITOR)
+│   │   │   │   └── BottomTerminal.jsx      (TERMINAL_WATCHDOG)
+│   │   │   ├── engine/
+│   │   │   │   ├── EngineModeToggle.jsx    (AI / ALGO segmented button)
+│   │   │   │   ├── AiSubModeToggle.jsx     (CLOUD / LOCAL sub-selector)
+│   │   │   │   └── EngineBadge.jsx         (colored mode label badge)
+│   │   │   ├── agents/
+│   │   │   │   ├── AgentCard.jsx           (one AI agent card)
+│   │   │   │   ├── AgentMonitors.jsx       (2x2 grid of agent cards)
+│   │   │   │   ├── AlgoProcessorCard.jsx   (one algo processor card)
+│   │   │   │   └── AlgoProcessors.jsx      (2x2 grid of processor cards)
+│   │   │   ├── center/
+│   │   │   │   ├── CenterTabs.jsx          (tab bar, NL_INPUT conditional)
+│   │   │   │   ├── GenerateTab.jsx
+│   │   │   │   │   ├── FormBuilder.jsx
+│   │   │   │   │   ├── RawEditor.jsx       (CodeMirror 6)
+│   │   │   │   │   └── NLInput.jsx         (AI modes only)
+│   │   │   │   ├── ParseTab.jsx
+│   │   │   │   │   ├── SegmentTree.jsx
+│   │   │   │   │   ├── HumanReadable.jsx
+│   │   │   │   │   └── FhirOutput.jsx
+│   │   │   │   ├── ValidateTab.jsx
+│   │   │   │   │   ├── ScoreBoxes.jsx
+│   │   │   │   │   ├── ErrorTable.jsx
+│   │   │   │   │   └── AutoFixDiff.jsx
+│   │   │   │   ├── DiffTab.jsx
+│   │   │   │   ├── BatchTab.jsx
+│   │   │   │   ├── TemplatesTab.jsx
+│   │   │   │   └── MessageOutput.jsx       (persistent active message area)
+│   │   │   ├── right/
+│   │   │   │   ├── CloudAIMonitor.jsx      (NEURAL_LINK_MONITOR)
+│   │   │   │   ├── OllamaMonitor.jsx       (OLLAMA_LINK_MONITOR)
+│   │   │   │   ├── AlgoEngineMonitor.jsx   (RULE_ENGINE_MONITOR)
+│   │   │   │   ├── ValidationTimeline.jsx  (STRATAGEM_PLOTTER)
+│   │   │   │   ├── ComplianceMatrix.jsx
+│   │   │   │   ├── SocialMatrix.jsx
+│   │   │   │   └── SubconsciousLog.jsx
+│   │   │   └── shared/
+│   │   │       ├── StatusLED.jsx           (colored dot with blink animation)
+│   │   │       ├── SectionHeader.jsx       ("// LABEL" style header)
+│   │   │       ├── StatusBadge.jsx
+│   │   │       ├── ThoughtStream.jsx       (indigo AI reasoning panel)
+│   │   │       └── CrtOverlay.jsx          (scanline CSS overlay, fixed)
+│   │   ├── hooks/
+│   │   │   ├── useWebSocket.js             (event bus WS connection)
+│   │   │   ├── useHL7Api.js                (all API calls, engine-aware)
+│   │   │   ├── useSessionClock.js
+│   │   │   └── useOllamaHealth.js          (polls localhost:11434)
+│   │   ├── store/
+│   │   │   └── nexusStore.js               (Zustand global store)
+│   │   ├── engine/
+│   │   │   └── hl7Colors.js                (CodeMirror HL7 highlight rules)
+│   │   ├── styles/
+│   │   │   └── globals.css                 (CRT overlay, Tailwind base)
+│   │   └── App.jsx
+│   ├── tailwind.config.js                  (extend with #af0a0f, rounded-none default)
+│   └── package.json
+│
+├── backend/
+│   ├── main.py                             (FastAPI app + WS endpoint)
+│   ├── routers/
+│   │   ├── generate.py                     (routes to AI or algo engine)
+│   │   ├── parse.py
+│   │   ├── validate.py
+│   │   ├── batch.py
+│   │   ├── transform.py
+│   │   ├── engine_status.py                (health checks for all engines)
+│   │   └── audit.py
+│   ├── engines/
+│   │   ├── base.py                         (abstract LLMProvider interface)
+│   │   ├── cloud_ai.py                     (Claude API implementation)
+│   │   ├── local_ai.py                     (Ollama implementation)
+│   │   └── algorithm/
+│   │       ├── lexer.py                    (HL7 character lexer)
+│   │       ├── parser.py                   (PEG grammar parser)
+│   │       ├── validator.py                (rule engine)
+│   │       ├── generator.py                (template-based generator)
+│   │       ├── autofix.py                  (deterministic fixer)
+│   │       ├── fhir_bridge.py              (field-mapping FHIR converter)
+│   │       ├── rules/
+│   │       │   ├── required_fields.py      (auto-generated from HL7 spec)
+│   │       │   ├── data_type_rules.py
+│   │       │   ├── table_rules.py
+│   │       │   ├── segment_sequence_rules.py
+│   │       │   └── cross_segment_rules.py
+│   │       └── data/
+│   │           ├── hl7_tables.json         (all 945 HL7 defined tables)
+│   │           ├── templates/              (HL7 message templates by type)
+│   │           └── fhir_map.json           (HL7→FHIR field mapping)
+│   ├── services/
+│   │   ├── event_bus.py                    (WebSocket event publisher)
+│   │   └── audit_service.py
+│   ├── models/
+│   │   └── database.py                     (SQLAlchemy models)
+│   ├── prompts/                            (AI mode prompt files)
+│   │   ├── nl_generator.txt
+│   │   ├── syntax_agent.txt
+│   │   ├── semantic_agent.txt
+│   │   ├── compliance_agent.txt
+│   │   └── autofix_agent.txt
+│   ├── requirements.txt
+│   └── .env                                (ANTHROPIC_API_KEY)
+│
+├── sample_data/
+│   ├── valid_adt_a01.hl7
+│   ├── valid_oru_r01.hl7
+│   ├── invalid_with_errors.hl7
+│   └── batch_100_messages.hl7
+│
+└── README.md
+
+================================================================================
+  SECTION 12 // PYTHON DEPENDENCIES (requirements.txt)
+================================================================================
+
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+websockets==12.0
+anthropic==0.20.0
+python-hl7==0.4.0
+httpx==0.26.0
+sqlalchemy==2.0.25
+aiosqlite==0.20.0
+aiofiles==23.2.1
+python-multipart==0.0.9
+pydantic==2.5.3
+python-dotenv==1.0.0
+
+================================================================================
+  SECTION 13 // FRONTEND DEPENDENCIES (package.json)
+================================================================================
+
+"dependencies": {
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0",
+  "react-router-dom": "^6.21.0",
+  "zustand": "^4.4.7",
+  "recharts": "^2.10.3",
+  "@codemirror/view": "^6.22.2",
+  "@codemirror/state": "^6.3.3",
+  "@codemirror/language": "^6.10.0",
+  "framer-motion": "^11.0.3",
+  "lucide-react": "^0.312.0",
+  "axios": "^1.6.5",
+  "clsx": "^2.1.0"
+},
+"devDependencies": {
+  "vite": "^5.0.11",
+  "@vitejs/plugin-react": "^4.2.1",
+  "tailwindcss": "^3.4.1",
+  "autoprefixer": "^10.4.17",
+  "postcss": "^8.4.33"
+}
+
+TAILWIND CONFIG NOTE:
+  In tailwind.config.js, extend the theme with:
+    colors: { 'nexus-red': '#af0a0f' }
+    borderRadius: { 'none': '0px' }   (make rounded-none the default)
+  Set darkMode: 'class' but do not implement dark mode — this is a
+  light/white theme only.
+
+================================================================================
+  SECTION 14 // IMPLEMENTATION PRIORITY ORDER
+================================================================================
+
+PHASE 1 — SCAFFOLD & CORE UI (first 2 hours):
+  [P1-01] Project scaffold: Vite + React + Tailwind + FastAPI
+  [P1-02] Three-column Iron Council layout (backdrop + 3 floating panels)
+  [P1-03] CRT scanline overlay
+  [P1-04] Global header with ENGINE_MODE toggle (3 states)
+  [P1-05] Left panel structure: hardware indicators, clock, channel status
+  [P1-06] Right panel structure: placeholder blocks
+  [P1-07] Bottom terminal panel (static for now)
+  [P1-08] Center panel: tab bar (with NL_INPUT conditional disable)
+  [P1-09] Zustand store with engineMode state wired to header toggle
+
+PHASE 2 — ALGORITHM ENGINE (next 2 hours):
+  [P2-01] HL7 Lexer (Python: lexer.py)
+  [P2-02] HL7 Parser with PEG grammar for ADT, ORU, ORM (parser.py)
+  [P2-03] Required fields rule set + data type rules (validator.py)
+  [P2-04] HL7 table JSON bundle (minimum: tables 0001, 0003, 0004, 0076)
+  [P2-05] Template-based generator for ADT^A01 and ORU^R01 (generator.py)
+  [P2-06] Wire algo engine to backend FastAPI routes
+  [P2-07] Segment tree display in center panel
+  [P2-08] Validation results table (score boxes + error table)
+  [P2-09] Algo processor cards in left panel (live status updates)
+  [P2-10] WebSocket event bus (backend publish + frontend terminal)
+
+PHASE 3 — AI ENGINE (next 2 hours):
+  [P3-01] Claude API integration (cloud_ai.py)
+  [P3-02] Ollama integration + health check (local_ai.py)
+  [P3-03] LLMProvider abstraction layer (base.py)
+  [P3-04] Three-agent parallel validation (syntax + semantic + compliance)
+  [P3-05] Agent cards in left panel (swap from processor cards on mode change)
+  [P3-06] NL input tab with thought stream panel
+  [P3-07] Auto-fix diff view (AI + algo both)
+  [P3-08] Right panel: NEURAL_LINK_MONITOR (Cloud AI) and OLLAMA_LINK_MONITOR
+
+PHASE 4 — ADVANCED FEATURES:
+  [P4-01] FHIR bridge (algo + AI modes)
+  [P4-02] Batch processing engine
+  [P4-03] Social matrix in right panel (live updates)
+  [P4-04] Stratagem plotter sparkline chart
+  [P4-05] Template library (10+ pre-built templates)
+  [P4-06] Message diff engine
+  [P4-07] Audit trail + session analytics
+  [P4-08] Synthetic test data generator (algo: random from valid tables)
+
+PHASE 5 — POLISH:
+  [P5-01] Status LED blink animations (CSS keyframes)
+  [P5-02] Thought stream streaming (token-by-token from Claude API)
+  [P5-03] Agent card state transitions with background color changes
+  [P5-04] MISSION_CLOCK counting up from session start
+  [P5-05] ENTROPY bar animating based on backend load
+  [P5-06] "ZERO AI DEPENDENCIES" badge pulsing in algo mode
+  [P5-07] Export buttons (PDF report, CSV, JSON)
+  [P5-08] [DOWNLOAD_LOG.EXE] and [EXPORT CHAT TO .TXT] buttons in terminal
+           (mirrors the reference image's bottom buttons exactly)
+
+================================================================================
+  SECTION 15 // DEMO SCRIPT FOR JUDGES
+================================================================================
+
+OPENING STATEMENT (30 seconds):
+  "Healthcare systems process billions of HL7 messages daily. When they fail,
+  patient care fails. HL7_NEXUS is a command-grade intelligence platform
+  for HL7 operations — and unlike anything else you'll see today, it works
+  in three completely independent modes. Let us show you why that matters."
+
+DEMO SEQUENCE:
+
+  ACT 1 — ALGORITHM MODE (Start here — no AI, show engineering depth)
+    Switch to ALGORITHM MODE in the header. "Notice the left panel changes —
+    no AI agents. Four deterministic processors: Lexer, Parser, Validator,
+    Generator. No API keys. No internet. This works on an air-gapped hospital
+    server."
+    Load the invalid_with_errors.hl7 sample file.
+    Click INITIATE VALIDATION.
+    Watch the four processor cards cycle through states in sequence.
+    Watch the event bus terminal fire LEXER, PARSER, VALIDATOR events.
+    Show the error table: 4 errors found (date format, missing required field,
+    invalid table value, segment out of order).
+    Show the score boxes: 72% overall.
+    Click AUTO-FIX → diff view appears → ACCEPT ALL → re-validate → 100%.
+    "Pure algorithm. 1,240 rules. Zero AI calls."
+
+  ACT 2 — LOCAL AI MODE (Ollama)
+    Switch to LOCAL AI (Ollama) in the header. Show the OLLAMA_LINK_MONITOR
+    in the right panel connecting to localhost:11434.
+    Show the model selector (llama3 selected).
+    Type the same message in the raw editor.
+    Click INITIATE VALIDATION.
+    Watch the three AI agent cards (SYNTAX, SEMANTIC, COMPLIANCE) activate.
+    Show THOUGHT STREAM panels appearing with agent reasoning.
+    "Same validation, now with local AI — no data leaves your machine."
+
+  ACT 3 — CLOUD AI MODE (Claude — The WOW moment)
+    Switch to CLOUD AI (Claude) in the header. Show NEURAL_LINK_MONITOR
+    connecting, token counters appear.
+    Click NL_INPUT tab (notice it was greyed in algo mode).
+    Type: "Admit Maria Santos, 67-year-old female, to the cardiac ward
+           for chest pain evaluation. Attending: Dr. Reyes, Cardiologist."
+    Click GENERATE FROM LANGUAGE.
+    Watch the THOUGHT STREAM panel fill with AI reasoning.
+    Watch the complete ADT^A01 message appear.
+    Immediately click VALIDATE — all three agents run in parallel.
+    Social matrix updates. Stratagem plotter updates. Score: 97%.
+    "Natural language to standards-compliant HL7 in seconds."
+    Click BRIDGE TO FHIR — show the FHIR Patient + Encounter JSON.
+    "And one click converts it to modern FHIR R4."
+
+  CLOSING:
+    Show all three engine mode badges side by side in the header.
+    Point to the event bus terminal: "Every operation logged. Every agent
+    tracked. Every decision audited."
+    "HL7_NEXUS: Three engines. One platform. Enterprise-ready."
+
+================================================================================
+  END OF SPECIFICATION
+  HL7_NEXUS v3.0 — TEAM SEMICOLONS
+  DOCUMENT STATUS: IMPL_READY — HAND TO CODING AGENT
+================================================================================

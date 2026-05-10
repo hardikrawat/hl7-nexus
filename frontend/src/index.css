@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nexus-red: #af0a0f;
+  --color-nexus-dark: #0f172a;
+  --color-nexus-bg: #E0E7FF;
+}
+
+body {
+  background-color: var(--color-nexus-bg);
+  color: var(--color-nexus-dark);
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Zero rounded corners globally via Tailwind overrides or just avoiding rounded utilities */
+
+/* CRT Scanline Overlay */
+body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.03) 3px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
