@@ -207,7 +207,7 @@ flowchart LR
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/hl7-nexus.git
+git clone https://github.com/hardikrawat/hl7-nexus.git
 cd hl7-nexus
 ```
 
