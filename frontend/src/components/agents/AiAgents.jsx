@@ -11,6 +11,9 @@ const AgentCard = ({ name, role, agentKey }) => {
   const isActive = status !== 'IDLE' && status !== 'COMPLETE' && status !== 'ERROR' && status !== 'ALERT' && status !== 'WARNING';
   const isError = status === 'ERROR' || status === 'ALERT' || status === 'WARNING';
   const isComplete = status === 'COMPLETE' || status === 'PASS' || status === 'CLEAR';
+  const displayName = name
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
     <div className={clsx(
@@ -29,8 +32,8 @@ const AgentCard = ({ name, role, agentKey }) => {
           ) : (
             <div className="w-2 h-2 rounded-full bg-slate-300" />
           )}
-          <span className="font-mono text-[10px] font-bold uppercase text-slate-800 truncate" title={`/${name}/`}>
-            /{name}/
+          <span className="text-[11px] font-semibold text-slate-800 truncate" title={displayName}>
+            {displayName}
           </span>
         </div>
         {isError && (
@@ -75,11 +78,11 @@ export default function AiAgents() {
     <div className="flex flex-col space-y-3 h-full">
       {/* Header section */}
       <div className="flex justify-between items-center border-b border-gray-300 pb-1">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-          // VALIDATION PIPELINE
+        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+          Validation pipeline
         </span>
-        <span className="text-[9px] font-mono text-[var(--color-nexus-red)] uppercase">
-          FULL_MATRIX
+        <span className="rounded-full bg-red-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--color-nexus-red)]">
+          Full matrix
         </span>
       </div>
 
@@ -101,11 +104,11 @@ export default function AiAgents() {
           agentKey="compliance" 
         />
         <div className="border-2 border-black bg-white flex flex-col justify-center items-center p-2 text-center">
-          <span className="font-mono text-[10px] font-bold text-slate-800 uppercase mb-1">
-            /AI_ENGINE/
+          <span className="text-[11px] font-semibold text-slate-800 mb-1">
+            AI Engine
           </span>
           <span className="font-mono text-[8px] text-slate-500 uppercase">
-            {engineMode === 'cloud_ai' ? 'Claude API connected' : 'Ollama localhost'}
+            {engineMode === 'cloud_ai' ? 'Cloud API connected' : 'Ollama localhost'}
           </span>
         </div>
       </div>

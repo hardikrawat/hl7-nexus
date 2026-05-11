@@ -131,8 +131,8 @@ export default function BatchTab() {
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              // BATCH PROCESSING PAYLOAD
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+              Batch processing payload
             </span>
             <span className={clsx(
               "font-mono text-[9px] font-bold uppercase px-2 py-0.5 border",
@@ -167,8 +167,8 @@ export default function BatchTab() {
       {/* Output Stream */}
       <div className="flex-1 flex flex-col border-2 border-black bg-white min-h-0">
         <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-          <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-            / BATCH VALIDATION RESULTS
+          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            Batch validation results
           </span>
         </div>
         <div className="flex-1 overflow-y-auto p-3 bg-slate-50">
@@ -195,7 +195,7 @@ export default function BatchTab() {
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-slate-400 font-mono text-[10px]">
-              [ AWAITING_BATCH_STREAM ]
+              Awaiting batch stream
             </div>
           )}
         </div>

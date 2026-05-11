@@ -10,6 +10,11 @@ const ProcessorCard = ({ name, role, processorKey }) => {
 
   const isActive = status !== 'IDLE' && status !== 'COMPLETE' && status !== 'ERROR';
   const isError = status === 'ERROR';
+  const displayName = name
+    .replace(/_PROC$/, '')
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
     <div className={clsx(
@@ -26,8 +31,8 @@ const ProcessorCard = ({ name, role, processorKey }) => {
           ) : (
             <div className="w-2 h-2 rounded-full bg-slate-300" />
           )}
-          <span className="font-mono text-[10px] font-bold uppercase text-slate-800 truncate" title={`/${name}/`}>
-            /{name}/
+          <span className="text-[11px] font-semibold text-slate-800 truncate" title={displayName}>
+            {displayName}
           </span>
         </div>
         <span className={clsx(
@@ -79,15 +84,15 @@ export default function AlgoProcessors() {
     <div className="flex flex-col space-y-3 h-full">
       {/* Header section with real-time fetcher visibility */}
       <div className="flex justify-between items-center border-b border-gray-300 pb-1">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-          // VALIDATION PIPELINE
+        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+          Validation pipeline
         </span>
         <div className="flex items-center space-x-2">
           {isFetching && !isFetchComplete && (
             <Loader2 size={12} className="animate-spin text-[var(--color-nexus-red)]" />
           )}
-          <span className="text-[9px] font-mono text-slate-500">
-            {isFetching && !isFetchComplete ? 'FETCHING_DATA...' : 'RULE_ENGINE'}
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+            {isFetching && !isFetchComplete ? 'Fetching data' : 'Rule engine'}
           </span>
         </div>
       </div>

@@ -111,8 +111,8 @@ export default function ParseTab() {
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              // HL7 MESSAGE INPUT
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+              HL7 message input
             </span>
             <span className={clsx(
               "font-mono text-[9px] font-bold uppercase px-2 py-0.5 border",
@@ -143,8 +143,8 @@ export default function ParseTab() {
         {/* Segment Tree */}
         <div className="flex-1 flex flex-col border-2 border-black bg-white min-w-0">
           <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / AST PARSE TREE
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              AST parse tree
             </span>
           </div>
           <div className="flex-1 overflow-y-auto p-3 bg-slate-50">
@@ -168,7 +168,7 @@ export default function ParseTab() {
               </div>
             ) : (
               <div className="h-full flex items-center justify-center text-slate-400 font-mono text-[10px]">
-                [ AWAITING_PAYLOAD ]
+                Awaiting payload
               </div>
             )}
           </div>
@@ -177,8 +177,8 @@ export default function ParseTab() {
         {/* Validation Matrix */}
         <div className="w-64 flex flex-col border-2 border-black bg-white flex-shrink-0">
           <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / COMPLIANCE VALIDATION
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              Compliance validation
             </span>
           </div>
           <div className="flex-1 overflow-y-auto p-3">
@@ -231,7 +231,7 @@ export default function ParseTab() {
               </div>
             ) : (
               <div className="h-full flex items-center justify-center text-slate-400 font-mono text-[10px]">
-                [ NO_DATA ]
+                No validation data
               </div>
             )}
           </div>
@@ -240,13 +240,13 @@ export default function ParseTab() {
         {/* FHIR Bridge Output */}
         <div className="flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white min-w-0">
           <div className="bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)]">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / FHIR BUNDLE EXPORT
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              FHIR bundle export
             </span>
           </div>
           <div className="flex-1 overflow-y-auto p-3 bg-red-50 text-blue-900 font-mono text-[10px] whitespace-pre">
             {fhir ? JSON.stringify(fhir, null, 2) : (
-              <span className="text-slate-400">[ AWAITING_PAYLOAD ]</span>
+              <span className="text-slate-400">Awaiting payload</span>
             )}
           </div>
           {fhir && (

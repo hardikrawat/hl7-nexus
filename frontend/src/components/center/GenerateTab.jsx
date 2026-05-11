@@ -119,15 +119,15 @@ export default function GenerateTab() {
   return (
     <div className="flex flex-col h-full space-y-4">
       {/* Controls */}
-      <div className="flex space-x-4 items-end">
+      <div className="flex space-x-4 items-end rounded-xl border border-slate-200 bg-white/80 p-3 shadow-sm">
         <div className="flex flex-col space-y-1">
-          <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-gray-200 pb-1 mb-2">
-            // SELECT MESSAGE TEMPLATE
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em] border-b border-gray-200 pb-1 mb-2">
+            Message template
           </span>
           <select 
             value={template}
             onChange={(e) => setTemplate(e.target.value)}
-            className="border-2 border-black px-3 py-2 font-mono text-sm bg-slate-50 focus:outline-none"
+            className="rounded-xl border border-slate-200 px-3 py-2 font-mono text-sm bg-slate-50 focus:outline-none focus:border-[var(--color-nexus-red)]"
           >
             <option value="ADT_A01">ADT^A01 (Admit)</option>
             <option value="ADT_A03">ADT^A03 (Discharge)</option>
@@ -154,7 +154,7 @@ export default function GenerateTab() {
           <button 
             onClick={handleGenerate}
             disabled={isProcessing || !!jsonError}
-            className="border-2 border-black bg-[var(--color-nexus-red)] text-white px-6 py-2 font-mono text-[11px] uppercase tracking-widest font-bold hover:bg-red-800 disabled:opacity-50"
+            className="border border-red-900/10 bg-[var(--color-nexus-red)] text-white px-6 py-2 font-mono text-[11px] uppercase tracking-widest font-bold shadow-sm hover:bg-red-800 disabled:opacity-50"
           >
             {isProcessing ? 'GENERATING...' : 'BUILD MESSAGE'}
           </button>
@@ -165,10 +165,10 @@ export default function GenerateTab() {
       <div className="flex-1 flex space-x-4 min-h-0">
         
         {/* JSON Input */}
-        <div className="flex-1 flex flex-col border-2 border-black bg-white">
+        <div className="flex-1 flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black flex justify-between items-center">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / PATIENT DATA (JSON)
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              Patient data JSON
             </span>
             {jsonError && (
               <span className="text-red-400 font-mono text-[9px] uppercase truncate ml-2">
@@ -187,10 +187,10 @@ export default function GenerateTab() {
         </div>
 
         {/* HL7 Output */}
-        <div className="flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white">
+        <div className="flex-1 flex flex-col rounded-2xl border border-red-200 bg-white shadow-sm overflow-hidden">
           <div className="bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / GENERATED HL7 OUTPUT
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              Generated HL7 output
             </span>
             <button onClick={handleCopy} className="text-red-200 hover:text-white transition-colors" title="Copy to clipboard">
               {copied ? <Check size={12} className="text-green-300" /> : <Copy size={12} />}

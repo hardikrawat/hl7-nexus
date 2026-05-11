@@ -15,6 +15,14 @@ body {
   min-height: 100vh;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
 /* Zero rounded corners globally via Tailwind overrides or just avoiding rounded utilities */
 
 /* CRT Scanline Overlay */
@@ -35,4 +43,138 @@ body::after {
   );
   pointer-events: none;
   z-index: 9999;
+}
+
+body.modern-ui {
+  background: #f1f5f9;
+}
+
+body.modern-ui::after {
+  display: none;
+}
+
+.modern-shell {
+  --color-nexus-bg: #f1f5f9;
+  --color-nexus-red: #b4232a;
+}
+
+.modern-shell .bg-white {
+  background-color: #ffffff;
+}
+
+.modern-shell .border-2 {
+  border-width: 1px;
+}
+
+.modern-shell .border-black,
+.modern-shell .border-gray-300,
+.modern-shell .border-slate-800 {
+  border-color: #cbd5e1;
+}
+
+.modern-shell .shadow-xl,
+.modern-shell .shadow-lg,
+.modern-shell .shadow-md {
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.modern-shell .modern-workbench .border-2,
+.modern-shell aside .border-2 {
+  border-radius: 12px;
+}
+
+.modern-shell textarea,
+.modern-shell select,
+.modern-shell input {
+  border-radius: 10px;
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.modern-shell textarea:focus,
+.modern-shell select:focus,
+.modern-shell input:focus {
+  border-color: var(--color-nexus-red);
+  box-shadow: 0 0 0 3px rgba(180, 35, 42, 0.12);
+}
+
+.modern-shell button {
+  border-radius: 10px;
+}
+
+.modern-shell .modern-workbench button,
+.modern-shell .modern-status-strip button {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.modern-shell .modern-workbench > div,
+.modern-shell aside > div > div {
+  background: #ffffff;
+}
+
+.modern-shell .modern-workbench [class*="border-b-2"],
+.modern-shell aside [class*="border-b-2"] {
+  border-bottom-width: 1px;
+}
+
+.modern-shell .modern-workbench [class*="bg-slate-900"],
+.modern-shell aside [class*="bg-slate-900"] {
+  background-color: #111827;
+}
+
+.modern-shell .modern-workbench [class*="bg-red-50"] {
+  background-color: #fff5f5;
+}
+
+.modern-shell .modern-workbench [class*="bg-slate-50"],
+.modern-shell aside [class*="bg-slate-50"] {
+  background-color: #f8fafc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-shell *,
+  .modern-shell *::before,
+  .modern-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .modern-shell .modern-workbench .flex.space-x-4 {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .modern-shell .modern-workbench .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0;
+  }
+
+  .modern-shell .modern-workbench .w-64 {
+    width: 100%;
+  }
+
+  .modern-shell .modern-workbench textarea {
+    min-height: 180px;
+  }
+
+  .modern-shell .modern-workbench .h-48 {
+    height: auto;
+  }
+
+  .modern-shell .modern-status-strip > div {
+    height: auto;
+    min-height: 44px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+  }
+
+  .modern-shell .modern-status-strip > div > div {
+    flex-wrap: wrap;
+  }
 }

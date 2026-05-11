@@ -5,6 +5,7 @@ import GenerateTab from '../center/GenerateTab';
 import NlInputTab from '../center/NlInputTab';
 import BatchTab from '../center/BatchTab';
 import DiffTab from '../center/DiffTab';
+import { FilePlus2, GitCompare, Layers3, Lock, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function CenterPanel() {
   const activeTab = useNexusStore((state) => state.activeTab);
@@ -14,11 +15,11 @@ export default function CenterPanel() {
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
 
   const tabs = [
-    { label: 'BUILD MESSAGE', route: 'generate', aiOnly: false, algoOnly: false },
-    { label: 'PARSE & VALIDATE', route: 'parse', aiOnly: false, algoOnly: false },
-    { label: 'COMPARE MESSAGES', route: 'diff', aiOnly: false, algoOnly: false },
-    { label: 'BATCH PROCESSING', route: 'batch', aiOnly: false, algoOnly: false },
-    { label: 'CLINICAL NLP', route: 'nl_input', aiOnly: true, algoOnly: false },
+    { label: 'BUILD MESSAGE', route: 'generate', aiOnly: false, algoOnly: false, icon: FilePlus2 },
+    { label: 'PARSE & VALIDATE', route: 'parse', aiOnly: false, algoOnly: false, icon: ShieldCheck },
+    { label: 'COMPARE MESSAGES', route: 'diff', aiOnly: false, algoOnly: false, icon: GitCompare },
+    { label: 'BATCH PROCESSING', route: 'batch', aiOnly: false, algoOnly: false, icon: Layers3 },
+    { label: 'CLINICAL NLP', route: 'nl_input', aiOnly: true, algoOnly: false, icon: Sparkles },
   ];
 
   return (
@@ -29,6 +30,7 @@ export default function CenterPanel() {
         {tabs.map((tab) => {
           const isDisabled = (tab.aiOnly && !isAI) || (tab.algoOnly && isAI);
           const isActive = activeTab === tab.route;
+          const Icon = isDisabled ? Lock : tab.icon;
 
           return (
             <button
@@ -36,20 +38,21 @@ export default function CenterPanel() {
               disabled={isDisabled}
               onClick={() => setActiveTab(tab.route)}
               title={isDisabled ? (tab.aiOnly ? "Requires AI Engine" : "Requires Algorithm Engine") : ""}
-              className={`flex-1 font-mono text-[10px] uppercase tracking-wider py-1.5 border-b-2 transition-colors ${
+              className={`flex-1 font-mono text-[10px] uppercase tracking-wider py-2 border-b-2 transition-colors inline-flex items-center justify-center gap-2 ${
                 isActive 
                   ? 'border-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold bg-gray-50' 
                   : 'border-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'
-              } ${isDisabled ? 'line-through opacity-50 cursor-not-allowed' : ''}`}
+              } ${isDisabled ? 'opacity-45 cursor-not-allowed' : ''}`}
             >
-              {tab.label}
+              <Icon size={13} />
+              <span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
       {/* Content Area */}
-      <div className="p-4 flex-1 overflow-hidden bg-white flex flex-col relative min-h-0">
+      <div className="p-4 flex-1 overflow-y-auto md:overflow-hidden bg-white flex flex-col relative min-h-0">
         {activeTab === 'parse' && <ParseTab />}
         {activeTab === 'validate' && <ParseTab />}
         {activeTab === 'generate' && <GenerateTab />}

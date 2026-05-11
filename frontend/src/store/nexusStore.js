@@ -12,7 +12,7 @@ export const useNexusStore = create((set) => ({
     ollamaUrl: 'http://localhost:11434',
     activeModel: '',
     availableModels: [],
-    layoutMode: 'classic',
+    layoutMode: 'modern',
   },
 
   // UI State

@@ -25,7 +25,7 @@ export class ErrorBoundary extends React.Component {
         <div className="flex items-center justify-center h-full bg-slate-900 p-8">
           <div className="border-2 border-red-600 bg-red-950 p-8 max-w-lg text-center">
             <div className="font-mono text-[11px] text-red-400 uppercase tracking-widest mb-4">
-              // SYSTEM_FAULT_DETECTED
+              System fault detected
             </div>
             <h2 className="font-mono text-lg font-bold text-white mb-4">
               HELIX COMPONENT FAILURE

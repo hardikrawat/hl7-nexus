@@ -120,8 +120,8 @@ export default function DiffTab() {
     <div className="flex flex-col h-full space-y-4">
       {/* Controls */}
       <div className="flex justify-between items-center">
-        <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          // COMPARISON ENGINE (SEGMENT-AWARE)
+        <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+          Segment-aware comparison
         </span>
         <button 
           onClick={handleDiff}
@@ -150,8 +150,8 @@ export default function DiffTab() {
       {/* Output */}
       <div className="flex-1 flex flex-col border-2 border-black bg-slate-900 min-h-0">
         <div className="px-3 py-1.5 border-b-2 border-black bg-[var(--color-nexus-red)]">
-          <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-            / COMPARISON OUTPUT
+          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            Comparison output
           </span>
         </div>
         <div className="flex-1 overflow-y-auto p-4 font-mono text-[11px] space-y-1 bg-slate-900 text-slate-300">
@@ -180,7 +180,7 @@ export default function DiffTab() {
             </div>
           )) : (
             <div className="h-full flex items-center justify-center text-slate-500">
-              [ AWAITING_COMPARISON ]
+              Awaiting comparison
             </div>
           )}
         </div>

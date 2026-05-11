@@ -5,6 +5,7 @@ import LeftPanel from './components/layout/LeftPanel';
 import CenterPanel from './components/layout/CenterPanel';
 import RightPanel from './components/layout/RightPanel';
 import GlobalFooter from './components/layout/GlobalFooter';
+import ModernShell from './components/layout/ModernShell';
 import ConfigModal from './components/shared/ConfigModal';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -32,6 +33,15 @@ function App() {
       severity: 'INFO'
     });
   }, [addEvent]);
+
+  if (layoutMode === 'modern') {
+    return (
+      <div className="h-screen flex flex-col font-sans bg-[var(--color-nexus-bg)] text-[var(--color-nexus-dark)] overflow-hidden">
+        <ModernShell />
+        {isConfigModalOpen && <ConfigModal />}
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col font-sans bg-[var(--color-nexus-bg)] text-[var(--color-nexus-dark)] overflow-hidden">

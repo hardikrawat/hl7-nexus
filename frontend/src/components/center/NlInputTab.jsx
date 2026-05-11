@@ -69,7 +69,7 @@ export default function NlInputTab() {
   if (engineMode === 'algorithm') {
     return (
       <div className="flex-1 flex items-center justify-center text-slate-400 font-mono text-[10px]">
-        [ NL_INPUT_REQUIRES_AI_ENGINE ]
+        Natural language input requires AI Engine
       </div>
     );
   }
@@ -84,8 +84,8 @@ export default function NlInputTab() {
       {/* Input Area */}
       <div className="flex flex-col space-y-2 flex-1">
         <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            // CLINICAL TEXT INPUT
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+            Clinical text input
           </span>
           <button 
             onClick={handleGenerate}
@@ -106,8 +106,8 @@ export default function NlInputTab() {
       {/* Output Area */}
       <div className="flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white">
         <div className="bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center">
-          <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-            / SYNTHESIZED HL7 OUTPUT
+          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            Synthesized HL7 output
           </span>
           <button onClick={handleCopy} className="text-red-200 hover:text-white transition-colors" title="Copy to clipboard">
             {copied ? <Check size={12} className="text-green-300" /> : <Copy size={12} />}

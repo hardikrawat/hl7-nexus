@@ -80,12 +80,12 @@ export default function RightPanel() {
           <span className="text-[9px] text-cyan-400 font-mono uppercase">Session_Sync</span>
         </div>
       </div>
-      <div className="p-4 flex-1 flex flex-col space-y-6 min-h-0">
+      <div className="p-4 flex-1 flex flex-col space-y-6 min-h-0 overflow-hidden">
         
         {/* LINK_MONITOR */}
         <div className="flex flex-col space-y-2">
-          <span className="font-mono text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-gray-200 pb-1">
-            {isAI ? '// NEURAL_LINK_MONITOR' : '// RULE_ENGINE_MONITOR'}
+          <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-[0.16em] border-b border-gray-200 pb-1">
+            {isAI ? 'Neural link monitor' : 'Rule engine monitor'}
           </span>
           <div className={clsx(
             "border-2 p-3 flex flex-col space-y-2",
@@ -143,8 +143,8 @@ export default function RightPanel() {
         {/* SYSTEM EVENT LOG */}
         <div className="flex flex-col space-y-2 flex-1 min-h-0">
           <div className="flex justify-between items-end border-b border-gray-200 pb-1 flex-shrink-0">
-            <span className="font-mono text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-              // SYSTEM EVENT LOG
+            <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-[0.16em]">
+              System event log
             </span>
             <span className={clsx("font-mono text-[8px] uppercase", isLogPaused ? "text-red-500" : "text-slate-400 animate-pulse")}>
               {isLogPaused ? 'PAUSED' : 'LIVE'}
@@ -152,7 +152,7 @@ export default function RightPanel() {
           </div>
           <div 
             ref={scrollRef}
-            className="border-2 border-black bg-slate-900 flex-1 p-3 overflow-y-auto"
+            className="border-2 border-black bg-slate-900 flex-1 min-h-0 p-3 overflow-y-auto overscroll-contain"
           >
             <div className="font-mono text-[9px] text-slate-300 flex flex-col">
               {displayedEvents.map((ev, i) => {

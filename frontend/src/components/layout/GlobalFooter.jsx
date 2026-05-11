@@ -27,7 +27,7 @@ export default function GlobalFooter() {
       {/* Left side: System Controls */}
       <div className="flex items-center space-x-3">
         <span className="font-mono text-[10px] font-bold text-slate-800 uppercase tracking-widest mr-2">
-          [ SYSTEM EVENT LOG ]
+          System event log
         </span>
         <button onClick={() => setLogPaused(true)} className={clsx("border border-black px-2 py-0.5 font-mono text-[9px] uppercase transition-colors", isLogPaused ? "bg-black text-white" : "bg-white text-black hover:bg-gray-300")}>PAUSE</button>
         <button onClick={() => setLogPaused(false)} className={clsx("border border-black px-2 py-0.5 font-mono text-[9px] uppercase transition-colors", !isLogPaused ? "bg-black text-white" : "bg-white text-black hover:bg-gray-300")}>RESUME</button>
