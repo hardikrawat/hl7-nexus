@@ -7,10 +7,12 @@ import {
   Cpu,
   Download,
   Menu,
+  Moon,
   Pause,
   Play,
   Server,
   Settings,
+  Sun,
   Trash2,
   Wifi,
   X,
@@ -20,6 +22,7 @@ import { useNexusStore } from '../../store/nexusStore';
 import CenterPanel from './CenterPanel';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
+import { DARK_THEME_ID, LIGHT_THEME_ID, getNextThemeId, getThemeById } from '../../config/themes';
 
 const formatTime = (seconds) => {
   const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -34,10 +37,8 @@ function SegmentButton({ active, children, onClick, title }) {
       onClick={onClick}
       title={title}
       className={clsx(
-        'inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-md px-3 text-[11px] font-bold uppercase tracking-wider transition-colors',
-        active
-          ? 'bg-slate-950 text-white shadow-sm'
-          : 'text-slate-500 hover:bg-white hover:text-slate-900'
+        'nexus-segment-button inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-md px-3 text-[11px] font-bold uppercase tracking-wider transition',
+        active ? 'nexus-segment-button--active' : 'nexus-segment-button--idle'
       )}
     >
       {children}
@@ -53,6 +54,8 @@ export default function ModernShell() {
   const isLogPaused = useNexusStore((state) => state.isLogPaused);
   const setLogPaused = useNexusStore((state) => state.setLogPaused);
   const clearEventBus = useNexusStore((state) => state.clearEventBus);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
+  const updateSystemConfig = useNexusStore((state) => state.updateSystemConfig);
 
   const [sessionTime, setSessionTime] = useState(0);
   const [leftOpen, setLeftOpen] = useState(true);
@@ -72,11 +75,17 @@ export default function ModernShell() {
 
   const latestEvent = eventBus[eventBus.length - 1];
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
+  const themeId = getThemeById(systemConfig?.themeId || LIGHT_THEME_ID).id;
+  const isDarkTheme = themeId === DARK_THEME_ID;
 
   const selectAiEngine = () => {
     if (!isAI) {
       setEngineMode('cloud_ai');
     }
+  };
+
+  const toggleTheme = () => {
+    updateSystemConfig({ themeId: getNextThemeId(themeId) });
   };
 
   const handleExportLog = () => {
@@ -134,7 +143,7 @@ export default function ModernShell() {
             Engine Mode
           </div>
 
-          <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100 p-1">
+          <div className="nexus-engine-tabs flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
             <SegmentButton active={isAI} onClick={selectAiEngine} title="Use AI Engine">
               <Cloud size={13} />
               AI Engine
@@ -157,7 +166,7 @@ export default function ModernShell() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.16 }}
-                className="flex items-center rounded-lg border border-amber-200 bg-amber-50 p-1"
+                className="nexus-engine-tabs nexus-engine-subtabs flex items-center gap-2 rounded-xl border p-1"
               >
                 <SegmentButton
                   active={engineMode === 'cloud_ai'}
@@ -183,7 +192,7 @@ export default function ModernShell() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.16 }}
-                className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg border border-slate-200 bg-slate-50 px-3 text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                className="nexus-engine-badge inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wider"
               >
                 <Cpu size={13} />
                 Rule Engine v2.1
@@ -212,6 +221,14 @@ export default function ModernShell() {
             className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
           >
             Inspector
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            title={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDarkTheme ? <Sun size={17} /> : <Moon size={17} />}
           </button>
           <button
             onClick={() => setConfigModalOpen(true)}

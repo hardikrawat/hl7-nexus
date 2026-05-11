@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Settings } from 'lucide-react';
+import { Moon, Settings, Sun } from 'lucide-react';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
+import { DARK_THEME_ID, LIGHT_THEME_ID, getNextThemeId, getThemeById } from '../../config/themes';
 
 export default function GlobalHeader() {
-  const { engineMode, setEngineMode, setConfigModalOpen } = useNexusStore();
+  const { engineMode, setEngineMode, setConfigModalOpen, systemConfig, updateSystemConfig } = useNexusStore();
   const [sessionTime, setSessionTime] = useState(0);
 
   useEffect(() => {
@@ -20,6 +21,12 @@ export default function GlobalHeader() {
   };
 
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
+  const themeId = getThemeById(systemConfig?.themeId || LIGHT_THEME_ID).id;
+  const isDarkTheme = themeId === DARK_THEME_ID;
+
+  const toggleTheme = () => {
+    updateSystemConfig({ themeId: getNextThemeId(themeId) });
+  };
 
   return (
     <header className="h-14 bg-white border-b-2 border-[var(--color-nexus-red)] flex items-center justify-between px-4 flex-shrink-0 relative z-50">
@@ -102,6 +109,19 @@ export default function GlobalHeader() {
             CONNECTED
           </span>
         </div>
+
+        <button
+          onClick={toggleTheme}
+          className="p-1.5 border-2 border-black hover:bg-slate-100 transition-colors"
+          title={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {isDarkTheme ? (
+            <Sun size={14} className="text-slate-800" />
+          ) : (
+            <Moon size={14} className="text-slate-800" />
+          )}
+        </button>
 
         <button 
           onClick={() => setConfigModalOpen(true)}

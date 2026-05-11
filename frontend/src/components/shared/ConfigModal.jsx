@@ -6,16 +6,16 @@ import { API } from '../../config/api';
 
 function ConfigSection({ icon: Icon, eyebrow, title, children }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="nexus-config-section rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600">
+        <div className="nexus-config-icon flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600">
           <Icon size={16} />
         </div>
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+          <div className="nexus-config-eyebrow text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
             {eyebrow}
           </div>
-          <h3 className="text-sm font-semibold text-slate-900">
+          <h3 className="nexus-config-title text-sm font-semibold text-slate-900">
             {title}
           </h3>
         </div>
@@ -27,11 +27,24 @@ function ConfigSection({ icon: Icon, eyebrow, title, children }) {
 
 export default function ConfigModal() {
   const { systemConfig, updateSystemConfig, setConfigModalOpen, addEvent } = useNexusStore();
+  const [initialConfig] = useState(systemConfig);
   const [localConfig, setLocalConfig] = useState(systemConfig);
   const [isFetchingModels, setIsFetchingModels] = useState(false);
 
   const handleChange = (e) => {
-    setLocalConfig({ ...localConfig, [e.target.name]: e.target.value });
+    const patch = { [e.target.name]: e.target.value };
+    setLocalConfig({ ...localConfig, ...patch });
+
+    if (e.target.name === 'layoutMode') {
+      updateSystemConfig(patch);
+    }
+  };
+
+  const handleCancel = () => {
+    updateSystemConfig({
+      layoutMode: initialConfig.layoutMode || 'modern',
+    });
+    setConfigModalOpen(false);
   };
 
   const fetchGeminiModels = async () => {
@@ -77,24 +90,24 @@ export default function ConfigModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md">
-      <div className="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]">
+    <div className="nexus-config-overlay fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md">
+      <div className="nexus-config-dialog flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]">
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-slate-200 bg-white px-6 py-5">
+        <div className="nexus-config-dialog-header flex items-start justify-between border-b border-slate-200 bg-white px-6 py-5">
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-nexus-red)]">
+            <div className="nexus-config-accent text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-nexus-red)]">
               Control panel
             </div>
-            <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">
+            <h2 className="nexus-config-title mt-1 text-xl font-semibold tracking-tight text-slate-950">
               System Configuration
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="nexus-config-copy mt-1 text-sm text-slate-500">
               Configure engine providers, terminology sources, and workspace layout.
             </p>
           </div>
           <button
-            onClick={() => setConfigModalOpen(false)}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+            onClick={handleCancel}
+            className="nexus-button-secondary flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
             title="Close settings"
           >
             <X size={16} />
@@ -102,8 +115,7 @@ export default function ConfigModal() {
         </div>
 
         {/* Body */}
-        <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50/70 p-5">
-          
+        <div className="nexus-config-dialog-body flex-1 space-y-4 overflow-y-auto bg-slate-50/70 p-5">
           {/* Gemini Config */}
           <ConfigSection icon={Cloud} eyebrow="Cloud AI" title="Gemini configuration">
             <div className="flex gap-2">
@@ -188,17 +200,17 @@ export default function ConfigModal() {
               <option value="unified">UNIFIED DASHBOARD (2-Column Focused)</option>
             </select>
             <p className="mt-2 text-xs text-slate-500">
-              Layout changes apply immediately after saving.
+              Layout changes preview instantly. Cancel restores the previous layout.
             </p>
           </ConfigSection>
 
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 border-t border-slate-200 bg-white p-4">
+        <div className="nexus-config-dialog-footer flex justify-end gap-3 border-t border-slate-200 bg-white p-4">
           <button 
-            onClick={() => setConfigModalOpen(false)}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+            onClick={handleCancel}
+            className="nexus-button-secondary rounded-xl border border-slate-200 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
           >
             Cancel
           </button>

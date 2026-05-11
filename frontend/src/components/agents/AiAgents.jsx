@@ -17,27 +17,27 @@ const AgentCard = ({ name, role, agentKey }) => {
 
   return (
     <div className={clsx(
-      "border-2 border-black flex flex-col relative overflow-hidden transition-colors duration-300",
-      isActive ? "bg-yellow-50 animate-pulse border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]" : isError ? "bg-red-50" : isComplete ? "bg-green-50" : "bg-white"
+      "nexus-pipeline-card flex flex-col relative overflow-hidden transition-colors duration-300",
+      isActive ? "nexus-pipeline-card--active animate-pulse" : isError ? "nexus-pipeline-card--error" : isComplete ? "nexus-pipeline-card--complete" : "nexus-pipeline-card--idle"
     )}>
       {/* Header */}
-      <div className="flex justify-between items-center p-2 border-b border-gray-200">
+      <div className="nexus-pipeline-card-header flex justify-between items-center p-2 border-b border-gray-200">
         <div className="flex items-center space-x-1">
           {isActive ? (
-            <Loader2 size={12} className="animate-spin text-amber-700" />
+            <Loader2 size={12} className="nexus-pipeline-spinner animate-spin" />
           ) : isError ? (
-            <div className="w-2 h-2 rounded-full bg-red-600" />
+            <div className="nexus-pipeline-dot nexus-pipeline-dot--error" />
           ) : isComplete ? (
-            <div className="w-2 h-2 rounded-full bg-green-600" />
+            <div className="nexus-pipeline-dot nexus-pipeline-dot--complete" />
           ) : (
-            <div className="w-2 h-2 rounded-full bg-slate-300" />
+            <div className="nexus-pipeline-dot nexus-pipeline-dot--idle" />
           )}
-          <span className="text-[11px] font-semibold text-slate-800 truncate" title={displayName}>
+          <span className="nexus-pipeline-name text-[11px] font-semibold truncate" title={displayName}>
             {displayName}
           </span>
         </div>
         {isError && (
-          <span className="font-mono text-[10px] font-bold text-red-600">!</span>
+          <span className="nexus-pipeline-alert font-mono text-[10px] font-bold">!</span>
         )}
       </div>
 
@@ -45,7 +45,8 @@ const AgentCard = ({ name, role, agentKey }) => {
       <div className="p-2 flex-1 flex flex-col justify-between">
         <p className="font-mono text-[9px] uppercase font-bold mb-2">
           <span className={clsx(
-            isActive ? "text-amber-700 animate-pulse" : isError ? "text-red-700" : isComplete ? "text-green-700" : "text-slate-500"
+            "nexus-pipeline-status",
+            isActive && "animate-pulse"
           )}>
             {status}
           </span>
@@ -56,11 +57,11 @@ const AgentCard = ({ name, role, agentKey }) => {
           {['OBS', 'ORI', 'DEC', 'RCL', 'GEN', 'OUT'].map((label, i) => (
             <div key={label} className="flex flex-col items-center justify-end h-full">
               <div className={clsx(
-                "w-3 mb-1 transition-all duration-300",
-                isActive ? "bg-black" : "bg-gray-300",
+                "nexus-pipeline-microbar w-3 mb-1 transition-all duration-300",
+                isActive && "nexus-pipeline-microbar--active",
                 isActive && `h-[${Math.floor(Math.random() * 80 + 20)}%]` // Fake activity for visual flair
               )} style={{ height: isActive ? `${Math.floor(Math.random() * 80 + 20)}%` : '20%' }} />
-              <span className="font-mono text-[6px] uppercase tracking-widest text-slate-400 leading-none">
+              <span className="nexus-pipeline-metric-label font-mono text-[6px] uppercase tracking-widest leading-none">
                 {label}
               </span>
             </div>
@@ -77,11 +78,11 @@ export default function AiAgents() {
   return (
     <div className="flex flex-col space-y-3 h-full">
       {/* Header section */}
-      <div className="flex justify-between items-center border-b border-gray-300 pb-1">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+      <div className="nexus-pipeline-header flex justify-between items-center border-b border-gray-300 pb-1">
+        <span className="nexus-pipeline-title text-[11px] font-semibold uppercase tracking-[0.16em]">
           Validation pipeline
         </span>
-        <span className="rounded-full bg-red-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--color-nexus-red)]">
+        <span className="nexus-pipeline-pill nexus-pipeline-pill--accent rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider">
           Full matrix
         </span>
       </div>
@@ -103,11 +104,11 @@ export default function AiAgents() {
           role="Standards audit" 
           agentKey="compliance" 
         />
-        <div className="border-2 border-black bg-white flex flex-col justify-center items-center p-2 text-center">
-          <span className="text-[11px] font-semibold text-slate-800 mb-1">
+        <div className="nexus-pipeline-card nexus-pipeline-card--idle flex flex-col justify-center items-center p-2 text-center">
+          <span className="nexus-pipeline-name text-[11px] font-semibold mb-1">
             AI Engine
           </span>
-          <span className="font-mono text-[8px] text-slate-500 uppercase">
+          <span className="nexus-pipeline-role font-mono text-[8px] uppercase">
             {engineMode === 'cloud_ai' ? 'Cloud API connected' : 'Ollama localhost'}
           </span>
         </div>

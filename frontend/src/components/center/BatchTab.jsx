@@ -144,7 +144,7 @@ export default function BatchTab() {
           <button 
             onClick={handleBatchProcess}
             disabled={isProcessing || !inputText.trim()}
-            className="bg-black text-white px-6 py-2 font-mono text-[11px] uppercase tracking-widest font-bold flex items-center hover:bg-slate-800 disabled:opacity-50"
+            className="nexus-tool-action flex items-center border px-6 py-2 font-mono text-[11px] font-bold uppercase tracking-widest disabled:opacity-50"
           >
             {isProcessing ? 'Processing...' : 'EXECUTE BATCH'} {isProcessing ? <Loader2 size={14} className="ml-2 animate-spin" /> : <Play size={14} className="ml-2" />}
           </button>
@@ -152,58 +152,58 @@ export default function BatchTab() {
         <textarea 
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="w-full h-32 border-2 border-black p-3 font-mono text-xs bg-slate-50 focus:outline-none focus:border-[var(--color-nexus-red)] resize-none"
+          className="nexus-tool-textarea w-full h-32 resize-none border-2 border-black p-3 font-mono text-xs focus:outline-none"
           placeholder="Paste multiple HL7 v2 messages here, separated by empty lines..."
         />
       </div>
 
       {/* Progress Bar */}
       {isProcessing && (
-        <div className="h-2 w-full bg-gray-200 border border-black">
-          <div className="h-full bg-[var(--color-nexus-red)] transition-all duration-300" style={{ width: `${progress}%` }} />
+        <div className="nexus-batch-progress h-2 w-full border border-black">
+          <div className="nexus-batch-progress-bar h-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
       )}
 
       {/* Output Stream */}
-      <div className="flex-1 flex flex-col border-2 border-black bg-white min-h-0">
-        <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black">
+      <div className="nexus-tool-panel nexus-batch-panel flex-1 flex flex-col border-2 border-black bg-white min-h-0">
+        <div className="nexus-tool-panel-header bg-slate-900 px-3 py-1.5 border-b-2 border-black">
           <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
             Batch validation results
           </span>
         </div>
-        <div className="flex-1 overflow-y-auto p-3 bg-slate-50">
+        <div className="nexus-tool-panel-body flex-1 overflow-y-auto p-3 bg-slate-50">
           {results.length > 0 ? (
             <div className="font-mono text-[11px] space-y-2">
               {results.map((res, i) => (
                 <div key={i} className={clsx(
-                  "border p-2 flex justify-between items-center",
-                  res.status === 'PASS' ? "border-green-600 bg-green-50" : "border-red-600 bg-red-50"
+                  "nexus-batch-result border p-2 flex justify-between items-center",
+                  res.status === 'PASS' ? "nexus-batch-result--pass" : "nexus-batch-result--fail"
                 )}>
                   <div className="flex items-center space-x-4">
-                    <span className="font-bold w-16 text-slate-500">MSG_{res.id.toString().padStart(4, '0')}</span>
-                    <span className="text-slate-600 truncate w-96">{res.preview}</span>
+                    <span className="nexus-batch-message-id font-bold w-16">MSG_{res.id.toString().padStart(4, '0')}</span>
+                    <span className="nexus-batch-preview truncate w-96">{res.preview}</span>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="text-slate-400 text-[9px]">{res.rulesChecked}R/{res.segments}S/{res.fhirResources}F</span>
-                    <span className={clsx("font-bold", res.status === 'PASS' ? "text-green-600" : "text-red-600")}>
+                    <span className="nexus-batch-metrics text-[9px]">{res.rulesChecked}R/{res.segments}S/{res.fhirResources}F</span>
+                    <span className="nexus-batch-status font-bold">
                       {res.status}
                     </span>
-                    <span className="text-slate-500">{res.errors} ERR</span>
+                    <span className="nexus-batch-errors">{res.errors} ERR</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-slate-400 font-mono text-[10px]">
+            <div className="nexus-tool-empty h-full flex items-center justify-center font-mono text-[10px]">
               Awaiting batch stream
             </div>
           )}
         </div>
-        <div className="p-3 border-t-2 border-black bg-slate-50 flex justify-end">
+        <div className="nexus-tool-panel-footer p-3 border-t-2 border-black bg-slate-50 flex justify-end">
           <button 
             onClick={downloadReport}
             disabled={results.length === 0}
-            className="border-2 border-black bg-white text-black px-6 py-2 font-mono text-[11px] font-bold uppercase disabled:opacity-50 hover:bg-gray-100"
+            className="nexus-tool-secondary-action border px-6 py-2 font-mono text-[11px] font-bold uppercase disabled:opacity-50"
           >
             [DOWNLOAD BATCH REPORT]
           </button>
