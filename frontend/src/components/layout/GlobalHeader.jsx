@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Moon, Settings, Sun } from 'lucide-react';
+import { Activity, Moon, Settings, Sun } from 'lucide-react';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
 import { DARK_THEME_ID, LIGHT_THEME_ID, getNextThemeId, getThemeById } from '../../config/themes';
@@ -33,9 +33,14 @@ export default function GlobalHeader() {
       
       {/* LEFT SECTION */}
       <div className="flex items-center space-x-4">
-        <h1 className="text-xl font-bold font-mono tracking-wider text-[var(--color-nexus-red)] whitespace-nowrap">
-          HELIX SYSTEM
-        </h1>
+        <div className="flex items-center gap-3">
+          <div className="nexus-brand-logo flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
+            <Activity size={18} className="nexus-brand-logo-icon" />
+          </div>
+          <h1 className="nexus-brand-title text-xl font-bold font-mono tracking-wider text-[var(--color-nexus-red)] whitespace-nowrap">
+            HELIX SYSTEM
+          </h1>
+        </div>
         <div className="hidden lg:flex items-center space-x-2 text-[9px] font-mono tracking-wider text-slate-500 uppercase border-l-2 border-slate-300 pl-4 h-6">
           <span>Enterprise HL7 Orchestration powered by the Nexus-Hybrid Core</span>
         </div>

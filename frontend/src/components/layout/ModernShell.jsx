@@ -114,12 +114,12 @@ export default function ModernShell() {
           </button>
 
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
-              <Activity size={19} />
+            <div className="nexus-brand-logo flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
+              <Activity size={19} className="nexus-brand-logo-icon" />
             </div>
             <div className="min-w-0 max-w-[210px]">
               <div className="flex items-baseline gap-2">
-                <h1 className="truncate text-lg font-semibold tracking-tight text-slate-950">
+                <h1 className="nexus-brand-title truncate text-lg font-semibold tracking-tight text-slate-950">
                   Helix System
                 </h1>
                 <span className="hidden text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:inline">

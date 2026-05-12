@@ -319,6 +319,148 @@ body[data-nexus-theme] .nexus-config-dialog-footer {
   color: var(--nexus-header-text);
 }
 
+body[data-nexus-theme] .nexus-brand-logo {
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--nexus-accent-soft) 68%, white), transparent 58%),
+    color-mix(in srgb, var(--nexus-accent) 8%, var(--nexus-surface));
+  border-color: color-mix(in srgb, var(--nexus-accent) 22%, var(--nexus-border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--nexus-accent) 8%, transparent),
+    0 10px 24px color-mix(in srgb, var(--nexus-accent) 14%, transparent);
+  color: var(--nexus-accent);
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+body[data-nexus-theme="dark-console"] .nexus-brand-logo {
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--nexus-accent-muted) 82%, transparent), transparent 62%),
+    color-mix(in srgb, var(--nexus-panel) 72%, var(--nexus-panel-strong));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--nexus-accent) 16%, transparent),
+    0 0 28px color-mix(in srgb, var(--nexus-accent) 18%, transparent);
+}
+
+body[data-nexus-theme] .nexus-brand-logo::before,
+body[data-nexus-theme] .nexus-brand-logo::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+}
+
+body[data-nexus-theme] .nexus-brand-logo::before {
+  animation: nexus-logo-cursor 1.95s linear infinite;
+  background: linear-gradient(180deg, transparent, var(--nexus-accent), transparent);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--nexus-accent) 52%, transparent),
+    0 0 20px color-mix(in srgb, var(--nexus-accent) 24%, transparent);
+  height: 64%;
+  left: 0.46rem;
+  opacity: 0.68;
+  top: 18%;
+  width: 2px;
+  z-index: 1;
+}
+
+body[data-nexus-theme] .nexus-brand-logo::after {
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--nexus-accent) 16%, transparent), transparent),
+    linear-gradient(180deg, transparent 49%, color-mix(in srgb, var(--nexus-accent) 18%, transparent) 50%, transparent 51%);
+  height: 100%;
+  inset: 0;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+body[data-nexus-theme] .nexus-brand-logo-icon {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--nexus-accent) 38%, transparent));
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}
+
+body[data-nexus-theme] .nexus-brand-logo-icon path,
+body[data-nexus-theme] .nexus-brand-logo-icon polyline,
+body[data-nexus-theme] .nexus-brand-logo-icon line {
+  animation: nexus-logo-pulse-draw 1.95s linear infinite;
+  stroke-dasharray: 44;
+  stroke-dashoffset: 44;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body[data-nexus-theme] .nexus-brand-logo:hover {
+  border-color: color-mix(in srgb, var(--nexus-accent) 46%, var(--nexus-border));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--nexus-accent) 12%, transparent),
+    0 14px 30px color-mix(in srgb, var(--nexus-accent) 20%, transparent);
+  transform: translateY(-1px) scale(1.04);
+}
+
+body[data-nexus-theme] .nexus-brand-title {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--nexus-accent) 9%, transparent);
+}
+
+@keyframes nexus-logo-pulse-draw {
+  0% {
+    opacity: 0.2;
+    stroke-dashoffset: 44;
+  }
+  12% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  74% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    opacity: 0.22;
+    stroke-dashoffset: -44;
+  }
+}
+
+@keyframes nexus-logo-cursor {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  10% {
+    opacity: 0.72;
+  }
+  70% {
+    opacity: 0.72;
+    transform: translateX(1.72rem);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(1.72rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-nexus-theme] .nexus-brand-logo::before,
+  body[data-nexus-theme] .nexus-brand-logo::after,
+  body[data-nexus-theme] .nexus-brand-logo-icon,
+  body[data-nexus-theme] .nexus-brand-logo-icon path,
+  body[data-nexus-theme] .nexus-brand-logo-icon polyline,
+  body[data-nexus-theme] .nexus-brand-logo-icon line {
+    animation: none;
+  }
+
+  body[data-nexus-theme] .nexus-brand-logo-icon path,
+  body[data-nexus-theme] .nexus-brand-logo-icon polyline,
+  body[data-nexus-theme] .nexus-brand-logo-icon line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+
 body[data-nexus-theme] .modern-shell [class*="bg-white"],
 body[data-nexus-theme] .nexus-config-dialog [class*="bg-white"],
 body[data-nexus-theme] .nexus-config-section {
@@ -816,6 +958,107 @@ body[data-nexus-theme] .nexus-nl-instructions {
   color: var(--nexus-ink);
 }
 
+body[data-nexus-theme] .modern-shell .nexus-ingest-card,
+body[data-nexus-theme] .nexus-ingest-card {
+  background-color: color-mix(in srgb, var(--nexus-surface) 88%, var(--nexus-panel));
+  border-color: var(--nexus-border);
+  box-shadow: var(--nexus-shadow);
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-ingest-title,
+body[data-nexus-theme] .nexus-ingest-title {
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-ingest-label,
+body[data-nexus-theme] .nexus-ingest-label,
+body[data-nexus-theme] .modern-shell .nexus-ingest-note,
+body[data-nexus-theme] .nexus-ingest-note {
+  color: var(--nexus-muted);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-ingest-input,
+body[data-nexus-theme] .nexus-ingest-input {
+  background-color: var(--nexus-input);
+  border-color: var(--nexus-border);
+  color: var(--nexus-ink);
+  outline: none;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-ingest-input:focus,
+body[data-nexus-theme] .nexus-ingest-input:focus {
+  border-color: var(--nexus-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nexus-accent) 15%, transparent);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-ingest-status,
+body[data-nexus-theme] .nexus-ingest-status {
+  background-color: var(--nexus-panel);
+  color: var(--nexus-muted);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-ingest-status--connected,
+body[data-nexus-theme] .nexus-ingest-status--connected {
+  background-color: var(--nexus-log-success-bg);
+  color: var(--nexus-log-success-text);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-db-row,
+body[data-nexus-theme] .nexus-db-row {
+  background-color: var(--nexus-panel);
+  border-color: var(--nexus-border);
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-db-row:hover,
+body[data-nexus-theme] .nexus-db-row:hover,
+body[data-nexus-theme] .modern-shell .nexus-db-row--selected,
+body[data-nexus-theme] .nexus-db-row--selected {
+  background-color: var(--nexus-accent-muted);
+  border-color: var(--nexus-accent);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-db-check,
+body[data-nexus-theme] .nexus-db-check {
+  border-color: var(--nexus-border);
+  color: var(--nexus-accent-text);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-db-row--selected .nexus-db-check,
+body[data-nexus-theme] .nexus-db-row--selected .nexus-db-check {
+  background-color: var(--nexus-accent);
+  border-color: var(--nexus-accent);
+  color: var(--nexus-control-active-text);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-import-drop,
+body[data-nexus-theme] .nexus-import-drop {
+  background-color: var(--nexus-panel);
+  border-color: var(--nexus-border);
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-import-drop:hover,
+body[data-nexus-theme] .nexus-import-drop:hover {
+  background-color: var(--nexus-accent-muted);
+  border-color: var(--nexus-accent);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-import-summary,
+body[data-nexus-theme] .nexus-import-summary {
+  background-color: var(--nexus-log-success-bg);
+  border-color: var(--nexus-log-success-border);
+  color: var(--nexus-log-success-text);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-import-error,
+body[data-nexus-theme] .nexus-import-error {
+  background-color: var(--nexus-log-error-bg);
+  border-color: var(--nexus-log-error-border);
+  color: var(--nexus-log-error-text);
+}
+
 body[data-nexus-theme] .modern-shell .nexus-diff-body,
 body[data-nexus-theme] .nexus-diff-body,
 body[data-nexus-theme] .modern-shell .nexus-diff-footer,
@@ -838,17 +1081,130 @@ body[data-nexus-theme] .nexus-diff-meta {
   color: var(--nexus-muted);
 }
 
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-shell,
+body[data-nexus-theme] .nexus-batch-progress-shell {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--nexus-accent-soft) 32%, transparent), transparent 44%),
+    linear-gradient(180deg, color-mix(in srgb, var(--nexus-surface) 94%, white), var(--nexus-panel));
+  border: 1px solid color-mix(in srgb, var(--nexus-accent) 26%, var(--nexus-border));
+  border-radius: 1.1rem;
+  box-shadow: 0 18px 38px color-mix(in srgb, var(--nexus-accent) 12%, transparent);
+  padding: 0.85rem;
+}
+
+body[data-nexus-theme="dark-console"] .modern-shell .nexus-batch-progress-shell,
+body[data-nexus-theme="dark-console"] .nexus-batch-progress-shell {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--nexus-accent-muted) 55%, transparent), transparent 48%),
+    linear-gradient(180deg, color-mix(in srgb, var(--nexus-panel) 92%, black), var(--nexus-panel-strong));
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-meter,
+body[data-nexus-theme] .nexus-batch-progress-meter {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-label,
+body[data-nexus-theme] .nexus-batch-progress-label {
+  color: var(--nexus-ink);
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-detail,
+body[data-nexus-theme] .nexus-batch-progress-detail {
+  color: var(--nexus-muted);
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  margin-top: 0.28rem;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-percent,
+body[data-nexus-theme] .nexus-batch-progress-percent {
+  background-color: color-mix(in srgb, var(--nexus-accent) 12%, var(--nexus-surface));
+  border: 1px solid color-mix(in srgb, var(--nexus-accent) 30%, var(--nexus-border));
+  border-radius: 9999px;
+  color: var(--nexus-accent-text);
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0.36rem 0.6rem;
+}
+
 body[data-nexus-theme] .modern-shell .nexus-batch-progress,
 body[data-nexus-theme] .nexus-batch-progress {
-  background-color: var(--nexus-panel);
-  border-color: var(--nexus-border);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--nexus-border) 48%, transparent) 1px, transparent 1px) 0 0 / 25% 100%,
+    color-mix(in srgb, var(--nexus-panel) 78%, var(--nexus-surface));
+  border: 1px solid color-mix(in srgb, var(--nexus-border) 80%, transparent);
   border-radius: 9999px;
+  box-shadow: inset 0 1px 3px color-mix(in srgb, var(--nexus-ink) 12%, transparent);
+  height: 0.85rem;
   overflow: hidden;
+  position: relative;
 }
 
 body[data-nexus-theme] .modern-shell .nexus-batch-progress-bar,
 body[data-nexus-theme] .nexus-batch-progress-bar {
-  background-color: var(--nexus-accent);
+  background:
+    linear-gradient(90deg, var(--nexus-accent), var(--nexus-accent-hover)),
+    var(--nexus-accent);
+  border-radius: inherit;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--nexus-accent) 42%, transparent);
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-shine,
+body[data-nexus-theme] .nexus-batch-progress-shine {
+  animation: nexus-progress-sheen 1.25s linear infinite;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.48) 45%, transparent 70%);
+  inset: 0;
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-steps,
+body[data-nexus-theme] .nexus-batch-progress-steps {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 0.55rem;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-batch-progress-steps span,
+body[data-nexus-theme] .nexus-batch-progress-steps span {
+  background-color: color-mix(in srgb, var(--nexus-accent) 20%, var(--nexus-border));
+  border-radius: 9999px;
+  height: 0.22rem;
+  opacity: 0.72;
+}
+
+@keyframes nexus-progress-sheen {
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-nexus-theme] .modern-shell .nexus-batch-progress-shine,
+  body[data-nexus-theme] .nexus-batch-progress-shine,
+  body[data-nexus-theme] .modern-shell .nexus-pipeline-progress-bar::after,
+  body[data-nexus-theme] .nexus-pipeline-progress-bar::after {
+    animation: none;
+  }
 }
 
 body[data-nexus-theme] .modern-shell .nexus-batch-result,
@@ -1040,11 +1396,30 @@ body[data-nexus-theme] .nexus-pipeline-dot--error {
 }
 
 body[data-nexus-theme] .nexus-pipeline-progress-track {
-  background-color: var(--nexus-panel);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--nexus-border) 44%, transparent) 1px, transparent 1px) 0 0 / 33.333% 100%,
+    color-mix(in srgb, var(--nexus-panel) 78%, var(--nexus-surface));
+  border-top: 1px solid color-mix(in srgb, var(--nexus-border) 70%, transparent);
+  box-shadow: inset 0 1px 3px color-mix(in srgb, var(--nexus-ink) 10%, transparent);
+  height: 0.42rem;
+  overflow: hidden;
 }
 
 body[data-nexus-theme] .nexus-pipeline-progress-bar {
-  background-color: var(--nexus-accent);
+  background: linear-gradient(90deg, var(--nexus-accent), var(--nexus-accent-hover));
+  border-radius: 0 9999px 9999px 0;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--nexus-accent) 42%, transparent);
+  overflow: hidden;
+  position: relative;
+}
+
+body[data-nexus-theme] .nexus-pipeline-progress-bar::after {
+  animation: nexus-progress-sheen 1.35s linear infinite;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.42) 44%, transparent 70%);
+  content: "";
+  inset: 0;
+  position: absolute;
+  transform: translateX(-100%);
 }
 
 body[data-nexus-theme] .nexus-pipeline-microbar {
