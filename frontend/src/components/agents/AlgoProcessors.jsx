@@ -5,50 +5,80 @@ import { Loader2 } from 'lucide-react';
 
 const ProcessorCard = ({ name, role, processorKey }) => {
   const processor = useNexusStore((state) => state.processors[processorKey]);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
+  const isDark = systemConfig?.themeId === 'dark-console';
+  
   const status = processor?.status || 'IDLE';
   const metrics = processor?.metrics || {};
 
   const isActive = status !== 'IDLE' && status !== 'COMPLETE' && status !== 'ERROR';
   const isError = status === 'ERROR';
   const isComplete = status === 'COMPLETE';
-  const displayName = name
-    .replace(/_PROC$/, '')
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  // Dynamic Styles based on Theme and Status
+  const getCardStyles = () => {
+    if (isDark) {
+      if (isActive) return "bg-blue-950/30 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.15)]";
+      if (isError) return "bg-red-950/30 border-red-500/50";
+      if (isComplete) return "bg-emerald-950/30 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]";
+      return "bg-slate-900/40 border-slate-800";
+    }
+    // Light Mode (Legacy)
+    if (isActive) return "bg-blue-50 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]";
+    if (isError) return "bg-red-50 border-red-500";
+    if (isComplete) return "bg-emerald-50 border-emerald-500";
+    return "bg-white border-black";
+  };
+
+  const getStatusTextColor = () => {
+    if (isDark) {
+      if (isActive) return "text-blue-400 animate-pulse";
+      if (isError) return "text-red-400";
+      if (isComplete) return "text-emerald-400";
+      return "text-slate-500";
+    }
+    if (isActive) return "text-blue-600 animate-pulse";
+    if (isError) return "text-red-600";
+    if (isComplete) return "text-emerald-700";
+    return "text-slate-400";
+  };
+
+  const getLabelColor = () => isDark ? "text-slate-300" : "text-slate-800";
+  const getMutedColor = () => isDark ? "text-slate-500" : "text-slate-400";
+  const getMetricsValueColor = () => isDark ? "text-slate-200" : "text-slate-700";
 
   return (
     <div className={clsx(
-      "nexus-pipeline-card flex flex-col relative overflow-hidden transition-all duration-300",
-      isActive ? "nexus-pipeline-card--active" : isError ? "nexus-pipeline-card--error" : isComplete ? "nexus-pipeline-card--complete" : "nexus-pipeline-card--idle"
+      "border-2 flex flex-col relative overflow-hidden transition-all duration-300",
+      getCardStyles()
     )}>
       {/* Header */}
-      <div className="nexus-pipeline-card-header flex justify-between items-center p-2 border-b border-gray-200">
-        <div className="flex items-center space-x-1">
+      <div className={clsx(
+        "flex justify-between items-center p-2 border-b",
+        isDark ? "border-slate-800/50" : "border-gray-200"
+      )}>
+        <div className="flex items-center space-x-2">
           {isActive ? (
-            <Loader2 size={12} className="nexus-pipeline-spinner animate-spin" />
+            <Loader2 size={12} className={clsx("animate-spin", isDark ? "text-blue-400" : "text-blue-600")} />
           ) : isError ? (
-            <div className="nexus-pipeline-dot nexus-pipeline-dot--error" />
+            <div className="w-2 h-2 rounded-full bg-red-500" />
           ) : isComplete ? (
-            <div className="nexus-pipeline-dot nexus-pipeline-dot--complete" />
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
           ) : (
-            <div className="nexus-pipeline-dot nexus-pipeline-dot--idle" />
+            <div className={clsx("w-2 h-2 rounded-full", isDark ? "bg-slate-700" : "bg-slate-300")} />
           )}
-          <span className="nexus-pipeline-name text-[11px] font-semibold truncate" title={displayName}>
-            {displayName}
+          <span className={clsx("font-mono text-[10px] font-bold uppercase truncate", getLabelColor())} title={`/${name}/`}>
+            /{name}/
           </span>
         </div>
-        <span className={clsx(
-          "nexus-pipeline-status font-mono text-[9px] uppercase font-bold",
-          isActive && "animate-pulse"
-        )}>
+        <span className={clsx("font-mono text-[9px] uppercase font-bold", getStatusTextColor())}>
           {status}
         </span>
       </div>
 
       {/* Body */}
       <div className="p-2 flex-1 flex flex-col justify-between">
-        <p className="nexus-pipeline-role font-sans text-[10px] leading-tight mb-2">
+        <p className={clsx("font-mono text-[9px] uppercase font-bold leading-tight mb-2", isDark ? "text-slate-400" : "text-slate-500")}>
           {role}
         </p>
         
@@ -56,10 +86,10 @@ const ProcessorCard = ({ name, role, processorKey }) => {
         <div className="grid grid-cols-2 gap-x-2 gap-y-1">
           {Object.entries(metrics).map(([key, val]) => (
             <div key={key} className="flex justify-between items-center">
-              <span className="nexus-pipeline-metric-label font-mono text-[9px] uppercase tracking-widest">
+              <span className={clsx("font-mono text-[8px] uppercase tracking-widest", getMutedColor())}>
                 {key.substring(0, 5)}:
               </span>
-              <span className="nexus-pipeline-metric-value font-mono text-[9px] font-bold">
+              <span className={clsx("font-mono text-[9px] font-bold", getMetricsValueColor())}>
                 {val}
               </span>
             </div>
@@ -68,10 +98,10 @@ const ProcessorCard = ({ name, role, processorKey }) => {
       </div>
       
       {/* Status Bar */}
-      <div className="nexus-pipeline-progress-track h-1 w-full flex">
+      <div className={clsx("h-1 w-full flex", isDark ? "bg-slate-800" : "bg-slate-100")}>
         <div className={clsx(
-          "nexus-pipeline-progress-bar h-full transition-all duration-[800ms] ease-in-out",
-          isActive ? "w-full animate-pulse" : "w-0"
+          "h-full transition-all duration-[800ms] ease-in-out",
+          isActive ? "w-full bg-blue-500 animate-pulse" : isComplete ? "w-full bg-emerald-500" : "w-0 bg-transparent"
         )} />
       </div>
     </div>
@@ -80,22 +110,34 @@ const ProcessorCard = ({ name, role, processorKey }) => {
 
 export default function AlgoProcessors() {
   const eventBus = useNexusStore((state) => state.eventBus);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
+  const isDark = systemConfig?.themeId === 'dark-console';
+  
   const isFetching = eventBus.some(e => e.type === 'EventType.FETCH_PROGRESS' || e.type === 'EventType.FETCH_START');
   const isFetchComplete = eventBus.some(e => e.type === 'EventType.FETCH_COMPLETE');
 
   return (
     <div className="flex flex-col space-y-3 h-full">
       {/* Header section with real-time fetcher visibility */}
-      <div className="nexus-pipeline-header flex justify-between items-center border-b border-gray-300 pb-1">
-        <span className="nexus-pipeline-title text-[11px] font-semibold uppercase tracking-[0.16em]">
-          Validation pipeline
+      <div className={clsx(
+        "flex justify-between items-center border-b pb-1",
+        isDark ? "border-slate-800" : "border-gray-300"
+      )}>
+        <span className={clsx(
+          "text-[10px] font-mono uppercase tracking-widest",
+          isDark ? "text-slate-500" : "text-slate-400"
+        )}>
+          // VALIDATION PIPELINE
         </span>
         <div className="flex items-center space-x-2">
           {isFetching && !isFetchComplete && (
             <Loader2 size={12} className="animate-spin text-[var(--color-nexus-red)]" />
           )}
-          <span className="nexus-pipeline-pill rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider">
-            {isFetching && !isFetchComplete ? 'Fetching data' : 'Rule engine'}
+          <span className={clsx(
+            "text-[9px] font-mono",
+            isDark ? "text-slate-500" : "text-slate-500"
+          )}>
+            {isFetching && !isFetchComplete ? 'FETCHING_DATA...' : 'RULE_ENGINE'}
           </span>
         </div>
       </div>

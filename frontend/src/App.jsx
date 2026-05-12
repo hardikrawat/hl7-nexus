@@ -11,6 +11,7 @@ import ErrorBoundary from './components/shared/ErrorBoundary';
 import { useWebSocket } from './hooks/useWebSocket';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DEFAULT_THEME_ID, getThemeById } from './config/themes';
+import { AnimatePresence } from 'framer-motion';
 
 function App() {
   const isConfigModalOpen = useNexusStore((state) => state.isConfigModalOpen);
@@ -22,7 +23,6 @@ function App() {
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   
-  // Initialize WebSocket connection (uses centralized API config)
   useWebSocket();
 
   useEffect(() => {
@@ -33,7 +33,6 @@ function App() {
   }, [themeId]);
 
   useEffect(() => {
-    // Initial boot event
     addEvent({
       type: 'EventType.SYSTEM_BOOT',
       timestamp: new Date().toISOString(),
@@ -49,10 +48,8 @@ function App() {
         <ModernShell />
       ) : (
         <>
-          {/* Global Header */}
           <GlobalHeader />
 
-          {/* Dynamic Layout Router */}
           {layoutMode === 'classic' && (
             <main className="flex-1 flex flex-row px-4 pt-4 pb-2 gap-0 overflow-hidden relative min-h-0">
               <div className="w-[280px] flex-shrink-0 flex flex-col bg-white border border-gray-300 shadow-xl z-10 relative min-h-0">
@@ -99,7 +96,6 @@ function App() {
 
           {layoutMode === 'unified' && (
             <main className="flex-1 flex flex-row px-4 pt-4 pb-2 gap-4 overflow-hidden">
-              {/* Left Column (Merged) */}
               <div className="w-[320px] flex-shrink-0 flex flex-col space-y-4 pr-1 pb-2">
                 <div className="flex-1 flex-shrink-0 border border-gray-300 shadow-lg bg-white relative min-h-0">
                   <LeftPanel />
@@ -108,20 +104,20 @@ function App() {
                   <RightPanel />
                 </div>
               </div>
-              {/* Main Area */}
               <div className="flex-1 flex flex-col bg-white border border-gray-300 shadow-xl relative min-w-0">
                 <CenterPanel />
               </div>
             </main>
           )}
 
-          {/* Global Footer Controls */}
           <GlobalFooter />
         </>
       )}
 
       {/* System Config Modal */}
-      {isConfigModalOpen && <ConfigModal />}
+      <AnimatePresence>
+        {isConfigModalOpen && <ConfigModal />}
+      </AnimatePresence>
     </div>
   );
 }

@@ -141,7 +141,7 @@ export default function ParseTab() {
       <div className="flex-1 flex space-x-4 min-h-0">
         
         {/* Segment Tree */}
-        <div className="nexus-parse-panel nexus-parse-panel--ast flex-1 flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white min-w-0">
+        <div className="nexus-parse-panel nexus-parse-panel--ast flex-1 flex flex-col overflow-hidden rounded-lg border-2 border-black bg-white min-w-0">
           <div className="nexus-parse-panel-header bg-slate-900 px-3 py-1.5 border-b-2 border-black">
             <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
               AST parse tree
@@ -175,7 +175,7 @@ export default function ParseTab() {
         </div>
 
         {/* Validation Matrix */}
-        <div className="nexus-parse-panel nexus-parse-panel--validation w-64 flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white flex-shrink-0">
+        <div className="nexus-parse-panel nexus-parse-panel--validation w-64 flex flex-col overflow-hidden rounded-lg border-2 border-black bg-white flex-shrink-0">
           <div className="nexus-parse-panel-header bg-slate-900 px-3 py-1.5 border-b-2 border-black">
             <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
               Compliance validation
@@ -238,7 +238,7 @@ export default function ParseTab() {
         </div>
         
         {/* FHIR Bridge Output */}
-        <div className="nexus-fhir-panel flex-1 flex flex-col overflow-hidden rounded-2xl border-2 border-[var(--color-nexus-red)] bg-white min-w-0">
+        <div className="nexus-fhir-panel flex-1 flex flex-col overflow-hidden rounded-lg border-2 border-[var(--color-nexus-red)] bg-white min-w-0">
           <div className="nexus-fhir-header bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)]">
             <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
               FHIR bundle export
