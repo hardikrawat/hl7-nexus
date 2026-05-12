@@ -17,7 +17,7 @@ function App() {
   const addEvent = useNexusStore((state) => state.addEvent);
   const systemConfig = useNexusStore((state) => state.systemConfig);
   
-  const layoutMode = systemConfig?.layoutMode || 'classic';
+  const layoutMode = systemConfig?.layoutMode || 'modern';
   const themeId = getThemeById(systemConfig?.themeId || DEFAULT_THEME_ID).id;
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);

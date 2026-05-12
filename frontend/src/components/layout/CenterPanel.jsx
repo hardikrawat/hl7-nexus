@@ -23,10 +23,10 @@ export default function CenterPanel() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white relative">
+    <div className="nexus-center-shell flex flex-col h-full bg-white relative">
 
       {/* Tabs */}
-      <div className="flex flex-shrink-0 border-b border-gray-300">
+      <div className="nexus-workbench-tabs flex flex-shrink-0 border-b border-gray-300">
         {tabs.map((tab) => {
           const isDisabled = (tab.aiOnly && !isAI) || (tab.algoOnly && isAI);
           const isActive = activeTab === tab.route;
@@ -38,10 +38,10 @@ export default function CenterPanel() {
               disabled={isDisabled}
               onClick={() => setActiveTab(tab.route)}
               title={isDisabled ? (tab.aiOnly ? "Requires AI Engine" : "Requires Algorithm Engine") : ""}
-              className={`flex-1 font-mono text-[10px] uppercase tracking-wider py-2 border-b-2 transition-colors inline-flex items-center justify-center gap-2 ${
+              className={`nexus-workbench-tab flex-1 font-mono text-[10px] uppercase tracking-wider py-2 border-b-2 transition-colors inline-flex items-center justify-center gap-2 ${
                 isActive 
-                  ? 'border-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold bg-gray-50' 
-                  : 'border-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'
+                  ? 'nexus-workbench-tab--active border-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold bg-gray-50'
+                  : 'nexus-workbench-tab--idle border-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'
               } ${isDisabled ? 'opacity-45 cursor-not-allowed' : ''}`}
             >
               <Icon size={13} />
@@ -52,7 +52,7 @@ export default function CenterPanel() {
       </div>
 
       {/* Content Area */}
-      <div className="p-4 flex-1 overflow-y-auto md:overflow-hidden bg-white flex flex-col relative min-h-0">
+      <div className="nexus-workbench-body p-4 flex-1 overflow-y-auto md:overflow-hidden bg-white flex flex-col relative min-h-0">
         {activeTab === 'parse' && <ParseTab />}
         {activeTab === 'validate' && <ParseTab />}
         {activeTab === 'generate' && <GenerateTab />}

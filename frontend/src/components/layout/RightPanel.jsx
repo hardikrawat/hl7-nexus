@@ -96,8 +96,8 @@ export default function RightPanel() {
   }, [eventBus, isLogPaused]);
 
   return (
-    <div className="flex flex-col h-full bg-white relative min-h-0">
-      <div className="bg-slate-900 px-3 py-2 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center flex-shrink-0">
+    <div className="nexus-panel-shell nexus-right-panel flex flex-col h-full bg-white relative min-h-0">
+      <div className="nexus-panel-top bg-slate-900 px-3 py-2 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center flex-shrink-0">
         <h2 className="font-mono text-[11px] font-bold tracking-widest text-white flex items-center">
           PROCESSING PARAMETERS
         </h2>
@@ -106,7 +106,7 @@ export default function RightPanel() {
           <span className="text-[9px] text-cyan-400 font-mono uppercase">Session_Sync</span>
         </div>
       </div>
-      <div className="p-4 flex-1 flex flex-col space-y-6 min-h-0 overflow-hidden">
+      <div className="nexus-panel-body p-4 flex-1 flex flex-col space-y-6 min-h-0 overflow-hidden">
         
         {/* LINK_MONITOR */}
         <div className="flex flex-col space-y-2">
@@ -114,7 +114,7 @@ export default function RightPanel() {
             {isAI ? 'Neural link monitor' : 'Rule engine monitor'}
           </span>
           <div className={clsx(
-            "border-2 p-3 flex flex-col space-y-2",
+            "nexus-monitor-card border-2 p-3 flex flex-col space-y-2",
             isAI ? "border-[var(--color-nexus-red)] bg-red-50" : "border-slate-800 bg-slate-50"
           )}>
             {isAI ? (
@@ -146,7 +146,7 @@ export default function RightPanel() {
               </>
             ) : (
               <>
-                <div className="border-2 border-amber-600 bg-amber-50 text-amber-700 font-mono text-[10px] uppercase font-bold text-center py-2 mb-2 animate-pulse">
+                <div className="nexus-zero-ai-banner border-2 border-amber-600 bg-amber-50 text-amber-700 font-mono text-[10px] uppercase font-bold text-center py-2 mb-2 animate-pulse">
                   ZERO AI DEPENDENCIES
                 </div>
                 <div className="flex justify-between items-center">

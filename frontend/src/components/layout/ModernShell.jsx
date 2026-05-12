@@ -102,18 +102,20 @@ export default function ModernShell() {
   };
 
   return (
-    <div className="modern-shell flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-950">
-      <header className="flex h-[72px] flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
+    <div className="modern-shell nexus-orbital-shell flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-950">
+      <div className="nexus-orbital-glow nexus-orbital-glow--one" aria-hidden="true" />
+      <div className="nexus-orbital-glow nexus-orbital-glow--two" aria-hidden="true" />
+      <header className="nexus-shell-header flex h-[76px] flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
         <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
           <button
             onClick={() => setMobileLeftOpen((open) => !open)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
+            className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
             title="Toggle pipeline"
           >
             {mobileLeftOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
 
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="nexus-brand-cluster flex min-w-0 items-center gap-3">
             <div className="nexus-brand-logo flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
               <Activity size={19} className="nexus-brand-logo-icon" />
             </div>
@@ -138,7 +140,7 @@ export default function ModernShell() {
           </div>
         </div>
 
-        <div className="hidden min-w-0 items-center gap-2 md:flex">
+        <div className="nexus-topology hidden min-w-0 items-center gap-2 md:flex">
           <div className="hidden whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:block">
             Engine Mode
           </div>
@@ -201,12 +203,12 @@ export default function ModernShell() {
           </AnimatePresence>
         </div>
 
-        <div className="flex flex-shrink-0 items-center gap-3">
-          <div className="hidden items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 sm:flex">
+        <div className="nexus-header-actions flex flex-shrink-0 items-center gap-3">
+          <div className="nexus-status-pill hidden items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 sm:flex">
             <Wifi size={14} />
             Connected
           </div>
-          <div className="hidden items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-600 lg:flex">
+          <div className="nexus-time-pill hidden items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-600 lg:flex">
             <Clock size={14} />
             {formatTime(sessionTime)}
           </div>
@@ -218,13 +220,13 @@ export default function ModernShell() {
                 setMobileRightOpen(true);
               }
             }}
-            className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-inspector-toggle inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
           >
             Inspector
           </button>
           <button
             onClick={toggleTheme}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
             title={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
             aria-label={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
           >
@@ -232,7 +234,7 @@ export default function ModernShell() {
           </button>
           <button
             onClick={() => setConfigModalOpen(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
             title="System configuration"
           >
             <Settings size={17} />
@@ -240,7 +242,7 @@ export default function ModernShell() {
         </div>
       </header>
 
-      <main className="flex min-h-0 flex-1 gap-4 overflow-hidden p-4">
+      <main className="nexus-shell-main flex min-h-0 flex-1 gap-4 overflow-hidden p-4">
         <AnimatePresence initial={false}>
           {leftOpen && (
             <motion.aside
@@ -250,14 +252,14 @@ export default function ModernShell() {
               transition={{ duration: 0.18 }}
               className="hidden min-h-0 flex-shrink-0 overflow-hidden lg:block"
             >
-              <div className="h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+              <div className="nexus-side-frame nexus-side-frame--left h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                 <LeftPanel />
               </div>
             </motion.aside>
           )}
         </AnimatePresence>
 
-        <section className="modern-workbench min-w-0 flex-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <section className="modern-workbench nexus-workbench-frame min-w-0 flex-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <CenterPanel />
         </section>
 
@@ -270,7 +272,7 @@ export default function ModernShell() {
               transition={{ duration: 0.18 }}
               className="hidden min-h-0 flex-shrink-0 overflow-hidden xl:block"
             >
-              <div className="h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+              <div className="nexus-side-frame nexus-side-frame--right h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                 <RightPanel />
               </div>
             </motion.aside>
@@ -281,7 +283,7 @@ export default function ModernShell() {
       <AnimatePresence>
         {mobileLeftOpen && (
           <motion.div
-            className="fixed inset-0 z-[80] bg-slate-950/35 backdrop-blur-sm lg:hidden"
+            className="nexus-mobile-scrim fixed inset-0 z-[80] bg-slate-950/35 backdrop-blur-sm lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -291,7 +293,7 @@ export default function ModernShell() {
               animate={{ x: 0 }}
               exit={{ x: -340 }}
               transition={{ duration: 0.18 }}
-              className="h-full w-[min(340px,calc(100vw-32px))] border-r border-slate-200 bg-white shadow-2xl"
+              className="nexus-mobile-drawer h-full w-[min(340px,calc(100vw-32px))] border-r border-slate-200 bg-white shadow-2xl"
             >
               <div className="flex h-12 items-center justify-between border-b border-slate-200 px-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
@@ -315,7 +317,7 @@ export default function ModernShell() {
       <AnimatePresence>
         {mobileRightOpen && (
           <motion.div
-            className="fixed inset-0 z-[80] bg-slate-950/35 backdrop-blur-sm xl:hidden"
+            className="nexus-mobile-scrim fixed inset-0 z-[80] bg-slate-950/35 backdrop-blur-sm xl:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -325,7 +327,7 @@ export default function ModernShell() {
               animate={{ x: 0 }}
               exit={{ x: 360 }}
               transition={{ duration: 0.18 }}
-              className="ml-auto h-full w-[min(360px,calc(100vw-32px))] border-l border-slate-200 bg-white shadow-2xl"
+              className="nexus-mobile-drawer ml-auto h-full w-[min(360px,calc(100vw-32px))] border-l border-slate-200 bg-white shadow-2xl"
             >
               <div className="flex h-12 items-center justify-between border-b border-slate-200 px-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
@@ -361,14 +363,14 @@ export default function ModernShell() {
             <span>{eventBus.length} events</span>
             <button
               onClick={() => setLogPaused(!isLogPaused)}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+              className="nexus-status-action inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
               {isLogPaused ? <Play size={12} /> : <Pause size={12} />}
               {isLogPaused ? 'Resume' : 'Pause'}
             </button>
             <button
               onClick={clearEventBus}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+              className="nexus-status-action inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
               <Trash2 size={12} />
               Clear
@@ -376,7 +378,7 @@ export default function ModernShell() {
             <button
               onClick={handleExportLog}
               disabled={eventBus.length === 0}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-40"
+              className="nexus-status-action inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-40"
             >
               <Download size={12} />
               Export

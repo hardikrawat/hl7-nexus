@@ -190,11 +190,11 @@ export default function ConfigModal() {
           <ConfigSection icon={LayoutDashboard} eyebrow="Interface" title="Workspace architecture">
             <select 
               name="layoutMode"
-              value={localConfig.layoutMode || 'classic'}
+              value={localConfig.layoutMode || 'modern'}
               onChange={handleChange}
               className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
             >
-              <option value="modern">MODERN PROTOTYPE (Responsive Console)</option>
+              <option value="modern">ORBITAL WORKSPACE (Modern Console)</option>
               <option value="classic">CLASSIC (3-Column Dense)</option>
               <option value="ide">IDE COLLAPSIBLE (Toggle Sidebars)</option>
               <option value="unified">UNIFIED DASHBOARD (2-Column Focused)</option>
