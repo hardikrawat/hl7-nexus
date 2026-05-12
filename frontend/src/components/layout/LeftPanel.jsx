@@ -3,6 +3,7 @@ import { useNexusStore } from '../../store/nexusStore';
 import AiAgents from '../agents/AiAgents';
 import AlgoProcessors from '../agents/AlgoProcessors';
 import { Activity } from 'lucide-react';
+import clsx from 'clsx';
 
 export default function LeftPanel() {
   const engineMode = useNexusStore((state) => state.engineMode);
@@ -20,9 +21,10 @@ export default function LeftPanel() {
       <div className="p-4 flex-1 flex flex-col space-y-6 overflow-y-auto">
 
         {/* SECTION 3.3 — CHANNEL STATUS */}
-        <div className={`border p-2 flex flex-col items-center justify-center cursor-pointer transition-colors ${
-          engineMode === 'algorithm' ? 'border-slate-800 bg-slate-50' : 'border-[var(--color-nexus-red)] bg-red-50'
-        }`}>
+        <div className={clsx(
+          "border-2 border-black p-2 flex flex-col items-center justify-center cursor-pointer transition-colors bg-white",
+          engineMode === 'algorithm' ? "border-slate-800" : "border-[var(--color-nexus-red)]"
+        )}>
           <span className="font-mono text-[10px] uppercase font-bold text-slate-800">
             ACTIVE ENGINE: {engineMode.toUpperCase()}
           </span>

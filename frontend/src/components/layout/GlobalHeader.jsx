@@ -34,7 +34,7 @@ export default function GlobalHeader() {
       {/* LEFT SECTION */}
       <div className="flex items-center space-x-4">
         <div className="flex items-center gap-3">
-          <div className="nexus-brand-logo flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
+          <div className="nexus-brand-logo flex h-9 w-9 flex-shrink-0 items-center justify-center rounded border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
             <Activity size={18} className="nexus-brand-logo-icon" />
           </div>
           <h1 className="nexus-brand-title text-xl font-bold font-mono tracking-wider text-[var(--color-nexus-red)] whitespace-nowrap">
