@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_THEME_ID } from '../config/themes';
 
 export const useNexusStore = create((set) => ({
   // Core State
@@ -12,7 +13,8 @@ export const useNexusStore = create((set) => ({
     ollamaUrl: 'http://localhost:11434',
     activeModel: '',
     availableModels: [],
-    layoutMode: 'classic',
+    layoutMode: 'modern',
+    themeId: DEFAULT_THEME_ID,
   },
 
   // UI State

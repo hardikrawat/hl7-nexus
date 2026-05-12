@@ -36,7 +36,7 @@ export default function BottomTerminal() {
       {/* Header */}
       <div className="bg-gray-100 px-3 py-1.5 border-b border-black flex justify-between items-center">
         <span className="font-mono text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-          [ SYSTEM EVENT LOG ]
+          System event log
         </span>
         <div className="flex items-center space-x-4">
           <div className="flex space-x-1">

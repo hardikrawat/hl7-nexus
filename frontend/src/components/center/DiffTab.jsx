@@ -120,12 +120,12 @@ export default function DiffTab() {
     <div className="flex flex-col h-full space-y-4">
       {/* Controls */}
       <div className="flex justify-between items-center">
-        <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          // COMPARISON ENGINE (SEGMENT-AWARE)
+        <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+          Segment-aware comparison
         </span>
         <button 
           onClick={handleDiff}
-          className="bg-black text-white px-6 py-2 border-2 border-black font-mono text-[11px] uppercase tracking-widest font-bold flex items-center hover:bg-slate-800"
+          className="nexus-tool-action flex items-center border px-6 py-2 font-mono text-[11px] font-bold uppercase tracking-widest"
         >
           COMPARE MESSAGES <Play size={14} className="ml-2" />
         </button>
@@ -136,25 +136,25 @@ export default function DiffTab() {
         <textarea 
           value={msg1}
           onChange={(e) => setMsg1(e.target.value)}
-          className="flex-1 border-2 border-black p-3 font-mono text-[10px] bg-slate-50 focus:outline-none resize-none"
+          className="nexus-tool-textarea flex-1 resize-none border-2 border-black p-3 font-mono text-[10px] focus:outline-none"
           placeholder="Original HL7 message..."
         />
         <textarea 
           value={msg2}
           onChange={(e) => setMsg2(e.target.value)}
-          className="flex-1 border-2 border-black p-3 font-mono text-[10px] bg-slate-50 focus:outline-none resize-none"
+          className="nexus-tool-textarea flex-1 resize-none border-2 border-black p-3 font-mono text-[10px] focus:outline-none"
           placeholder="Modified HL7 message..."
         />
       </div>
 
       {/* Output */}
-      <div className="flex-1 flex flex-col border-2 border-black bg-slate-900 min-h-0">
-        <div className="px-3 py-1.5 border-b-2 border-black bg-[var(--color-nexus-red)]">
-          <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-            / COMPARISON OUTPUT
+      <div className="nexus-tool-panel nexus-diff-panel flex-1 flex flex-col border-2 border-black min-h-0">
+        <div className="nexus-tool-panel-header nexus-tool-panel-header--accent px-3 py-1.5 border-b-2 border-black bg-[var(--color-nexus-red)]">
+          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            Comparison output
           </span>
         </div>
-        <div className="flex-1 overflow-y-auto p-4 font-mono text-[11px] space-y-1 bg-slate-900 text-slate-300">
+        <div className="nexus-diff-body flex-1 overflow-y-auto p-4 font-mono text-[11px] space-y-1">
           {diffResult ? diffResult.map((entry, i) => (
             <div key={i}>
               <div className={clsx("px-2 py-0.5", {
@@ -165,13 +165,13 @@ export default function DiffTab() {
                 <span className="mr-2 inline-block w-4 text-center font-bold">
                   {entry.type === 'added' ? '+' : entry.type === 'removed' ? '-' : entry.type === 'modified' ? '~' : ' '}
                 </span>
-                <span className="text-slate-500 mr-2">[{entry.segment}]</span>
+                <span className="nexus-diff-segment mr-2">[{entry.segment}]</span>
                 {entry.type === 'modified' ? entry.oldText : entry.text}
               </div>
               {/* Show field-level diffs for modified segments */}
               {entry.type === 'modified' && entry.fields.map((f, fi) => (
                 <div key={fi} className="pl-8 py-0.5 text-[10px]">
-                  <span className="text-slate-500">Field {f.index}:</span>{' '}
+                  <span className="nexus-diff-segment">Field {f.index}:</span>{' '}
                   <span className="text-red-400 line-through">{f.old || '(empty)'}</span>
                   {' → '}
                   <span className="text-green-400">{f.new || '(empty)'}</span>
@@ -179,20 +179,20 @@ export default function DiffTab() {
               ))}
             </div>
           )) : (
-            <div className="h-full flex items-center justify-center text-slate-500">
-              [ AWAITING_COMPARISON ]
+            <div className="nexus-tool-empty h-full flex items-center justify-center">
+              Awaiting comparison
             </div>
           )}
         </div>
         {diffResult && (
-          <div className="p-2 border-t-2 border-black bg-slate-900 flex justify-between items-center">
-            <span className="text-slate-500 font-mono text-[9px]">
+          <div className="nexus-diff-footer p-2 border-t-2 border-black flex justify-between items-center">
+            <span className="nexus-diff-meta font-mono text-[9px]">
               {diffResult.filter(d => d.type === 'unchanged').length} unchanged · 
               {diffResult.filter(d => d.type === 'modified').length} modified · 
               {diffResult.filter(d => d.type === 'added').length} added · 
               {diffResult.filter(d => d.type === 'removed').length} removed
             </span>
-            <button onClick={downloadDiff} className="border-2 border-black bg-white text-black px-4 py-1 font-mono text-[9px] uppercase font-bold hover:bg-gray-200">
+            <button onClick={downloadDiff} className="nexus-tool-secondary-action border px-4 py-1 font-mono text-[9px] font-bold uppercase">
               [EXPORT DIFF REPORT]
             </button>
           </div>

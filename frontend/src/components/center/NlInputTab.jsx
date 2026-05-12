@@ -68,8 +68,8 @@ export default function NlInputTab() {
 
   if (engineMode === 'algorithm') {
     return (
-      <div className="flex-1 flex items-center justify-center text-slate-400 font-mono text-[10px]">
-        [ NL_INPUT_REQUIRES_AI_ENGINE ]
+      <div className="nexus-tool-empty flex-1 flex items-center justify-center font-mono text-[10px]">
+        Natural language input requires AI Engine
       </div>
     );
   }
@@ -77,20 +77,20 @@ export default function NlInputTab() {
   return (
     <div className="flex flex-col h-full space-y-4">
       {/* Description / Instructions */}
-      <div className="bg-blue-50 border border-blue-200 p-3 font-mono text-[10px] text-blue-800">
+      <div className="nexus-nl-instructions border p-3 font-mono text-[10px]">
         Enter natural language clinical text below. The AI Engine ({engineMode === 'cloud_ai' ? systemConfig.activeModel : 'Ollama'}) will process the semantics and generate a structurally compliant HL7 message.
       </div>
 
       {/* Input Area */}
       <div className="flex flex-col space-y-2 flex-1">
         <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            // CLINICAL TEXT INPUT
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+            Clinical text input
           </span>
           <button 
             onClick={handleGenerate}
             disabled={isProcessing || !inputText.trim()}
-            className="bg-black text-white px-6 py-2 border-2 border-black font-mono text-[11px] uppercase tracking-widest font-bold flex items-center hover:bg-slate-800 disabled:opacity-50"
+            className="nexus-tool-action flex items-center border px-6 py-2 font-mono text-[11px] font-bold uppercase tracking-widest disabled:opacity-50"
           >
             {isProcessing ? 'Thinking...' : 'GENERATE FROM TEXT'} <Play size={14} className="ml-2" />
           </button>
@@ -98,25 +98,25 @@ export default function NlInputTab() {
         <textarea 
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="flex-1 border-2 border-black p-3 font-mono text-xs bg-slate-50 focus:outline-none focus:border-[var(--color-nexus-red)] resize-none"
+          className="nexus-tool-textarea flex-1 resize-none border-2 border-black p-3 font-mono text-xs focus:outline-none"
           placeholder="Describe the patient event..."
         />
       </div>
 
       {/* Output Area */}
-      <div className="flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white">
-        <div className="bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center">
-          <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-            / SYNTHESIZED HL7 OUTPUT
+      <div className="nexus-tool-panel nexus-tool-panel--accent flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white">
+        <div className="nexus-tool-panel-header nexus-tool-panel-header--accent bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center">
+          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            Synthesized HL7 output
           </span>
-          <button onClick={handleCopy} className="text-red-200 hover:text-white transition-colors" title="Copy to clipboard">
+          <button onClick={handleCopy} className="nexus-tool-copy-button text-red-200 hover:text-white transition-colors" title="Copy to clipboard">
             {copied ? <Check size={12} className="text-green-300" /> : <Copy size={12} />}
           </button>
         </div>
         <textarea 
           value={outputHL7}
           readOnly
-          className="flex-1 p-3 font-mono text-[11px] text-blue-900 bg-red-50 focus:outline-none resize-none"
+          className="nexus-tool-output-textarea flex-1 resize-none p-3 font-mono text-[11px] focus:outline-none"
           placeholder="Synthesized message will appear here..."
         />
       </div>

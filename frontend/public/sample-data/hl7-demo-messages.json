@@ -1,0 +1,110 @@
+{
+  "dataset": "Helix demo HL7 batch payloads",
+  "count": 12,
+  "messages": [
+    {
+      "id": "DEMO_001",
+      "type": "ADT^A01",
+      "patient": "DOE, JOHN",
+      "receivedAt": "2026-05-11T08:12:00Z",
+      "hl7": "MSH|^~\\&|ADT_APP|NORTH_HOSP|HELIX|NEXUS|202605110812||ADT^A01|DEMO001|P|2.5.1\nEVN|A01|202605110812\nPID|1||100001^^^NORTH^MR||DOE^JOHN||19800101|M|||100 MAIN ST^^PHOENIX^AZ^85001||555-0101\nPV1|1|I|3N^312^A|E|||1234^MILLER^ANNE|||||||||||V100001"
+    },
+    {
+      "id": "DEMO_002",
+      "type": "ADT^A03",
+      "patient": "NGUYEN, LINH",
+      "receivedAt": "2026-05-11T08:26:00Z",
+      "hl7": "MSH|^~\\&|ADT_APP|NORTH_HOSP|HELIX|NEXUS|202605110826||ADT^A03|DEMO002|P|2.5.1\nEVN|A03|202605110826\nPID|1||100002^^^NORTH^MR||NGUYEN^LINH||19740612|F|||210 OAK AVE^^DENVER^CO^80202||555-0102\nPV1|1|I|4W^421^B||||2222^CHEN^RAY|||||||||||V100002|||||||||||||||||||||202605110826"
+    },
+    {
+      "id": "DEMO_003",
+      "type": "ADT^A08",
+      "patient": "PATEL, RAVI",
+      "receivedAt": "2026-05-11T08:41:00Z",
+      "hl7": "MSH|^~\\&|REG_SYS|WEST_CLINIC|HELIX|NEXUS|202605110841||ADT^A08|DEMO003|P|2.5.1\nEVN|A08|202605110841\nPID|1||100003^^^WEST^MR||PATEL^RAVI||19920314|M|||44 MARKET ST^^SAN JOSE^CA^95113||555-0103\nPV1|1|O|CARD^02^1||||3377^GARCIA^ELENA|||||||||||V100003"
+    },
+    {
+      "id": "DEMO_004",
+      "type": "ORU^R01",
+      "patient": "SMITH, ANNA",
+      "receivedAt": "2026-05-11T09:02:00Z",
+      "hl7": "MSH|^~\\&|LAB|NORTH_HOSP|HELIX|NEXUS|202605110902||ORU^R01|DEMO004|P|2.5.1\nPID|1||100004^^^NORTH^MR||SMITH^ANNA||19690909|F\nOBR|1|ORD1004|LAB1004|CBC^Complete Blood Count|||202605110830\nOBX|1|NM|WBC^White Blood Count||6.7|10*3/uL|4.0-11.0|N|||F\nOBX|2|NM|HGB^Hemoglobin||13.2|g/dL|12.0-16.0|N|||F"
+    },
+    {
+      "id": "DEMO_005",
+      "type": "ORM^O01",
+      "patient": "MARTINEZ, SOFIA",
+      "receivedAt": "2026-05-11T09:17:00Z",
+      "hl7": "MSH|^~\\&|ORDER_ENTRY|SOUTH_CLINIC|HELIX|NEXUS|202605110917||ORM^O01|DEMO005|P|2.5.1\nPID|1||100005^^^SOUTH^MR||MARTINEZ^SOFIA||19881122|F\nORC|NW|ORD1005|||\nOBR|1|ORD1005||XRAYCHEST^Chest X-Ray|||202605111000|||||||||7788^LEE^MORGAN"
+    },
+    {
+      "id": "DEMO_006",
+      "type": "SIU^S12",
+      "patient": "BROWN, ELI",
+      "receivedAt": "2026-05-11T09:31:00Z",
+      "hl7": "MSH|^~\\&|SCHED|EAST_CLINIC|HELIX|NEXUS|202605110931||SIU^S12|DEMO006|P|2.5.1\nSCH|APT1006|APT1006||||CHECKUP^Routine Follow Up|30|min|202605121030|202605121100|||||555-0106\nPID|1||100006^^^EAST^MR||BROWN^ELI||20120304|M\nPV1|1|O|PEDS^03^1"
+    },
+    {
+      "id": "DEMO_007",
+      "type": "DFT^P03",
+      "patient": "WILSON, MARA",
+      "receivedAt": "2026-05-11T09:48:00Z",
+      "hl7": "MSH|^~\\&|BILLING|NORTH_HOSP|HELIX|NEXUS|202605110948||DFT^P03|DEMO007|P|2.5.1\nEVN|P03|202605110948\nPID|1||100007^^^NORTH^MR||WILSON^MARA||19550327|F\nFT1|1|202605110900|202605110930|CG|99213^Office Visit||||1|125.00"
+    },
+    {
+      "id": "DEMO_008",
+      "type": "VXU^V04",
+      "patient": "KIM, JI",
+      "receivedAt": "2026-05-11T10:05:00Z",
+      "hl7": "MSH|^~\\&|IMM_REG|COUNTY|HELIX|NEXUS|202605111005||VXU^V04|DEMO008|P|2.5.1\nPID|1||100008^^^COUNTY^MR||KIM^JI||20190818|F\nORC|RE||IMM1008\nRXA|0|1|202605101130|202605101130|207^COVID-19 mRNA vaccine^CVX|0.5|mL||00^New immunization record^NIP001|9988^HARRIS^JULES"
+    },
+    {
+      "id": "DEMO_009",
+      "type": "MDM^T02",
+      "patient": "JOHNSON, NOAH",
+      "receivedAt": "2026-05-11T10:22:00Z",
+      "hl7": "MSH|^~\\&|DOC_SYS|NORTH_HOSP|HELIX|NEXUS|202605111022||MDM^T02|DEMO009|P|2.5.1\nEVN|T02|202605111022\nPID|1||100009^^^NORTH^MR||JOHNSON^NOAH||19791201|M\nTXA|1|DS|TEXT|202605111000|4455^WONG^PRIYA|202605111020|202605111021|DISCHARGE SUMMARY|DOC1009|AV"
+    },
+    {
+      "id": "DEMO_010",
+      "type": "RDE^O11",
+      "patient": "AHMED, LAYLA",
+      "receivedAt": "2026-05-11T10:39:00Z",
+      "hl7": "MSH|^~\\&|PHARMACY|WEST_CLINIC|HELIX|NEXUS|202605111039||RDE^O11|DEMO010|P|2.5.1\nPID|1||100010^^^WEST^MR||AHMED^LAYLA||19840630|F\nORC|NW|RX10010\nRXE|^^^202605111100|313782^AMOXICILLIN 500MG CAPSULE^RXNORM|500|mg|CAP|TAKE ONE CAPSULE BY MOUTH THREE TIMES DAILY"
+    },
+    {
+      "id": "DEMO_011",
+      "type": "ADT^A04",
+      "patient": "THOMPSON, LEO",
+      "receivedAt": "2026-05-11T10:55:00Z",
+      "hl7": "MSH|^~\\&|REG_SYS|URGENT_CARE|HELIX|NEXUS|202605111055||ADT^A04|DEMO011|P|2.5.1\nEVN|A04|202605111055\nPID|1||100011^^^URGENT^MR||THOMPSON^LEO||20010416|M|||77 RIVER RD^^AUSTIN^TX^78701||555-0111\nPV1|1|O|UC^01^1||||5566^BAKER^NOEL"
+    },
+    {
+      "id": "DEMO_012",
+      "type": "ORU^R01",
+      "patient": "GARCIA, MAYA",
+      "receivedAt": "2026-05-11T11:12:00Z",
+      "hl7": "MSH|^~\\&|RAD|SOUTH_HOSP|HELIX|NEXUS|202605111112||ORU^R01|DEMO012|P|2.5.1\nPID|1||100012^^^SOUTH^MR||GARCIA^MAYA||19991105|F\nOBR|1|ORD1012|RAD1012|71045^Chest X-Ray Single View|||202605111030\nOBX|1|TX|RADIMP^Radiology Impression||No acute cardiopulmonary abnormality identified.|||N|||F"
+    },
+     {
+      "id": "DEMO_012",
+      "type": "ORU^R01",
+      "patient": "GARCIA, MAYA",
+      "receivedAt": "2026-05-11T11:12:00Z",
+      "hl7": "MSH|^~\\&|RAD|SOUTH_HOSP|HELIX|NEXUS|202605111112||ORU^R01|DEMO012|P|2.5.1\nPID|1||100012^^^SOUTH^MR||GARCIA^MAYA||19991105|F\nOBR|1|ORD1012|RAD1012|71045^Chest X-Ray Single View|||202605111030\nOBX|1|TX|RADIMP^Radiology Impression||No acute cardiopulmonary abnormality identified.|||N|||F"
+    }
+    , {
+      "id": "DEMO_012",
+      "type": "ORU^R01",
+      "patient": "GARCIA, MAYA",
+      "receivedAt": "2026-05-11T11:12:00Z",
+      "hl7": "MSH|^~\\&|RAD|SOUTH_HOSP|HELIX|NEXUS|202605111112||ORU^R01|DEMO012|P|2.5.1\nPID|1||100012^^^SOUTH^MR||GARCIA^MAYA||19991105|F\nOBR|1|ORD1012|RAD1012|71045^Chest X-Ray Single View|||202605111030\nOBX|1|TX|RADIMP^Radiology Impression||No acute cardiopulmonary abnormality identified.|||N|||F"
+    }, {
+      "id": "DEMO_012",
+      "type": "ORU^R01",
+      "patient": "GARCIA, MAYA",
+      "receivedAt": "2026-05-11T11:12:00Z",
+      "hl7": "MSH|^~\\&|RAD|SOUTH_HOSP|HELIX|NEXUS|202605111112||ORU^R01|DEMO012|P|2.5.1\nPID|1||100012^^^SOUTH^MR||GARCIA^MAYA||19991105|F\nOBR|1|ORD1012|RAD1012|71045^Chest X-Ray Single View|||202605111030\nOBX|1|TX|RADIMP^Radiology Impression||No acute cardiopulmonary abnormality identified.|||N|||F"
+    }
+  ]
+}

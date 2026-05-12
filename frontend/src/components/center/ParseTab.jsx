@@ -111,8 +111,8 @@ export default function ParseTab() {
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              // HL7 MESSAGE INPUT
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+              HL7 message input
             </span>
             <span className={clsx(
               "font-mono text-[9px] font-bold uppercase px-2 py-0.5 border",
@@ -124,7 +124,7 @@ export default function ParseTab() {
           <button 
             onClick={handleProcess}
             disabled={isProcessing || !inputMessage.trim()}
-            className="bg-black text-white px-6 py-2 font-mono text-[11px] uppercase tracking-widest font-bold flex items-center hover:bg-slate-800 disabled:opacity-50"
+            className="nexus-parse-action flex items-center border px-6 py-2 font-mono text-[11px] font-bold uppercase tracking-widest disabled:opacity-50"
           >
             {isProcessing ? 'Processing...' : 'EXECUTE SEQUENCE'} <Play size={14} className="ml-2" />
           </button>
@@ -141,17 +141,17 @@ export default function ParseTab() {
       <div className="flex-1 flex space-x-4 min-h-0">
         
         {/* Segment Tree */}
-        <div className="flex-1 flex flex-col border-2 border-black bg-white min-w-0">
-          <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / AST PARSE TREE
+        <div className="nexus-parse-panel nexus-parse-panel--ast flex-1 flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white min-w-0">
+          <div className="nexus-parse-panel-header bg-slate-900 px-3 py-1.5 border-b-2 border-black">
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              AST parse tree
             </span>
           </div>
-          <div className="flex-1 overflow-y-auto p-3 bg-slate-50">
+          <div className="nexus-parse-panel-body flex-1 overflow-y-auto p-3 bg-slate-50">
             {ast ? (
               <div className="font-mono text-[11px] space-y-2">
                 {ast.segments.map((seg, i) => (
-                  <div key={seg.id} className="border border-slate-300 p-2 bg-white">
+                  <div key={seg.id} className="nexus-parse-segment border border-slate-300 p-2 bg-white">
                     <div className="font-bold text-[var(--color-nexus-red)] mb-1">
                       {seg.name} <span className="text-slate-400 font-normal">({seg.fields.length} fields)</span>
                     </div>
@@ -168,20 +168,20 @@ export default function ParseTab() {
               </div>
             ) : (
               <div className="h-full flex items-center justify-center text-slate-400 font-mono text-[10px]">
-                [ AWAITING_PAYLOAD ]
+                Awaiting payload
               </div>
             )}
           </div>
         </div>
 
         {/* Validation Matrix */}
-        <div className="w-64 flex flex-col border-2 border-black bg-white flex-shrink-0">
-          <div className="bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / COMPLIANCE VALIDATION
+        <div className="nexus-parse-panel nexus-parse-panel--validation w-64 flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white flex-shrink-0">
+          <div className="nexus-parse-panel-header bg-slate-900 px-3 py-1.5 border-b-2 border-black">
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              Compliance validation
             </span>
           </div>
-          <div className="flex-1 overflow-y-auto p-3">
+          <div className="nexus-parse-panel-body flex-1 overflow-y-auto p-3">
             {validation ? (
               <div className="flex flex-col space-y-4">
                 <div className={clsx(
@@ -231,26 +231,26 @@ export default function ParseTab() {
               </div>
             ) : (
               <div className="h-full flex items-center justify-center text-slate-400 font-mono text-[10px]">
-                [ NO_DATA ]
+                No validation data
               </div>
             )}
           </div>
         </div>
         
         {/* FHIR Bridge Output */}
-        <div className="flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white min-w-0">
-          <div className="bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)]">
-            <span className="text-white font-mono text-[10px] uppercase tracking-widest">
-              / FHIR BUNDLE EXPORT
+        <div className="nexus-fhir-panel flex-1 flex flex-col overflow-hidden rounded-2xl border-2 border-[var(--color-nexus-red)] bg-white min-w-0">
+          <div className="nexus-fhir-header bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)]">
+            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+              FHIR bundle export
             </span>
           </div>
-          <div className="flex-1 overflow-y-auto p-3 bg-red-50 text-blue-900 font-mono text-[10px] whitespace-pre">
+          <div className="nexus-fhir-body flex-1 overflow-y-auto p-3 font-mono text-[10px] whitespace-pre">
             {fhir ? JSON.stringify(fhir, null, 2) : (
-              <span className="text-slate-400">[ AWAITING_PAYLOAD ]</span>
+              <span className="text-slate-400">Awaiting payload</span>
             )}
           </div>
           {fhir && (
-            <div className="p-2 border-t-2 border-[var(--color-nexus-red)] bg-white flex justify-end">
+            <div className="nexus-fhir-footer p-2 border-t-2 border-[var(--color-nexus-red)] bg-white flex justify-end">
               <button onClick={downloadFhir} className="bg-[var(--color-nexus-red)] text-white px-4 py-1 font-mono text-[9px] uppercase font-bold hover:bg-red-800">
                 [DOWNLOAD FHIR JSON]
               </button>

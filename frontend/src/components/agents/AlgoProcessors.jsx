@@ -10,29 +10,37 @@ const ProcessorCard = ({ name, role, processorKey }) => {
 
   const isActive = status !== 'IDLE' && status !== 'COMPLETE' && status !== 'ERROR';
   const isError = status === 'ERROR';
+  const isComplete = status === 'COMPLETE';
+  const displayName = name
+    .replace(/_PROC$/, '')
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
     <div className={clsx(
-      "border-2 border-black flex flex-col relative overflow-hidden transition-all duration-300",
-      isActive ? "bg-blue-50 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]" : isError ? "bg-red-50" : "bg-white"
+      "nexus-pipeline-card flex flex-col relative overflow-hidden transition-all duration-300",
+      isActive ? "nexus-pipeline-card--active" : isError ? "nexus-pipeline-card--error" : isComplete ? "nexus-pipeline-card--complete" : "nexus-pipeline-card--idle"
     )}>
       {/* Header */}
-      <div className="flex justify-between items-center p-2 border-b border-gray-200">
+      <div className="nexus-pipeline-card-header flex justify-between items-center p-2 border-b border-gray-200">
         <div className="flex items-center space-x-1">
           {isActive ? (
-            <Loader2 size={12} className="animate-spin text-blue-600" />
+            <Loader2 size={12} className="nexus-pipeline-spinner animate-spin" />
           ) : isError ? (
-            <div className="w-2 h-2 rounded-full bg-red-600" />
+            <div className="nexus-pipeline-dot nexus-pipeline-dot--error" />
+          ) : isComplete ? (
+            <div className="nexus-pipeline-dot nexus-pipeline-dot--complete" />
           ) : (
-            <div className="w-2 h-2 rounded-full bg-slate-300" />
+            <div className="nexus-pipeline-dot nexus-pipeline-dot--idle" />
           )}
-          <span className="font-mono text-[10px] font-bold uppercase text-slate-800 truncate" title={`/${name}/`}>
-            /{name}/
+          <span className="nexus-pipeline-name text-[11px] font-semibold truncate" title={displayName}>
+            {displayName}
           </span>
         </div>
         <span className={clsx(
-          "font-mono text-[9px] uppercase font-bold",
-          isActive ? "text-blue-600 animate-pulse" : isError ? "text-red-600" : "text-slate-400"
+          "nexus-pipeline-status font-mono text-[9px] uppercase font-bold",
+          isActive && "animate-pulse"
         )}>
           {status}
         </span>
@@ -40,7 +48,7 @@ const ProcessorCard = ({ name, role, processorKey }) => {
 
       {/* Body */}
       <div className="p-2 flex-1 flex flex-col justify-between">
-        <p className="font-sans text-[10px] text-slate-600 leading-tight mb-2">
+        <p className="nexus-pipeline-role font-sans text-[10px] leading-tight mb-2">
           {role}
         </p>
         
@@ -48,10 +56,10 @@ const ProcessorCard = ({ name, role, processorKey }) => {
         <div className="grid grid-cols-2 gap-x-2 gap-y-1">
           {Object.entries(metrics).map(([key, val]) => (
             <div key={key} className="flex justify-between items-center">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400">
+              <span className="nexus-pipeline-metric-label font-mono text-[9px] uppercase tracking-widest">
                 {key.substring(0, 5)}:
               </span>
-              <span className="font-mono text-[9px] font-bold text-slate-700">
+              <span className="nexus-pipeline-metric-value font-mono text-[9px] font-bold">
                 {val}
               </span>
             </div>
@@ -60,10 +68,10 @@ const ProcessorCard = ({ name, role, processorKey }) => {
       </div>
       
       {/* Status Bar */}
-      <div className="h-1 w-full flex bg-slate-100">
+      <div className="nexus-pipeline-progress-track h-1 w-full flex">
         <div className={clsx(
-          "h-full transition-all duration-[800ms] ease-in-out",
-          isActive ? "w-full bg-blue-500 animate-pulse" : "w-0 bg-transparent"
+          "nexus-pipeline-progress-bar h-full transition-all duration-[800ms] ease-in-out",
+          isActive ? "w-full animate-pulse" : "w-0"
         )} />
       </div>
     </div>
@@ -78,16 +86,16 @@ export default function AlgoProcessors() {
   return (
     <div className="flex flex-col space-y-3 h-full">
       {/* Header section with real-time fetcher visibility */}
-      <div className="flex justify-between items-center border-b border-gray-300 pb-1">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-          // VALIDATION PIPELINE
+      <div className="nexus-pipeline-header flex justify-between items-center border-b border-gray-300 pb-1">
+        <span className="nexus-pipeline-title text-[11px] font-semibold uppercase tracking-[0.16em]">
+          Validation pipeline
         </span>
         <div className="flex items-center space-x-2">
           {isFetching && !isFetchComplete && (
             <Loader2 size={12} className="animate-spin text-[var(--color-nexus-red)]" />
           )}
-          <span className="text-[9px] font-mono text-slate-500">
-            {isFetching && !isFetchComplete ? 'FETCHING_DATA...' : 'RULE_ENGINE'}
+          <span className="nexus-pipeline-pill rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+            {isFetching && !isFetchComplete ? 'Fetching data' : 'Rule engine'}
           </span>
         </div>
       </div>

@@ -2,8 +2,34 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
 
+const getEventTone = (ev) => {
+  const signal = `${ev.severity || ''} ${ev.type || ''} ${ev.detail || ''}`.toUpperCase();
+
+  if (/ERROR|FAILED|FAIL|FAULT|INVALID|DISCONNECTED/.test(signal)) {
+    return 'error';
+  }
+
+  if (/WARN|RECONNECT|RETRY/.test(signal)) {
+    return 'warning';
+  }
+
+  if (/SUCCESS|COMPLETE|CONNECTED|SAVED|PASS|BOOT|ESTABLISHED|READY/.test(signal)) {
+    return 'success';
+  }
+
+  return 'info';
+};
+
+const logToneStyles = {
+  error: 'event-log-row--error',
+  success: 'event-log-row--success',
+  warning: 'event-log-row--warning',
+  info: 'event-log-row--info',
+};
+
 const LogEntry = ({ ev, time, isAIEvent }) => {
   const [displayedDetail, setDisplayedDetail] = useState('');
+  const tone = getEventTone(ev);
   
   useEffect(() => {
     // If event is older than 1 second, it was pre-loaded. Skip animation to save performance.
@@ -27,23 +53,23 @@ const LogEntry = ({ ev, time, isAIEvent }) => {
   }, [ev.detail, ev.timestamp]);
 
   return (
-    <div className="flex flex-col pb-2 mb-2 border-b border-slate-800 leading-tight last:border-0">
+    <div className={clsx('event-log-row mb-2 flex flex-col rounded-xl border px-3 py-2 leading-tight last:mb-0', logToneStyles[tone])}>
       <div className="flex space-x-1.5 items-center">
-        <span className="text-slate-500 flex-shrink-0">[{time}]</span>
+        <span className="event-log-time flex-shrink-0">[{time}]</span>
         <span className={clsx(
-          "font-bold truncate",
-          isAIEvent ? "text-[var(--color-nexus-red)]" : "text-green-400"
+          "event-log-type font-bold truncate",
+          isAIEvent && tone === 'info' ? "event-log-type--ai" : null
         )}>
           {ev.type}
         </span>
       </div>
       <span className={clsx(
-        "pl-14 break-words",
-        ev.severity === 'ERROR' ? "text-red-500 font-bold" : "text-slate-300"
+        "event-log-detail pl-14 break-words",
+        ev.severity === 'ERROR' ? "font-bold" : null
       )}>
         → {displayedDetail}
         {displayedDetail.length < ev.detail.length && (
-          <span className="inline-block w-1.5 h-2.5 bg-slate-400 ml-1 animate-pulse translate-y-0.5"></span>
+          <span className="event-log-cursor inline-block w-1.5 h-2.5 ml-1 animate-pulse translate-y-0.5"></span>
         )}
       </span>
     </div>
@@ -80,12 +106,12 @@ export default function RightPanel() {
           <span className="text-[9px] text-cyan-400 font-mono uppercase">Session_Sync</span>
         </div>
       </div>
-      <div className="p-4 flex-1 flex flex-col space-y-6 min-h-0">
+      <div className="p-4 flex-1 flex flex-col space-y-6 min-h-0 overflow-hidden">
         
         {/* LINK_MONITOR */}
         <div className="flex flex-col space-y-2">
-          <span className="font-mono text-[10px] text-slate-500 font-bold uppercase tracking-widest border-b border-gray-200 pb-1">
-            {isAI ? '// NEURAL_LINK_MONITOR' : '// RULE_ENGINE_MONITOR'}
+          <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-[0.16em] border-b border-gray-200 pb-1">
+            {isAI ? 'Neural link monitor' : 'Rule engine monitor'}
           </span>
           <div className={clsx(
             "border-2 p-3 flex flex-col space-y-2",
@@ -143,8 +169,8 @@ export default function RightPanel() {
         {/* SYSTEM EVENT LOG */}
         <div className="flex flex-col space-y-2 flex-1 min-h-0">
           <div className="flex justify-between items-end border-b border-gray-200 pb-1 flex-shrink-0">
-            <span className="font-mono text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-              // SYSTEM EVENT LOG
+            <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-[0.16em]">
+              System event log
             </span>
             <span className={clsx("font-mono text-[8px] uppercase", isLogPaused ? "text-red-500" : "text-slate-400 animate-pulse")}>
               {isLogPaused ? 'PAUSED' : 'LIVE'}
@@ -152,9 +178,9 @@ export default function RightPanel() {
           </div>
           <div 
             ref={scrollRef}
-            className="border-2 border-black bg-slate-900 flex-1 p-3 overflow-y-auto"
+            className="event-log-block border-2 border-black bg-slate-900 flex-1 min-h-0 p-3 overflow-y-auto overscroll-contain"
           >
-            <div className="font-mono text-[9px] text-slate-300 flex flex-col">
+            <div className="font-mono text-[9px] flex flex-col">
               {displayedEvents.map((ev, i) => {
                 const time = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString('en-US', { hour12: false }) : '00:00:00';
                 const isAIEvent = ev.engine === 'cloud_ai' || ev.engine === 'local_ai';
