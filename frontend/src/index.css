@@ -789,17 +789,17 @@ body[data-nexus-theme] .nexus-generator-error {
 
 body[data-nexus-theme] .modern-shell .nexus-parse-action,
 body[data-nexus-theme] .nexus-parse-action {
-  background-color: var(--nexus-accent);
-  border-color: var(--nexus-accent);
-  border-radius: 0.75rem;
-  color: var(--nexus-control-active-text);
-  box-shadow: var(--nexus-control-active-shadow);
+  background-color: color-mix(in srgb, var(--nexus-accent) 8%, var(--nexus-surface));
+  border-color: color-mix(in srgb, var(--nexus-accent) 28%, var(--nexus-border));
+  border-radius: 0.65rem;
+  box-shadow: none;
+  color: var(--nexus-accent-text);
 }
 
 body[data-nexus-theme] .modern-shell .nexus-parse-action:hover:not(:disabled),
 body[data-nexus-theme] .nexus-parse-action:hover:not(:disabled) {
-  background-color: var(--nexus-accent-hover);
-  border-color: var(--nexus-accent-hover);
+  background-color: color-mix(in srgb, var(--nexus-accent) 13%, var(--nexus-surface));
+  border-color: color-mix(in srgb, var(--nexus-accent) 48%, var(--nexus-border));
 }
 
 body[data-nexus-theme] .modern-shell .nexus-parse-action:disabled,
@@ -845,17 +845,17 @@ body[data-nexus-theme] .nexus-parse-segment {
 
 body[data-nexus-theme] .modern-shell .nexus-tool-action,
 body[data-nexus-theme] .nexus-tool-action {
-  background-color: var(--nexus-accent);
-  border-color: var(--nexus-accent);
-  border-radius: 0.75rem;
-  color: var(--nexus-control-active-text);
-  box-shadow: var(--nexus-control-active-shadow);
+  background-color: color-mix(in srgb, var(--nexus-accent) 8%, var(--nexus-surface));
+  border-color: color-mix(in srgb, var(--nexus-accent) 28%, var(--nexus-border));
+  border-radius: 0.65rem;
+  box-shadow: none;
+  color: var(--nexus-accent-text);
 }
 
 body[data-nexus-theme] .modern-shell .nexus-tool-action:hover:not(:disabled),
 body[data-nexus-theme] .nexus-tool-action:hover:not(:disabled) {
-  background-color: var(--nexus-accent-hover);
-  border-color: var(--nexus-accent-hover);
+  background-color: color-mix(in srgb, var(--nexus-accent) 13%, var(--nexus-surface));
+  border-color: color-mix(in srgb, var(--nexus-accent) 48%, var(--nexus-border));
 }
 
 body[data-nexus-theme] .modern-shell .nexus-tool-action:disabled,
@@ -865,18 +865,32 @@ body[data-nexus-theme] .nexus-tool-secondary-action:disabled {
   cursor: not-allowed;
 }
 
+body[data-nexus-theme] .modern-shell .nexus-build-message-action,
+body[data-nexus-theme] .nexus-build-message-action {
+  background-color: transparent;
+  border-color: color-mix(in srgb, var(--nexus-accent) 24%, var(--nexus-border));
+  border-radius: 0.55rem;
+  min-height: 1.95rem;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-build-message-action:hover:not(:disabled),
+body[data-nexus-theme] .nexus-build-message-action:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--nexus-accent) 8%, transparent);
+}
+
 body[data-nexus-theme] .modern-shell .nexus-tool-secondary-action,
 body[data-nexus-theme] .nexus-tool-secondary-action {
-  background-color: var(--nexus-surface);
+  background-color: color-mix(in srgb, var(--nexus-surface) 78%, transparent);
   border-color: var(--nexus-border);
-  border-radius: 0.75rem;
+  border-radius: 0.65rem;
+  box-shadow: none;
   color: var(--nexus-ink);
 }
 
 body[data-nexus-theme] .modern-shell .nexus-tool-secondary-action:hover:not(:disabled),
 body[data-nexus-theme] .nexus-tool-secondary-action:hover:not(:disabled) {
-  background-color: var(--nexus-panel);
-  border-color: var(--nexus-accent);
+  background-color: color-mix(in srgb, var(--nexus-panel) 62%, var(--nexus-surface));
+  border-color: color-mix(in srgb, var(--nexus-accent) 36%, var(--nexus-border));
 }
 
 body[data-nexus-theme] .modern-shell textarea.nexus-tool-textarea,
@@ -1313,6 +1327,132 @@ body[data-nexus-theme] .nexus-fhir-footer {
   border-bottom-right-radius: calc(1rem - 2px);
 }
 
+body[data-nexus-theme] .modern-shell .nexus-output-header-action,
+body[data-nexus-theme] .nexus-output-header-action {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transition: background-color 160ms ease, border-color 160ms ease, opacity 160ms ease;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-output-header-action:hover:not(:disabled),
+body[data-nexus-theme] .nexus-output-header-action:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.23);
+  border-color: rgba(255, 255, 255, 0.46);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-output-header-action:disabled,
+body[data-nexus-theme] .nexus-output-header-action:disabled {
+  cursor: not-allowed;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-overlay,
+body[data-nexus-theme] .nexus-detail-overlay {
+  background: var(--nexus-overlay);
+  padding: 1.5rem;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-dialog,
+body[data-nexus-theme] .nexus-detail-dialog {
+  background-color: var(--nexus-surface);
+  border-color: var(--nexus-border);
+  border-radius: 1.5rem;
+  box-shadow: var(--nexus-modal-shadow);
+  color: var(--nexus-ink);
+  height: min(42rem, calc(100dvh - 3rem));
+  max-height: calc(100dvh - 3rem);
+  min-height: min(34rem, calc(100dvh - 3rem));
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-body,
+body[data-nexus-theme] .nexus-detail-body {
+  min-height: 0;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-header,
+body[data-nexus-theme] .nexus-detail-header,
+body[data-nexus-theme] .modern-shell .nexus-detail-section-title,
+body[data-nexus-theme] .nexus-detail-section-title {
+  background-color: var(--nexus-glass-strong);
+  border-color: var(--nexus-border);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-eyebrow,
+body[data-nexus-theme] .nexus-detail-eyebrow {
+  color: var(--nexus-accent-text);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-copy,
+body[data-nexus-theme] .nexus-detail-copy,
+body[data-nexus-theme] .modern-shell .nexus-detail-section-title,
+body[data-nexus-theme] .nexus-detail-section-title,
+body[data-nexus-theme] .modern-shell .nexus-detail-metric span,
+body[data-nexus-theme] .nexus-detail-metric span {
+  color: var(--nexus-muted);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-close,
+body[data-nexus-theme] .nexus-detail-close {
+  background-color: var(--nexus-control-bg);
+  border-color: var(--nexus-border);
+  color: var(--nexus-muted);
+  position: fixed;
+  /* right: max(1.5rem, calc((100vw - 64rem) / 2 + 1rem));
+  top: max(2rem, calc((100dvh - 42rem) / 2 + 1rem)); */
+  top:42px;
+  right:38px;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-close:hover,
+body[data-nexus-theme] .nexus-detail-close:hover {
+  background-color: var(--nexus-control-hover-bg);
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-metric,
+body[data-nexus-theme] .nexus-detail-metric,
+body[data-nexus-theme] .modern-shell .nexus-detail-section,
+body[data-nexus-theme] .nexus-detail-section,
+body[data-nexus-theme] .modern-shell .nexus-detail-segment,
+body[data-nexus-theme] .nexus-detail-segment,
+body[data-nexus-theme] .modern-shell .nexus-detail-row,
+body[data-nexus-theme] .nexus-detail-row,
+body[data-nexus-theme] .modern-shell .nexus-detail-empty,
+body[data-nexus-theme] .nexus-detail-empty {
+  background-color: var(--nexus-panel);
+  border-color: var(--nexus-border);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-section,
+body[data-nexus-theme] .nexus-detail-section {
+  min-width: 0;
+}
+
+body[data-nexus-theme] .nexus-detail-section .nexus-parse-panel-body {
+  min-height: 0;
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-metric strong,
+body[data-nexus-theme] .nexus-detail-metric strong {
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-chip,
+body[data-nexus-theme] .nexus-detail-chip {
+  background-color: var(--nexus-accent-muted);
+  border-color: color-mix(in srgb, var(--nexus-accent) 34%, var(--nexus-border));
+  color: var(--nexus-accent-text);
+}
+
+body[data-nexus-theme] .modern-shell .nexus-detail-code,
+body[data-nexus-theme] .nexus-detail-code {
+  background-color: var(--nexus-output-bg);
+  color: var(--nexus-ink);
+  min-height: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 body[data-nexus-theme] .nexus-pipeline-header {
   border-color: var(--nexus-border);
 }
@@ -1451,36 +1591,36 @@ body[data-nexus-theme] .nexus-pipeline-microbar--active {
 }
 
 .event-log-block {
-  background: var(--nexus-log-surface);
+  background: color-mix(in srgb, var(--nexus-surface) 58%, var(--nexus-panel));
   border-color: var(--nexus-border);
+  border-radius: 0.95rem;
 }
 
 .event-log-row {
   --event-log-accent: var(--nexus-log-info-text);
-  background: var(--nexus-log-info-bg);
-  border-color: var(--nexus-log-info-border);
-  color: var(--nexus-log-info-text);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--event-log-accent) 52%, var(--nexus-border));
+  color: var(--nexus-ink);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.event-log-row:hover {
+  background: color-mix(in srgb, var(--event-log-accent) 7%, transparent);
 }
 
 .event-log-row--success {
   --event-log-accent: var(--nexus-log-success-text);
-  background: var(--nexus-log-success-bg);
-  border-color: var(--nexus-log-success-border);
-  color: var(--nexus-log-success-text);
+  color: var(--nexus-ink);
 }
 
 .event-log-row--warning {
   --event-log-accent: var(--nexus-log-warning-text);
-  background: var(--nexus-log-warning-bg);
-  border-color: var(--nexus-log-warning-border);
-  color: var(--nexus-log-warning-text);
+  color: var(--nexus-ink);
 }
 
 .event-log-row--error {
   --event-log-accent: var(--nexus-log-error-text);
-  background: var(--nexus-log-error-bg);
-  border-color: var(--nexus-log-error-border);
-  color: var(--nexus-log-error-text);
+  color: var(--nexus-ink);
 }
 
 .event-log-time {
@@ -1488,9 +1628,12 @@ body[data-nexus-theme] .nexus-pipeline-microbar--active {
 }
 
 .event-log-type,
-.event-log-type--ai,
-.event-log-detail {
+.event-log-type--ai {
   color: var(--event-log-accent);
+}
+
+.event-log-detail {
+  color: var(--nexus-muted);
 }
 
 .event-log-type--ai {
@@ -1745,6 +1888,47 @@ body[data-nexus-theme] .nexus-workbench-body {
   background:
     radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--nexus-cyan-soft) 38%, transparent), transparent 28rem),
     color-mix(in srgb, var(--nexus-surface) 76%, transparent);
+}
+
+body[data-nexus-theme] .nexus-workbench-tabs {
+  background: color-mix(in srgb, var(--nexus-surface) 64%, transparent);
+  gap: 0.3rem;
+  justify-content: flex-start;
+  padding: 0.45rem;
+}
+
+body[data-nexus-theme] .nexus-workbench-tab {
+  border: 1px solid transparent;
+  border-radius: 0.6rem;
+  flex: 0 0 auto;
+  font-size: 0.58rem;
+  letter-spacing: 0.075em;
+  min-height: 2rem;
+  padding-bottom: 0.35rem;
+  padding-top: 0.35rem;
+  width: auto;
+}
+
+body[data-nexus-theme] .nexus-workbench-tab::before {
+  display: none;
+}
+
+body[data-nexus-theme] .nexus-workbench-tab--idle {
+  background: transparent;
+  color: var(--nexus-muted);
+}
+
+body[data-nexus-theme] .nexus-workbench-tab--idle:hover {
+  background-color: color-mix(in srgb, var(--nexus-panel) 52%, transparent);
+  border-color: color-mix(in srgb, var(--nexus-border) 78%, transparent);
+  color: var(--nexus-ink);
+}
+
+body[data-nexus-theme] .nexus-workbench-tab--active {
+  background: color-mix(in srgb, var(--nexus-surface) 62%, transparent);
+  border-color: color-mix(in srgb, var(--nexus-accent) 24%, var(--nexus-border));
+  box-shadow: inset 0 -1px 0 var(--nexus-accent);
+  color: var(--nexus-ink);
 }
 
 body[data-nexus-theme] .nexus-panel-top {

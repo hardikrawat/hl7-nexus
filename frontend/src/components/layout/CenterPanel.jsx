@@ -26,7 +26,7 @@ export default function CenterPanel() {
     <div className="nexus-center-shell flex flex-col h-full bg-white relative">
 
       {/* Tabs */}
-      <div className="nexus-workbench-tabs flex flex-shrink-0 border-b border-gray-300">
+      <div className="nexus-workbench-tabs flex flex-shrink-0 items-center overflow-x-auto border-b border-gray-300">
         {tabs.map((tab) => {
           const isDisabled = (tab.aiOnly && !isAI) || (tab.algoOnly && isAI);
           const isActive = activeTab === tab.route;
@@ -38,7 +38,7 @@ export default function CenterPanel() {
               disabled={isDisabled}
               onClick={() => setActiveTab(tab.route)}
               title={isDisabled ? (tab.aiOnly ? "Requires AI Engine" : "Requires Algorithm Engine") : ""}
-              className={`nexus-workbench-tab flex-1 font-mono text-[10px] uppercase tracking-wider py-2 border-b-2 transition-colors inline-flex items-center justify-center gap-2 ${
+              className={`nexus-workbench-tab flex-none px-4 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-colors inline-flex items-center justify-center gap-2 ${
                 isActive 
                   ? 'nexus-workbench-tab--active border-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold bg-gray-50'
                   : 'nexus-workbench-tab--idle border-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'

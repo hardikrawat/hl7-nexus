@@ -154,9 +154,9 @@ export default function GenerateTab() {
           <button 
             onClick={handleGenerate}
             disabled={isProcessing || !!jsonError}
-            className="border border-red-900/10 bg-[var(--color-nexus-red)] text-white px-6 py-2 font-mono text-[11px] uppercase tracking-widest font-bold shadow-sm hover:bg-red-800 disabled:opacity-50"
+            className="nexus-tool-action nexus-build-message-action inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider disabled:opacity-50"
           >
-            {isProcessing ? 'GENERATING...' : 'BUILD MESSAGE'}
+            {isProcessing ? 'Generating...' : 'Build message'} <Play size={11} />
           </button>
         </div>
       </div>

@@ -53,25 +53,27 @@ const LogEntry = ({ ev, time, isAIEvent }) => {
   }, [ev.detail, ev.timestamp]);
 
   return (
-    <div className={clsx('event-log-row mb-2 flex flex-col rounded-xl border px-3 py-2 leading-tight last:mb-0', logToneStyles[tone])}>
-      <div className="flex space-x-1.5 items-center">
-        <span className="event-log-time flex-shrink-0">[{time}]</span>
+    <div className={clsx('event-log-row mb-1.5 grid grid-cols-[56px_minmax(0,1fr)] gap-x-2 rounded-md border-l-2 px-2.5 py-1.5 leading-tight last:mb-0', logToneStyles[tone])}>
+      <span className="event-log-time flex-shrink-0 pt-0.5">{time}</span>
+      <div className="min-w-0">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className={clsx(
+            "event-log-type min-w-0 truncate font-bold",
+            isAIEvent && tone === 'info' ? "event-log-type--ai" : null
+          )}>
+            {ev.type.replace('EventType.', '')}
+          </span>
+        </div>
         <span className={clsx(
-          "event-log-type font-bold truncate",
-          isAIEvent && tone === 'info' ? "event-log-type--ai" : null
+          "event-log-detail mt-0.5 block break-words",
+          ev.severity === 'ERROR' ? "font-bold" : null
         )}>
-          {ev.type}
+          {displayedDetail}
+          {displayedDetail.length < ev.detail.length && (
+            <span className="event-log-cursor inline-block h-2.5 w-1.5 translate-y-0.5 animate-pulse ml-1"></span>
+          )}
         </span>
       </div>
-      <span className={clsx(
-        "event-log-detail pl-14 break-words",
-        ev.severity === 'ERROR' ? "font-bold" : null
-      )}>
-        → {displayedDetail}
-        {displayedDetail.length < ev.detail.length && (
-          <span className="event-log-cursor inline-block w-1.5 h-2.5 ml-1 animate-pulse translate-y-0.5"></span>
-        )}
-      </span>
     </div>
   );
 };
@@ -178,7 +180,7 @@ export default function RightPanel() {
           </div>
           <div 
             ref={scrollRef}
-            className="event-log-block border-2 border-black bg-slate-900 flex-1 min-h-0 p-3 overflow-y-auto overscroll-contain"
+            className="event-log-block flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl border p-2.5"
           >
             <div className="font-mono text-[9px] flex flex-col">
               {displayedEvents.map((ev, i) => {
