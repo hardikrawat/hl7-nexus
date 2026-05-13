@@ -119,7 +119,7 @@ export default function GenerateTab() {
   return (
     <div className="nexus-generator flex h-full flex-col space-y-4">
       {/* Controls */}
-      <div className="nexus-generator-controls flex items-end gap-4 rounded-md border p-3 shadow-sm">
+      <div className="nexus-generator-controls flex items-end gap-4 rounded-xl border p-3 shadow-sm">
         <div className="flex flex-col space-y-1">
           <span className="nexus-generator-label mb-2 border-b border-gray-200 pb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
             Message template
@@ -127,7 +127,7 @@ export default function GenerateTab() {
           <select 
             value={template}
             onChange={(e) => setTemplate(e.target.value)}
-            className="nexus-generator-select rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-sm focus:outline-none focus:border-[var(--color-nexus-red)]"
+            className="nexus-generator-select rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-sm focus:outline-none focus:border-[var(--color-nexus-red)]"
           >
             <option value="ADT_A01">ADT^A01 (Admit)</option>
             <option value="ADT_A03">ADT^A03 (Discharge)</option>
@@ -165,7 +165,7 @@ export default function GenerateTab() {
       <div className="flex-1 flex space-x-4 min-h-0">
         
         {/* JSON Input */}
-        <div className="nexus-generator-panel flex flex-1 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div className="nexus-generator-panel flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="nexus-generator-panel-header flex items-center justify-between border-b-2 border-black bg-slate-900 px-3 py-1.5">
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               Patient data JSON
@@ -187,7 +187,7 @@ export default function GenerateTab() {
         </div>
 
         {/* HL7 Output */}
-        <div className="nexus-generator-panel nexus-generator-panel--output flex flex-1 flex-col overflow-hidden rounded-lg border border-red-200 bg-white shadow-sm">
+        <div className="nexus-generator-panel nexus-generator-panel--output flex flex-1 flex-col overflow-hidden rounded-2xl border border-red-200 bg-white shadow-sm">
           <div className="nexus-generator-panel-header nexus-generator-panel-header--accent flex items-center justify-between border-b-2 border-[var(--color-nexus-red)] bg-[var(--color-nexus-red)] px-3 py-1.5">
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               Generated HL7 output

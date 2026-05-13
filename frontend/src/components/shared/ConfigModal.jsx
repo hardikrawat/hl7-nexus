@@ -3,13 +3,12 @@ import { useNexusStore } from '../../store/nexusStore';
 import { Cloud, Database, LayoutDashboard, RefreshCw, Server, X } from 'lucide-react';
 import axios from 'axios';
 import { API } from '../../config/api';
-import { motion } from 'framer-motion';
 
 function ConfigSection({ icon: Icon, eyebrow, title, children }) {
   return (
-    <section className="nexus-config-section rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="nexus-config-section rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center gap-3">
-        <div className="nexus-config-icon flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-600">
+        <div className="nexus-config-icon flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600">
           <Icon size={16} />
         </div>
         <div>
@@ -59,6 +58,7 @@ export default function ConfigModal() {
         detail: 'Fetching Gemini models via proxy...',
         severity: 'INFO'
       });
+      // Hit our FastAPI backend
       const res = await axios.post(API.ENGINE_GEMINI_MODELS, { api_key: localConfig.geminiApiKey }, { timeout: 15000 });
       const models = res.data.models;
       
@@ -90,20 +90,8 @@ export default function ConfigModal() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="nexus-config-overlay fixed inset-0 z-[9999] flex items-center justify-center p-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.95, opacity: 0, y: 10 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 10 }}
-        transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
-        className="nexus-config-dialog flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]"
-      >
+    <div className="nexus-config-overlay fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md">
+      <div className="nexus-config-dialog flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]">
         {/* Header */}
         <div className="nexus-config-dialog-header flex items-start justify-between border-b border-slate-200 bg-white px-6 py-5">
           <div>
@@ -119,7 +107,7 @@ export default function ConfigModal() {
           </div>
           <button
             onClick={handleCancel}
-            className="nexus-button-secondary flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+            className="nexus-button-secondary flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
             title="Close settings"
           >
             <X size={16} />
@@ -137,12 +125,12 @@ export default function ConfigModal() {
                 value={localConfig.geminiApiKey}
                 onChange={handleChange}
                 placeholder="Enter Google Gemini API Key"
-                className="min-w-0 flex-1 rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
               />
               <button 
                 onClick={fetchGeminiModels}
                 disabled={!localConfig.geminiApiKey || isFetchingModels}
-                className="flex items-center rounded-md border border-slate-900 bg-slate-950 px-4 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-slate-800 disabled:opacity-50"
+                className="flex items-center rounded-xl border border-slate-900 bg-slate-950 px-4 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-slate-800 disabled:opacity-50"
               >
                 {isFetchingModels ? <RefreshCw size={14} className="animate-spin mr-2" /> : null}
                 Fetch Models
@@ -156,7 +144,7 @@ export default function ConfigModal() {
                   name="activeModel"
                   value={localConfig.activeModel}
                   onChange={handleChange}
-                  className="appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                  className="appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
                 >
                   {localConfig.availableModels.map(m => (
                     <option key={m.id} value={m.id}>
@@ -176,7 +164,7 @@ export default function ConfigModal() {
               value={localConfig.ollamaUrl}
               onChange={handleChange}
               placeholder="http://localhost:11434"
-              className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
             />
           </ConfigSection>
 
@@ -186,7 +174,7 @@ export default function ConfigModal() {
               name="terminologyServer"
               value={localConfig.terminologyServer}
               onChange={handleChange}
-              className="w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
             >
               <option value="hl7_tho">HL7 Terminology (THO) REST API</option>
               <option value="cdc_phin">CDC PHIN VADS</option>
@@ -204,7 +192,7 @@ export default function ConfigModal() {
               name="layoutMode"
               value={localConfig.layoutMode || 'classic'}
               onChange={handleChange}
-              className="w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
             >
               <option value="modern">MODERN PROTOTYPE (Responsive Console)</option>
               <option value="classic">CLASSIC (3-Column Dense)</option>
@@ -222,19 +210,18 @@ export default function ConfigModal() {
         <div className="nexus-config-dialog-footer flex justify-end gap-3 border-t border-slate-200 bg-white p-4">
           <button 
             onClick={handleCancel}
-            className="nexus-button-secondary rounded-md border border-slate-200 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+            className="nexus-button-secondary rounded-xl border border-slate-200 bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
           >
             Cancel
           </button>
           <button 
             onClick={handleSave}
-            className="rounded-md border border-red-900/10 bg-[var(--color-nexus-red)] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-red-800"
+            className="rounded-xl border border-red-900/10 bg-[var(--color-nexus-red)] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-red-800"
           >
             Save Configuration
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
-

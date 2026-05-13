@@ -38,10 +38,10 @@ export default function CenterPanel() {
               disabled={isDisabled}
               onClick={() => setActiveTab(tab.route)}
               title={isDisabled ? (tab.aiOnly ? "Requires AI Engine" : "Requires Algorithm Engine") : ""}
-              className={`nexus-main-tab flex-1 font-mono text-[10px] uppercase tracking-wider py-2 border-b-2 transition-colors inline-flex items-center justify-center gap-2 rounded-none ${
+              className={`flex-1 font-mono text-[10px] uppercase tracking-wider py-2 border-b-2 transition-colors inline-flex items-center justify-center gap-2 ${
                 isActive 
-                  ? 'border-b-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold' 
-                  : 'border-b-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'
+                  ? 'border-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold bg-gray-50' 
+                  : 'border-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'
               } ${isDisabled ? 'opacity-45 cursor-not-allowed' : ''}`}
             >
               <Icon size={13} />

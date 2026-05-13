@@ -45,7 +45,7 @@ body[data-nexus-theme="soft-slate"],
   --nexus-control-active-shadow: 0 8px 18px rgba(180, 35, 42, 0.22);
   --nexus-engine-badge-bg: #e2e8f0;
   --nexus-engine-badge-text: #334155;
-  --nexus-overlay: rgba(71, 85, 105, 0.15);
+  --nexus-overlay: rgba(15, 23, 42, 0.42);
   --nexus-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
   --nexus-modal-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
   --nexus-log-surface: #111827;
@@ -102,7 +102,7 @@ body[data-nexus-theme="dark-console"],
   --nexus-control-active-shadow: 0 0 0 1px rgba(248, 113, 113, 0.45), 0 10px 22px rgba(248, 113, 113, 0.2);
   --nexus-engine-badge-bg: #172033;
   --nexus-engine-badge-text: #e2e8f0;
-  --nexus-overlay: rgba(15, 23, 42, 0.35);
+  --nexus-overlay: rgba(0, 0, 0, 0.68);
   --nexus-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
   --nexus-modal-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
   --nexus-log-surface: #111113;
@@ -198,13 +198,13 @@ body.modern-ui::after {
 
 .modern-shell .modern-workbench .border-2,
 .modern-shell aside .border-2 {
-  border-radius: 4px;
+  border-radius: 12px;
 }
 
 .modern-shell textarea,
 .modern-shell select,
 .modern-shell input {
-  border-radius: 4px;
+  border-radius: 10px;
   border-color: #cbd5e1;
   background-color: #f8fafc;
   color: #0f172a;
@@ -218,7 +218,7 @@ body.modern-ui::after {
 }
 
 .modern-shell button {
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 .modern-shell .modern-workbench button,
@@ -234,11 +234,6 @@ body.modern-ui::after {
 .modern-shell .modern-workbench [class*="border-b-2"],
 .modern-shell aside [class*="border-b-2"] {
   border-bottom-width: 1px;
-}
-
-.modern-shell .nexus-main-tab {
-  border-radius: 0 !important;
-  box-shadow: none !important;
 }
 
 .modern-shell .modern-workbench [class*="bg-slate-900"],
@@ -595,9 +590,6 @@ body[data-nexus-theme] .modern-shell .shadow-md {
 
 body[data-nexus-theme] .nexus-config-overlay {
   background-color: var(--nexus-overlay);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s ease-in-out;
 }
 
 body[data-nexus-theme] .nexus-config-dialog {
@@ -779,7 +771,7 @@ body[data-nexus-theme] .modern-shell .nexus-parse-action,
 body[data-nexus-theme] .nexus-parse-action {
   background-color: var(--nexus-accent);
   border-color: var(--nexus-accent);
-  border-radius: 4px;
+  border-radius: 0.75rem;
   color: var(--nexus-control-active-text);
   box-shadow: var(--nexus-control-active-shadow);
 }
@@ -799,7 +791,7 @@ body[data-nexus-theme] .modern-shell .nexus-parse-panel,
 body[data-nexus-theme] .nexus-parse-panel {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-border);
-  border-radius: 6px;
+  border-radius: 1rem;
   box-shadow: var(--nexus-shadow);
   overflow: hidden;
 }
@@ -808,8 +800,8 @@ body[data-nexus-theme] .modern-shell .nexus-parse-panel-header,
 body[data-nexus-theme] .nexus-parse-panel-header {
   background-color: var(--nexus-panel-strong);
   border-color: var(--nexus-border-strong);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: calc(1rem - 2px);
+  border-top-right-radius: calc(1rem - 2px);
   color: var(--nexus-panel-strong-text);
 }
 
@@ -828,14 +820,14 @@ body[data-nexus-theme] .modern-shell .nexus-parse-segment,
 body[data-nexus-theme] .nexus-parse-segment {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-border);
-  border-radius: 4px;
+  border-radius: 0.75rem;
 }
 
 body[data-nexus-theme] .modern-shell .nexus-tool-action,
 body[data-nexus-theme] .nexus-tool-action {
   background-color: var(--nexus-accent);
   border-color: var(--nexus-accent);
-  border-radius: 4px;
+  border-radius: 0.75rem;
   color: var(--nexus-control-active-text);
   box-shadow: var(--nexus-control-active-shadow);
 }
@@ -857,7 +849,7 @@ body[data-nexus-theme] .modern-shell .nexus-tool-secondary-action,
 body[data-nexus-theme] .nexus-tool-secondary-action {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-border);
-  border-radius: 4px;
+  border-radius: 0.75rem;
   color: var(--nexus-ink);
 }
 
@@ -871,7 +863,7 @@ body[data-nexus-theme] .modern-shell textarea.nexus-tool-textarea,
 body[data-nexus-theme] textarea.nexus-tool-textarea {
   background-color: var(--nexus-input);
   border-color: var(--nexus-border);
-  border-radius: 6px;
+  border-radius: 1rem;
   color: var(--nexus-ink);
 }
 
@@ -898,7 +890,7 @@ body[data-nexus-theme] .modern-shell .nexus-tool-panel,
 body[data-nexus-theme] .nexus-tool-panel {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-border);
-  border-radius: 6px;
+  border-radius: 1rem;
   box-shadow: var(--nexus-shadow);
   overflow: hidden;
 }
@@ -912,8 +904,8 @@ body[data-nexus-theme] .modern-shell .nexus-tool-panel-header,
 body[data-nexus-theme] .nexus-tool-panel-header {
   background-color: var(--nexus-panel-strong);
   border-color: var(--nexus-border-strong);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: calc(1rem - 2px);
+  border-top-right-radius: calc(1rem - 2px);
   color: var(--nexus-panel-strong-text);
 }
 
@@ -939,8 +931,8 @@ body[data-nexus-theme] .modern-shell .nexus-tool-panel-footer,
 body[data-nexus-theme] .nexus-tool-panel-footer {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-border);
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: calc(1rem - 2px);
+  border-bottom-right-radius: calc(1rem - 2px);
 }
 
 body[data-nexus-theme] .modern-shell .nexus-tool-copy-button,
@@ -962,7 +954,7 @@ body[data-nexus-theme] .modern-shell .nexus-nl-instructions,
 body[data-nexus-theme] .nexus-nl-instructions {
   background-color: var(--nexus-control-sub-bg);
   border-color: var(--nexus-control-sub-border);
-  border-radius: 6px;
+  border-radius: 1rem;
   color: var(--nexus-ink);
 }
 
@@ -1078,8 +1070,8 @@ body[data-nexus-theme] .nexus-diff-footer {
 
 body[data-nexus-theme] .modern-shell .nexus-diff-footer,
 body[data-nexus-theme] .nexus-diff-footer {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: calc(1rem - 2px);
+  border-bottom-right-radius: calc(1rem - 2px);
 }
 
 body[data-nexus-theme] .modern-shell .nexus-diff-segment,
@@ -1095,7 +1087,7 @@ body[data-nexus-theme] .nexus-batch-progress-shell {
     linear-gradient(135deg, color-mix(in srgb, var(--nexus-accent-soft) 32%, transparent), transparent 44%),
     linear-gradient(180deg, color-mix(in srgb, var(--nexus-surface) 94%, white), var(--nexus-panel));
   border: 1px solid color-mix(in srgb, var(--nexus-accent) 26%, var(--nexus-border));
-  border-radius: 6px;
+  border-radius: 1.1rem;
   box-shadow: 0 18px 38px color-mix(in srgb, var(--nexus-accent) 12%, transparent);
   padding: 0.85rem;
 }
@@ -1217,7 +1209,7 @@ body[data-nexus-theme] .nexus-batch-progress-steps span {
 
 body[data-nexus-theme] .modern-shell .nexus-batch-result,
 body[data-nexus-theme] .nexus-batch-result {
-  border-radius: 4px;
+  border-radius: 0.75rem;
 }
 
 body[data-nexus-theme] .modern-shell .nexus-batch-result--pass,
@@ -1263,7 +1255,7 @@ body[data-nexus-theme] .modern-shell .nexus-fhir-panel,
 body[data-nexus-theme] .nexus-fhir-panel {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-accent);
-  border-radius: 6px;
+  border-radius: 1rem;
   box-shadow: var(--nexus-shadow);
   overflow: hidden;
 }
@@ -1272,8 +1264,8 @@ body[data-nexus-theme] .modern-shell .nexus-fhir-header,
 body[data-nexus-theme] .nexus-fhir-header {
   background-color: var(--nexus-accent);
   border-color: var(--nexus-accent);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: calc(1rem - 2px);
+  border-top-right-radius: calc(1rem - 2px);
   color: #ffffff;
 }
 
@@ -1297,8 +1289,8 @@ body[data-nexus-theme] .modern-shell .nexus-fhir-footer,
 body[data-nexus-theme] .nexus-fhir-footer {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-accent);
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: calc(1rem - 2px);
+  border-bottom-right-radius: calc(1rem - 2px);
 }
 
 body[data-nexus-theme] .nexus-pipeline-header {
@@ -1321,7 +1313,7 @@ body[data-nexus-theme] .nexus-pipeline-pill--accent {
 
 body[data-nexus-theme] .nexus-pipeline-card {
   border: 1px solid var(--nexus-border);
-  border-radius: 4px;
+  border-radius: 14px;
   background-color: var(--nexus-surface);
   color: var(--nexus-ink);
   box-shadow: var(--nexus-shadow);
@@ -1445,29 +1437,29 @@ body[data-nexus-theme] .nexus-pipeline-microbar--active {
 
 .event-log-row {
   --event-log-accent: var(--nexus-log-info-text);
-  background: transparent;
-  border-color: transparent;
+  background: var(--nexus-log-info-bg);
+  border-color: var(--nexus-log-info-border);
   color: var(--nexus-log-info-text);
 }
 
 .event-log-row--success {
   --event-log-accent: var(--nexus-log-success-text);
-  background: transparent;
-  border-color: transparent;
+  background: var(--nexus-log-success-bg);
+  border-color: var(--nexus-log-success-border);
   color: var(--nexus-log-success-text);
 }
 
 .event-log-row--warning {
   --event-log-accent: var(--nexus-log-warning-text);
-  background: transparent;
-  border-color: transparent;
+  background: var(--nexus-log-warning-bg);
+  border-color: var(--nexus-log-warning-border);
   color: var(--nexus-log-warning-text);
 }
 
 .event-log-row--error {
   --event-log-accent: var(--nexus-log-error-text);
-  background: transparent;
-  border-color: transparent;
+  background: var(--nexus-log-error-bg);
+  border-color: var(--nexus-log-error-border);
   color: var(--nexus-log-error-text);
 }
 

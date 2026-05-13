@@ -37,7 +37,7 @@ function SegmentButton({ active, children, onClick, title }) {
       onClick={onClick}
       title={title}
       className={clsx(
-        'nexus-segment-button inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-sm px-3 text-[11px] font-bold uppercase tracking-wider transition',
+        'nexus-segment-button inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-md px-3 text-[11px] font-bold uppercase tracking-wider transition',
         active ? 'nexus-segment-button--active' : 'nexus-segment-button--idle'
       )}
     >
@@ -103,172 +103,161 @@ export default function ModernShell() {
 
   return (
     <div className="modern-shell flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-950">
-      <header className="grid grid-cols-[auto_1fr_auto] h-14 flex-shrink-0 items-center border-b-2 border-[var(--color-nexus-red)] bg-white px-5 relative z-50 gap-4">
-        {/* Brand Section - Column 1 */}
-        <div className="flex items-center gap-4">
+      <header className="flex h-[72px] flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
+        <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
           <button
             onClick={() => setMobileLeftOpen((open) => !open)}
-            className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-sm border-2 border-black bg-white text-slate-600 lg:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
+            title="Toggle pipeline"
           >
-            {mobileLeftOpen ? <X size={16} /> : <Menu size={16} />}
+            {mobileLeftOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
 
-          <div className="flex items-center gap-3">
-            <div className="nexus-brand-logo flex h-9 w-9 flex-shrink-0 items-center justify-center rounded border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
-              <Activity size={18} className="nexus-brand-logo-icon" />
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="nexus-brand-logo flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-[var(--color-nexus-red)]">
+              <Activity size={19} className="nexus-brand-logo-icon" />
             </div>
-            <h1 className="nexus-brand-title text-xl font-bold font-mono tracking-wider text-[var(--color-nexus-red)] whitespace-nowrap">
-              HELIX SYSTEM
-            </h1>
+            <div className="min-w-0 max-w-[210px]">
+              <div className="flex items-baseline gap-2">
+                <h1 className="nexus-brand-title truncate text-lg font-semibold tracking-tight text-slate-950">
+                  Helix System
+                </h1>
+                <span className="hidden text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:inline">
+                  Nexus
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                <span className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[10px] text-slate-600">
+                  HL7 v2.5.1
+                </span>
+                <span className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[10px] text-slate-600">
+                  FHIR R4
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Spacer Column 2 (Header is now cleaner) */}
-        <div className="hidden xl:block min-w-0" />
-
-        {/* Controls Section - Column 3 (Right-Aligned) */}
-        <div className="flex items-center gap-6 justify-end">
-          {/* Engine Mode Group */}
-          <div className="hidden md:flex items-center gap-3">
-            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400 whitespace-nowrap">
-              ENGINE_MODE:
-            </span>
-
-            <div className="flex bg-white">
-              <button
-                onClick={selectAiEngine}
-                className={clsx(
-                  "w-[100px] font-mono text-[10px] font-bold tracking-widest px-2 py-1 border-2 border-black border-r-0 transition-colors uppercase whitespace-nowrap",
-                  isAI ? "bg-slate-900 text-white" : "bg-white text-slate-500 hover:bg-slate-100"
-                )}
-              >
-                AI ENGINE
-              </button>
-              <button
-                onClick={() => setEngineMode('algorithm')}
-                className={clsx(
-                  "w-[100px] font-mono text-[10px] font-bold tracking-widest px-2 py-1 border-2 border-black transition-colors uppercase whitespace-nowrap",
-                  !isAI ? "bg-slate-900 text-white" : "bg-white text-slate-500 hover:bg-slate-100"
-                )}
-              >
-                ALGORITHM
-              </button>
-            </div>
-
-            <div className="min-w-[210px] flex items-center">
-              <AnimatePresence initial={false} mode="wait">
-                {isAI ? (
-                  <motion.div
-                    key="ai-subtabs"
-                    initial={{ opacity: 0, x: -5 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -5 }}
-                    className="flex"
-                  >
-                    <button
-                      onClick={() => setEngineMode('cloud_ai')}
-                      className={clsx(
-                        "font-mono text-[9px] font-bold tracking-widest px-2 py-1 border-2 border-black border-r-0 uppercase whitespace-nowrap",
-                        engineMode === 'cloud_ai' ? "bg-[var(--color-nexus-red)] text-white" : "bg-white text-slate-400"
-                      )}
-                    >
-                      ☁ GEMINI
-                    </button>
-                    <button
-                      onClick={() => setEngineMode('local_ai')}
-                      className={clsx(
-                        "font-mono text-[9px] font-bold tracking-widest px-2 py-1 border-2 border-black uppercase whitespace-nowrap",
-                        engineMode === 'local_ai' ? "bg-amber-600 text-white" : "bg-white text-slate-400"
-                      )}
-                    >
-                      ⬡ OLLAMA
-                    </button>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="algo-subtab"
-                    initial={{ opacity: 0, x: -5 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -5 }}
-                    className="w-fit font-mono text-[9px] font-bold tracking-widest px-2 py-1 border-2 border-slate-700 bg-slate-700 text-white uppercase whitespace-nowrap flex items-center h-[26px]"
-                  >
-                    ⬡ RULE ENGINE v2.1
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+        <div className="hidden min-w-0 items-center gap-2 md:flex">
+          <div className="hidden whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:block">
+            Engine Mode
           </div>
 
-          {/* System Actions */}
-          <div className="flex items-center space-x-4">
-            <span className="hidden font-mono text-[10px] text-slate-500 whitespace-nowrap lg:block border-l border-slate-200 pl-4">
-              {formatTime(sessionTime)}
-            </span>
-            
-            <div className="hidden items-center space-x-2 sm:flex border-l border-slate-200 pl-4 h-6 w-32">
-              <div className={clsx(
-                "w-1.5 h-1.5 rounded-full animate-pulse",
-                latestEvent?.type.includes('ERROR') ? "bg-red-500" :
-                latestEvent?.type.includes('WARNING') ? "bg-amber-500" :
-                (latestEvent?.type.includes('START') || latestEvent?.type.includes('PROGRESS')) ? "bg-blue-500" :
-                "bg-green-500"
-              )} />
-              <span className="font-mono text-[8px] font-bold uppercase tracking-widest text-slate-400 truncate max-w-[100px]">
-                {(() => {
-                  if (!latestEvent) return 'SYSTEM READY';
-                  const type = latestEvent.type.replace('EventType.', '');
-                  const map = {
-                    'USER_ACTION': 'OPERATOR REQ',
-                    'FETCH_START': 'CONNECTING',
-                    'FETCH_PROGRESS': 'STREAMING',
-                    'FETCH_COMPLETE': 'DATA READY',
-                    'ERROR': 'SYS_FAIL',
-                    'COMPLETE': 'VERIFIED',
-                    'PARSING': 'ANALYZING',
-                    'GENERATING': 'SYNTHESIZING'
-                  };
-                  return map[type] || type.replace('_', ' ');
-                })()}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={toggleTheme}
-                className="p-1.5 border-2 border-black bg-white hover:bg-slate-100 transition-colors"
-              >
-                {isDarkTheme ? <Sun size={12} /> : <Moon size={12} />}
-              </button>
-              <button
-                onClick={() => setConfigModalOpen(true)}
-                className="p-1.5 border-2 border-black bg-white hover:bg-slate-100 transition-colors"
-              >
-                <Settings size={12} />
-              </button>
-            </div>
+          <div className="nexus-engine-tabs flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
+            <SegmentButton active={isAI} onClick={selectAiEngine} title="Use AI Engine">
+              <Cloud size={13} />
+              AI Engine
+            </SegmentButton>
+            <SegmentButton
+              active={engineMode === 'algorithm'}
+              onClick={() => setEngineMode('algorithm')}
+              title="Use Algorithm Engine"
+            >
+              <Cpu size={13} />
+              Algorithm
+            </SegmentButton>
           </div>
+
+          <AnimatePresence initial={false} mode="wait">
+            {isAI ? (
+              <motion.div
+                key="ai-subtabs"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.16 }}
+                className="nexus-engine-tabs nexus-engine-subtabs flex items-center gap-2 rounded-xl border p-1"
+              >
+                <SegmentButton
+                  active={engineMode === 'cloud_ai'}
+                  onClick={() => setEngineMode('cloud_ai')}
+                  title="Use Gemini Cloud AI"
+                >
+                  <Cloud size={13} />
+                  Cloud AI
+                </SegmentButton>
+                <SegmentButton
+                  active={engineMode === 'local_ai'}
+                  onClick={() => setEngineMode('local_ai')}
+                  title="Use local Ollama AI"
+                >
+                  <Server size={13} />
+                  Local AI
+                </SegmentButton>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="algo-subtab"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.16 }}
+                className="nexus-engine-badge inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wider"
+              >
+                <Cpu size={13} />
+                Rule Engine v2.1
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="flex flex-shrink-0 items-center gap-3">
+          <div className="hidden items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 sm:flex">
+            <Wifi size={14} />
+            Connected
+          </div>
+          <div className="hidden items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-600 lg:flex">
+            <Clock size={14} />
+            {formatTime(sessionTime)}
+          </div>
+          <button
+            onClick={() => {
+              if (window.matchMedia('(min-width: 1280px)').matches) {
+                setRightOpen((open) => !open);
+              } else {
+                setMobileRightOpen(true);
+              }
+            }}
+            className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+          >
+            Inspector
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            title={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDarkTheme ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+          <button
+            onClick={() => setConfigModalOpen(true)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            title="System configuration"
+          >
+            <Settings size={17} />
+          </button>
         </div>
       </header>
-
 
       <main className="flex min-h-0 flex-1 gap-4 overflow-hidden p-4">
         <AnimatePresence initial={false}>
           {leftOpen && (
             <motion.aside
               initial={{ opacity: 0, width: 0, x: -20 }}
-              animate={{ opacity: 1, width: 260, x: 0 }}
+              animate={{ opacity: 1, width: 304, x: 0 }}
               exit={{ opacity: 0, width: 0, x: -20 }}
               transition={{ duration: 0.18 }}
               className="hidden min-h-0 flex-shrink-0 overflow-hidden lg:block"
             >
-              <div className="h-full overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+              <div className="h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                 <LeftPanel />
               </div>
             </motion.aside>
           )}
         </AnimatePresence>
 
-        <section className="modern-workbench min-w-0 flex-1 overflow-hidden border border-slate-200 bg-white shadow-sm">
+        <section className="modern-workbench min-w-0 flex-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <CenterPanel />
         </section>
 
@@ -276,12 +265,12 @@ export default function ModernShell() {
           {rightOpen && (
             <motion.aside
               initial={{ opacity: 0, width: 0, x: 20 }}
-              animate={{ opacity: 1, width: 280, x: 0 }}
+              animate={{ opacity: 1, width: 336, x: 0 }}
               exit={{ opacity: 0, width: 0, x: 20 }}
               transition={{ duration: 0.18 }}
               className="hidden min-h-0 flex-shrink-0 overflow-hidden xl:block"
             >
-              <div className="h-full overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+              <div className="h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                 <RightPanel />
               </div>
             </motion.aside>
@@ -310,7 +299,7 @@ export default function ModernShell() {
                 </span>
                 <button
                   onClick={() => setMobileLeftOpen(false)}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-slate-200 text-slate-500"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500"
                 >
                   <X size={16} />
                 </button>
@@ -344,7 +333,7 @@ export default function ModernShell() {
                 </span>
                 <button
                   onClick={() => setMobileRightOpen(false)}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-slate-200 text-slate-500"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500"
                 >
                   <X size={16} />
                 </button>
@@ -358,49 +347,40 @@ export default function ModernShell() {
       </AnimatePresence>
 
       <div className="modern-status-strip flex-shrink-0 border-t border-slate-200 bg-white">
-        <div className="flex h-11 items-center px-4">
-          {/* Left Status */}
-          <div className="flex-1 flex items-center gap-3">
-            <span className="rounded-sm bg-slate-900 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+        <div className="flex h-11 items-center justify-between px-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="rounded-md bg-slate-900 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
               {engineMode.replace('_', ' ')}
             </span>
-          </div>
-
-          {/* Center Tagline */}
-          <div className="hidden md:flex items-center justify-center flex-[2] overflow-hidden px-4">
-            <span className="text-[9px] font-mono tracking-wider text-slate-400 uppercase truncate">
-              Enterprise HL7 Orchestration powered by the Nexus-Hybrid Core
+            <span className="truncate text-xs text-slate-500">
+              {latestEvent ? latestEvent.detail : 'Helix workspace ready'}
             </span>
           </div>
-
-          {/* Right Actions */}
-          <div className="flex-1 flex items-center justify-end gap-2 text-[11px] font-medium text-slate-500">
+          <div className="flex items-center gap-2 text-[11px] font-medium text-slate-500">
             <span>{isLogPaused ? 'Log paused' : 'Log live'}</span>
-            <span className="hidden sm:inline">{eventBus.length} events</span>
-            <div className="flex items-center gap-1.5 ml-2">
-              <button
-                onClick={() => setLogPaused(!isLogPaused)}
-                className="inline-flex h-7 items-center gap-1 rounded-sm border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
-              >
-                {isLogPaused ? <Play size={12} /> : <Pause size={12} />}
-                <span className="hidden lg:inline">{isLogPaused ? 'Resume' : 'Pause'}</span>
-              </button>
-              <button
-                onClick={clearEventBus}
-                className="inline-flex h-7 items-center gap-1 rounded-sm border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
-              >
-                <Trash2 size={12} />
-                <span className="hidden lg:inline">Clear</span>
-              </button>
-              <button
-                onClick={handleExportLog}
-                disabled={eventBus.length === 0}
-                className="inline-flex h-7 items-center gap-1 rounded-sm border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-40"
-              >
-                <Download size={12} />
-                <span className="hidden lg:inline">Export</span>
-              </button>
-            </div>
+            <span>{eventBus.length} events</span>
+            <button
+              onClick={() => setLogPaused(!isLogPaused)}
+              className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+            >
+              {isLogPaused ? <Play size={12} /> : <Pause size={12} />}
+              {isLogPaused ? 'Resume' : 'Pause'}
+            </button>
+            <button
+              onClick={clearEventBus}
+              className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+            >
+              <Trash2 size={12} />
+              Clear
+            </button>
+            <button
+              onClick={handleExportLog}
+              disabled={eventBus.length === 0}
+              className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-[11px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-40"
+            >
+              <Download size={12} />
+              Export
+            </button>
           </div>
         </div>
       </div>
