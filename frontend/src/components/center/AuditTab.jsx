@@ -107,17 +107,17 @@ export default function AuditTab() {
         <div className="rounded border border-red-200 bg-red-50 px-3 py-2 font-mono text-xs text-red-800">{error}</div>
       ) : null}
 
-      <div className="min-h-0 flex-1 overflow-auto rounded border border-slate-200 bg-slate-50">
+      <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-[var(--nexus-border)] bg-[var(--nexus-panel)]">
         <table className="w-full border-collapse text-left font-mono text-[11px]">
-          <thead className="sticky top-0 z-10 bg-slate-200 text-[10px] uppercase tracking-wider text-slate-700">
+          <thead className="sticky top-0 z-10 bg-[var(--nexus-panel-strong)] text-[10px] uppercase tracking-wider text-[var(--nexus-panel-strong-text)] shadow-sm">
             <tr>
-              <th className="border-b border-slate-300 px-2 py-2">ID</th>
-              <th className="border-b border-slate-300 px-2 py-2">Time (UTC)</th>
-              <th className="border-b border-slate-300 px-2 py-2">User</th>
-              <th className="border-b border-slate-300 px-2 py-2">Action</th>
-              <th className="border-b border-slate-300 px-2 py-2">Outcome</th>
-              <th className="border-b border-slate-300 px-2 py-2">IP</th>
-              <th className="border-b border-slate-300 px-2 py-2">Detail</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">ID</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">Time (UTC)</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">User</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">Action</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">Outcome</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">IP</th>
+              <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">Detail</th>
             </tr>
           </thead>
           <tbody>
