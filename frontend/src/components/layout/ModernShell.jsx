@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useNexusStore } from '../../store/nexusStore';
+import UserSessionControls from '../auth/UserSessionControls';
 import CenterPanel from './CenterPanel';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
@@ -224,6 +225,8 @@ export default function ModernShell() {
           >
             Inspector
           </button>
+          <UserSessionControls variant="modern" />
+
           <button
             onClick={toggleTheme}
             className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNexusStore } from '../../store/nexusStore';
 import { Cloud, Database, LayoutDashboard, RefreshCw, Server, X } from 'lucide-react';
-import axios from 'axios';
+import { apiClient } from '../../api/client';
 import { API } from '../../config/api';
 
 function ConfigSection({ icon: Icon, eyebrow, title, children }) {
@@ -59,7 +59,11 @@ export default function ConfigModal() {
         severity: 'INFO'
       });
       // Hit our FastAPI backend
-      const res = await axios.post(API.ENGINE_GEMINI_MODELS, { api_key: localConfig.geminiApiKey }, { timeout: 15000 });
+      const res = await apiClient.post(
+        API.ENGINE_GEMINI_MODELS,
+        { api_key: localConfig.geminiApiKey },
+        { timeout: 15000 }
+      );
       const models = res.data.models;
       
       setLocalConfig(prev => ({ ...prev, availableModels: models, activeModel: models[0]?.id }));

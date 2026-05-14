@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../../api/client';
 import { useNexusStore } from '../../store/nexusStore';
 import { Loader2, Play } from 'lucide-react';
 import clsx from 'clsx';
@@ -62,9 +62,11 @@ export default function BatchTab() {
       }
 
       try {
-        const res = await axios.post(API.ALGO_PROCESS, {
-          message: messages[i]
-        }, { timeout: 30000 });
+        const res = await apiClient.post(
+          API.ALGO_PROCESS,
+          { message: messages[i] },
+          { timeout: 30000 }
+        );
         
         newResults.push({
           id: i + 1,

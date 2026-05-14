@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../../api/client';
 import { useNexusStore } from '../../store/nexusStore';
 import { Play, Copy, Check } from 'lucide-react';
 import clsx from 'clsx';
@@ -72,7 +72,7 @@ export default function GenerateTab() {
         // Build a prompt from the structured data + template
         const prompt = `Generate a valid HL7 v2.5.1 ${template.replace('_', '^')} message using this patient data:\n${JSON.stringify(parsedData, null, 2)}\n\nInclude all required segments for a ${template.replace('_', '^')} message.`;
 
-        const res = await axios.post(API.ENGINE_NL_PARSE, {
+        const res = await apiClient.post(API.ENGINE_NL_PARSE, {
           engine_mode: engineMode,
           model: engineMode === 'cloud_ai' ? systemConfig.activeModel : 'llama3',
           api_key: systemConfig.geminiApiKey,
@@ -92,7 +92,7 @@ export default function GenerateTab() {
         // Intentional delay for pipeline observability
         await new Promise(r => setTimeout(r, 1200));
         
-        const res = await axios.post(API.ALGO_GENERATE, {
+        const res = await apiClient.post(API.ALGO_GENERATE, {
           template,
           data: parsedData
         }, { timeout: 30000 });

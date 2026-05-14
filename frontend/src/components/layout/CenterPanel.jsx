@@ -5,7 +5,8 @@ import GenerateTab from '../center/GenerateTab';
 import NlInputTab from '../center/NlInputTab';
 import BatchTab from '../center/BatchTab';
 import DiffTab from '../center/DiffTab';
-import { FilePlus2, GitCompare, Layers3, Lock, Sparkles, ShieldCheck } from 'lucide-react';
+import AuditTab from '../center/AuditTab';
+import { FilePlus2, GitCompare, Layers3, Lock, ScrollText, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function CenterPanel() {
   const activeTab = useNexusStore((state) => state.activeTab);
@@ -20,6 +21,7 @@ export default function CenterPanel() {
     { label: 'COMPARE MESSAGES', route: 'diff', aiOnly: false, algoOnly: false, icon: GitCompare },
     { label: 'BATCH PROCESSING', route: 'batch', aiOnly: false, algoOnly: false, icon: Layers3 },
     { label: 'CLINICAL NLP', route: 'nl_input', aiOnly: true, algoOnly: false, icon: Sparkles },
+    { label: 'AUDIT LOG', route: 'audit', aiOnly: false, algoOnly: false, icon: ScrollText },
   ];
 
   return (
@@ -59,7 +61,8 @@ export default function CenterPanel() {
         {activeTab === 'nl_input' && <NlInputTab />}
         {activeTab === 'batch' && <BatchTab />}
         {activeTab === 'diff' && <DiffTab />}
-        {activeTab !== 'parse' && activeTab !== 'validate' && activeTab !== 'generate' && activeTab !== 'nl_input' && activeTab !== 'batch' && activeTab !== 'diff' && (
+        {activeTab === 'audit' && <AuditTab />}
+        {activeTab !== 'parse' && activeTab !== 'validate' && activeTab !== 'generate' && activeTab !== 'nl_input' && activeTab !== 'batch' && activeTab !== 'diff' && activeTab !== 'audit' && (
           <div className="border border-dashed border-gray-300 flex-1 flex items-center justify-center text-slate-400 font-mono text-[10px]">
             [ {activeTab.toUpperCase()}_CONTENT ]
           </div>

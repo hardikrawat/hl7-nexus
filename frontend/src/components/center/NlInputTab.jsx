@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../../api/client';
 import { useNexusStore } from '../../store/nexusStore';
 import { Play, Copy, Check } from 'lucide-react';
 import clsx from 'clsx';
@@ -45,7 +45,7 @@ export default function NlInputTab() {
       updateAgentStatus('semantic', 'PROCESSING', { tokens: inputText.split(' ').length });
       
       // M-01: Centralized API URL, L-03: timeout
-      const res = await axios.post(API.ENGINE_NL_PARSE, {
+      const res = await apiClient.post(API.ENGINE_NL_PARSE, {
         engine_mode: engineMode,
         model: engineMode === 'cloud_ai' ? systemConfig.activeModel : 'llama3',
         api_key: systemConfig.geminiApiKey,

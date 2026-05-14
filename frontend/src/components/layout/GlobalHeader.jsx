@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Moon, Settings, Sun } from 'lucide-react';
+import UserSessionControls from '../auth/UserSessionControls';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
 import { DARK_THEME_ID, LIGHT_THEME_ID, getNextThemeId, getThemeById } from '../../config/themes';
@@ -114,6 +115,8 @@ export default function GlobalHeader() {
             CONNECTED
           </span>
         </div>
+
+        <UserSessionControls variant="classic" />
 
         <button
           onClick={toggleTheme}

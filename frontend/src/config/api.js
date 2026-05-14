@@ -16,7 +16,13 @@ export const API = {
   // Health
   HEALTH: `${API_BASE_URL}/api/v1/health`,
 
-  // WebSocket
+  // Auth & audit
+  AUTH_LOGIN: `${API_BASE_URL}/api/v1/auth/login`,
+  AUTH_LOGOUT: `${API_BASE_URL}/api/v1/auth/logout`,
+  AUTH_ME: `${API_BASE_URL}/api/v1/auth/me`,
+  AUDIT: `${API_BASE_URL}/api/v1/audit`,
+
+  // WebSocket (append ?token=JWT after login)
   WS_EVENTBUS: `${WS_BASE_URL}/ws/eventbus`,
 };
 

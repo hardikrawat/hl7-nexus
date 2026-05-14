@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../../api/client';
 import { useNexusStore } from '../../store/nexusStore';
 import { Download, Eye, Play, X } from 'lucide-react';
 import clsx from 'clsx';
@@ -398,9 +398,11 @@ export default function ParseTab() {
         updateProcessorStatus('parser', 'PROCESSING', { segments: 0 });
         await new Promise(r => setTimeout(r, 800));
         
-        const res = await axios.post(API.ALGO_PROCESS, {
-          message: inputMessage
-        }, { timeout: 30000 });
+        const res = await apiClient.post(
+          API.ALGO_PROCESS,
+          { message: inputMessage },
+          { timeout: 30000 }
+        );
         
         updateProcessorStatus('parser', 'COMPLETE', { segments: res.data.ast.segments.length });
         
@@ -418,9 +420,11 @@ export default function ParseTab() {
         updateAgentStatus('semantic', 'PROCESSING', { segments: 0 });
         updateAgentStatus('compliance', 'PROCESSING', { rules: 0 });
         
-        const res = await axios.post(API.ALGO_PROCESS, {
-          message: inputMessage
-        }, { timeout: 30000 });
+        const res = await apiClient.post(
+          API.ALGO_PROCESS,
+          { message: inputMessage },
+          { timeout: 30000 }
+        );
         
         setAst(res.data.ast);
         setValidation(res.data.validation);

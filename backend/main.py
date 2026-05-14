@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from services.event_bus import event_bus
 from engines.algorithm.data_fetcher import runtime_data
-from routers import engine, algorithm
+from routers import algorithm, audit, auth, engine
+from security import decode_access_token
 
 
 @asynccontextmanager
@@ -36,12 +37,25 @@ app.add_middleware(
 
 
 @app.websocket("/ws/eventbus")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(
+    websocket: WebSocket,
+    token: str | None = Query(None, description="JWT from POST /api/v1/auth/login"),
+):
+    if not token or not token.strip():
+        await websocket.close(code=1008)
+        return
+    try:
+        username = decode_access_token(token.strip())
+    except ValueError:
+        await websocket.close(code=1008)
+        return
+
+    await websocket.accept()
     await event_bus.connect(websocket)
     try:
         while True:
-            # Keep alive — we don't expect messages from client on the event bus
-            data = await websocket.receive_text()
+            # Keep alive — we do not expect meaningful messages from client
+            await websocket.receive_text()
     except WebSocketDisconnect:
         event_bus.disconnect(websocket)
 
@@ -51,5 +65,7 @@ async def health_check():
     return {"status": "online"}
 
 
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(audit.router, prefix="/api/v1/audit", tags=["audit"])
 app.include_router(engine.router, prefix="/api/v1/engine", tags=["engine"])
 app.include_router(algorithm.router, prefix="/api/v1/algo", tags=["algorithm"])
