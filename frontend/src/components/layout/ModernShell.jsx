@@ -8,6 +8,8 @@ import {
   Download,
   Menu,
   Moon,
+  PanelRightClose,
+  PanelRightOpen,
   Pause,
   Play,
   Server,
@@ -141,7 +143,7 @@ export default function ModernShell() {
           </div>
         </div>
 
-        <div className="nexus-topology hidden min-w-0 items-center gap-2 md:flex">
+        <div className="nexus-topology hidden min-w-0 items-center gap-2 md:flex lg:-ml-6 xl:-ml-10">
           <div className="hidden whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:block">
             Engine Mode
           </div>
@@ -221,9 +223,11 @@ export default function ModernShell() {
                 setMobileRightOpen(true);
               }
             }}
-            className="nexus-inspector-toggle inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-inspector-toggle inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            title={rightOpen ? 'Hide inspector' : 'Show inspector'}
+            aria-label={rightOpen ? 'Hide inspector' : 'Show inspector'}
           >
-            Inspector
+            {rightOpen ? <PanelRightClose size={17} /> : <PanelRightOpen size={17} />}
           </button>
           <UserSessionControls variant="modern" />
 
