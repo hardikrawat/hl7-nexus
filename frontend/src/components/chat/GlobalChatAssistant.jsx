@@ -15,6 +15,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 import { apiClient } from '../../api/client';
+import { buildAiRequestConfig, getSelectedModel } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import { API } from '../../config/api';
 
@@ -227,6 +228,9 @@ export default function GlobalChatAssistant() {
   const activeTab = useNexusStore((state) => state.activeTab);
   const activeSubTab = useNexusStore((state) => state.activeSubTab);
   const currentMessage = useNexusStore((state) => state.currentMessage);
+  const parsedMessage = useNexusStore((state) => state.parsedMessage);
+  const validationResult = useNexusStore((state) => state.validationResult);
+  const aiAnalysis = useNexusStore((state) => state.aiAnalysis);
 
   const [draft, setDraft] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -234,9 +238,7 @@ export default function GlobalChatAssistant() {
   const scrollRef = useRef(null);
 
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
-  const activeModel = engineMode === 'cloud_ai'
-    ? systemConfig.activeModel || 'gemini-1.5-flash'
-    : systemConfig.localModel || 'llama3';
+  const activeModel = getSelectedModel(engineMode, systemConfig);
 
   const contextPayload = useMemo(() => ({
     active_tab: activeTab,
@@ -244,9 +246,15 @@ export default function GlobalChatAssistant() {
     active_workflow: tabLabels[activeTab] || activeTab,
     focused_field: activeAssistantField,
     current_message_preview: trimText(currentMessage, 2000),
+    parsed_message_summary: parsedMessage ? {
+      segments: parsedMessage.segments?.length || 0,
+      segment_names: parsedMessage.segments?.map((segment) => segment.name).slice(0, 20) || [],
+    } : null,
+    validation_result: validationResult,
+    ai_analysis: aiAnalysis,
     theme_id: systemConfig.themeId,
     layout_mode: systemConfig.layoutMode,
-  }), [activeAssistantField, activeSubTab, activeTab, currentMessage, systemConfig.layoutMode, systemConfig.themeId]);
+  }), [activeAssistantField, activeSubTab, activeTab, aiAnalysis, currentMessage, parsedMessage, systemConfig.layoutMode, systemConfig.themeId, validationResult]);
 
   useEffect(() => {
     const updateFieldContext = (target) => {
@@ -345,10 +353,7 @@ export default function GlobalChatAssistant() {
         .map((item) => ({ role: item.role, content: item.content }));
 
       const response = await apiClient.post(API.CHAT_MESSAGE, {
-        engine_mode: engineMode,
-        model: activeModel,
-        api_key: systemConfig.geminiApiKey,
-        ollama_url: systemConfig.ollamaUrl,
+        ...buildAiRequestConfig(engineMode, systemConfig),
         message,
         history,
         context: contextPayload,
@@ -432,7 +437,9 @@ export default function GlobalChatAssistant() {
                   <div className="min-w-0">
                     <div className="nexus-chat-title">Helix Assistant</div>
                     <div className="nexus-chat-subtitle truncate">
-                      {isAI ? `${engineMode === 'cloud_ai' ? 'Gemini Cloud' : 'Ollama Local'} / ${activeModel}` : 'AI Engine required'}
+                      {isAI
+                        ? `${engineMode === 'local_ai' ? 'Ollama Local' : systemConfig.cloudProvider === 'gateway' ? 'Gateway' : 'Gemini Cloud'} / ${activeModel}`
+                        : 'AI Engine required'}
                     </div>
                   </div>
                 </div>

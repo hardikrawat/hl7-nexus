@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiClient } from '../../api/client';
+import { buildAiRequestConfig } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import { Loader2, Play } from 'lucide-react';
 import clsx from 'clsx';
@@ -14,6 +15,7 @@ export default function BatchTab() {
 
   const addEvent = useNexusStore((state) => state.addEvent);
   const engineMode = useNexusStore((state) => state.engineMode);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
   const updateProcessorStatus = useNexusStore((state) => state.updateProcessorStatus);
   const updateAgentStatus = useNexusStore((state) => state.updateAgentStatus);
 
@@ -63,14 +65,18 @@ export default function BatchTab() {
 
       try {
         const res = await apiClient.post(
-          API.ALGO_PROCESS,
-          { message: messages[i] },
-          { timeout: 30000 }
+          isAI ? API.ENGINE_AI_PROCESS : API.ALGO_PROCESS,
+          isAI
+            ? { ...buildAiRequestConfig(engineMode, systemConfig), message: messages[i] }
+            : { message: messages[i] },
+          { timeout: isAI ? 120000 : 30000 }
         );
         
         newResults.push({
           id: i + 1,
           status: res.data.validation.status,
+          aiStatus: res.data.ai_analysis?.status,
+          aiConfidence: res.data.ai_analysis?.confidence,
           errors: res.data.validation.errors.length,
           warnings: res.data.validation.warnings?.length || 0,
           rulesChecked: res.data.validation.rules_checked || 0,
@@ -106,8 +112,8 @@ export default function BatchTab() {
     // Set pipeline status to complete
     if (isAI) {
       updateAgentStatus('syntax', 'COMPLETE', { batch: `${messages.length}/${messages.length}` });
-      updateAgentStatus('semantic', 'COMPLETE', {});
-      updateAgentStatus('compliance', 'COMPLETE', {});
+      updateAgentStatus('semantic', newResults.some((result) => result.aiStatus === 'ERROR') ? 'ERROR' : 'COMPLETE', {});
+      updateAgentStatus('compliance', newResults.some((result) => result.status !== 'PASS') ? 'ERROR' : 'COMPLETE', {});
     } else {
       updateProcessorStatus('lexer', 'COMPLETE', { batch: `${messages.length}/${messages.length}` });
       updateProcessorStatus('parser', 'COMPLETE', {});
@@ -235,7 +241,10 @@ export default function BatchTab() {
                     <span className="nexus-batch-preview truncate w-96">{res.preview}</span>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="nexus-batch-metrics text-[9px]">{res.rulesChecked}R/{res.segments}S/{res.fhirResources}F</span>
+                    <span className="nexus-batch-metrics text-[9px]">
+                      {res.rulesChecked}R/{res.segments}S/{res.fhirResources}F
+                      {res.aiConfidence != null ? `/${res.aiConfidence}%AI` : ''}
+                    </span>
                     <span className="nexus-batch-status font-bold">
                       {res.status}
                     </span>

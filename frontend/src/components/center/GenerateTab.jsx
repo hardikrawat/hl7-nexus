@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiClient } from '../../api/client';
+import { buildAiRequestConfig } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import { Play, Copy, Check } from 'lucide-react';
 import clsx from 'clsx';
@@ -16,6 +17,9 @@ export default function GenerateTab() {
   const addEvent = useNexusStore((state) => state.addEvent);
   const updateProcessorStatus = useNexusStore((state) => state.updateProcessorStatus);
   const updateAgentStatus = useNexusStore((state) => state.updateAgentStatus);
+  const setCurrentMessage = useNexusStore((state) => state.setCurrentMessage);
+  const setValidationResult = useNexusStore((state) => state.setValidationResult);
+  const setAiAnalysis = useNexusStore((state) => state.setAiAnalysis);
   const engineMode = useNexusStore((state) => state.engineMode);
   const systemConfig = useNexusStore((state) => state.systemConfig);
 
@@ -73,17 +77,19 @@ export default function GenerateTab() {
         const prompt = `Generate a valid HL7 v2.5.1 ${template.replace('_', '^')} message using this patient data:\n${JSON.stringify(parsedData, null, 2)}\n\nInclude all required segments for a ${template.replace('_', '^')} message.`;
 
         const res = await apiClient.post(API.ENGINE_NL_PARSE, {
-          engine_mode: engineMode,
-          model: engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'llama3'),
-          api_key: systemConfig.geminiApiKey,
-          ollama_url: systemConfig.ollamaUrl,
+          ...buildAiRequestConfig(engineMode, systemConfig),
           text: prompt
         }, { timeout: 60000 });
 
         setOutputMessage(res.data.hl7);
+        setCurrentMessage(res.data.hl7);
+        setValidationResult(res.data.validation || null);
+        setAiAnalysis(null);
         updateAgentStatus('syntax', 'COMPLETE', { template });
         updateAgentStatus('semantic', 'COMPLETE', { size: res.data.hl7.length });
-        updateAgentStatus('compliance', 'COMPLETE', {});
+        updateAgentStatus('compliance', res.data.validation?.status === 'PASS' ? 'COMPLETE' : 'ERROR', {
+          validation: res.data.validation?.status || 'UNKNOWN'
+        });
 
       } else {
         // --- ALGORITHM MODE: Use template-based generator ---
@@ -98,6 +104,9 @@ export default function GenerateTab() {
         }, { timeout: 30000 });
         
         setOutputMessage(res.data.message);
+        setCurrentMessage(res.data.message);
+        setValidationResult(null);
+        setAiAnalysis(null);
         updateProcessorStatus('generator', 'COMPLETE', { size: res.data.message.length });
       }
 

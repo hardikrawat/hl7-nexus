@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { apiClient } from '../../api/client';
+import { buildAiRequestConfig, getSelectedModel } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
+import { API } from '../../config/api';
 
 const getEventTone = (ev) => {
   const signal = `${ev.severity || ''} ${ev.type || ''} ${ev.detail || ''}`.toUpperCase();
@@ -82,6 +85,8 @@ export default function RightPanel() {
   const engineMode = useNexusStore((state) => state.engineMode);
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
   const systemConfig = useNexusStore((state) => state.systemConfig);
+  const engineStatus = useNexusStore((state) => state.engineStatus);
+  const setEngineStatus = useNexusStore((state) => state.setEngineStatus);
   
   const eventBus = useNexusStore((state) => state.eventBus);
   const isLogPaused = useNexusStore((state) => state.isLogPaused);
@@ -96,6 +101,35 @@ export default function RightPanel() {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [eventBus, isLogPaused]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkStatus = async () => {
+      try {
+        const payload = isAI
+          ? buildAiRequestConfig(engineMode, systemConfig)
+          : { engine_mode: 'algorithm' };
+        const response = await apiClient.post(API.ENGINE_STATUS, payload, { timeout: 20000 });
+        if (!cancelled) setEngineStatus(response.data);
+      } catch (err) {
+        if (!cancelled) {
+          setEngineStatus({
+            engine: engineMode,
+            available: false,
+            detail: err.response?.data?.detail || err.message,
+          });
+        }
+      }
+    };
+
+    checkStatus();
+    const timer = setInterval(checkStatus, 30000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [engineMode, isAI, setEngineStatus, systemConfig]);
 
   return (
     <div className="nexus-panel-shell nexus-right-panel flex flex-col h-full bg-white relative min-h-0">
@@ -123,26 +157,29 @@ export default function RightPanel() {
               <>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600 font-bold">STATUS</span>
-                  <span className="font-mono text-[9px] font-bold uppercase text-green-600">
-                    ESTABLISHED
+                  <span className={clsx(
+                    "font-mono text-[9px] font-bold uppercase",
+                    engineStatus?.available ? "text-green-600" : "text-red-600"
+                  )}>
+                    {engineStatus?.available ? 'ESTABLISHED' : 'UNAVAILABLE'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-mono text-[9px] font-bold text-slate-800">PROVIDER</span>
                   <span className="font-mono text-[9px] font-bold uppercase">
-                    {engineMode === 'cloud_ai' ? 'GEMINI_CLOUD' : 'OLLAMA_LOCAL'}
+                    {engineMode === 'local_ai' ? 'OLLAMA_LOCAL' : (systemConfig.cloudProvider === 'gateway' ? 'GATEWAY_PROXY' : 'GEMINI_DIRECT')}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-mono text-[9px] font-bold text-slate-800">MODEL</span>
                   <span className="font-mono text-[9px] font-bold uppercase text-blue-800 truncate w-24 text-right">
-                    {engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'llama3')}
+                    {getSelectedModel(engineMode, systemConfig)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-mono text-[9px] font-bold text-slate-800">LATENCY</span>
+                  <span className="font-mono text-[9px] font-bold text-slate-800">DETAIL</span>
                   <span className="font-mono text-[9px] font-bold uppercase">
-                    {engineMode === 'cloud_ai' ? '124ms' : '12ms'}
+                    {engineStatus?.detail || 'Checking'}
                   </span>
                 </div>
               </>

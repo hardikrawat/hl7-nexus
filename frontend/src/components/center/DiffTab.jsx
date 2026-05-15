@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { apiClient } from '../../api/client';
+import { buildAiRequestConfig } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import { Play } from 'lucide-react';
 import clsx from 'clsx';
+import { API } from '../../config/api';
 
 /**
  * H-05: Segment-aware HL7 diff engine.
@@ -80,14 +83,20 @@ export default function DiffTab() {
   const [msg1, setMsg1] = useState("MSH|^~\\&|APP1|FAC1|APP2|FAC2|20260510||ADT^A01|MSG1|P|2.5.1\nPID|1||12345||DOE^JOHN||19800101|M");
   const [msg2, setMsg2] = useState("MSH|^~\\&|APP1|FAC1|APP2|FAC2|20260510||ADT^A01|MSG2|P|2.5.1\nPID|1||12345||DOE^JOHN^A||19800101|M\nPV1|1|I|WARD1");
   const [diffResult, setDiffResult] = useState(null);
+  const [aiReview, setAiReview] = useState('');
   
   const addEvent = useNexusStore((state) => state.addEvent);
+  const engineMode = useNexusStore((state) => state.engineMode);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
+  const updateAgentStatus = useNexusStore((state) => state.updateAgentStatus);
 
-  const handleDiff = () => {
+  const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
+
+  const handleDiff = async () => {
     addEvent({
       type: 'EventType.USER_ACTION',
-      engine: 'algorithm',
-      detail: 'Initiated segment-aware HL7 diff comparison',
+      engine: engineMode,
+      detail: `Initiated segment-aware HL7 diff comparison via ${isAI ? 'AI-assisted' : 'Algorithm'} pipeline`,
       severity: 'INFO'
     });
 
@@ -95,6 +104,25 @@ export default function DiffTab() {
     const segs2 = parseSegments(msg2);
     const diff = buildSegmentDiff(segs1, segs2);
     setDiffResult(diff);
+    setAiReview('');
+
+    if (!isAI) return;
+
+    try {
+      updateAgentStatus('semantic', 'PROCESSING', { diffItems: diff.length });
+      const response = await apiClient.post(API.CHAT_MESSAGE, {
+        ...buildAiRequestConfig(engineMode, systemConfig),
+        message: `Review this HL7 segment-aware diff for clinical or interoperability risk. Be concise.\n\n${JSON.stringify(diff, null, 2)}`,
+        history: [],
+        context: { active_workflow: 'Compare Messages', diff_count: diff.length },
+      }, { timeout: 90000 });
+      setAiReview(response.data.reply);
+      updateAgentStatus('semantic', 'COMPLETE', { diffItems: diff.length });
+    } catch (err) {
+      const detail = err.response?.data?.detail || err.message;
+      setAiReview(`ERROR: ${detail}`);
+      updateAgentStatus('semantic', 'ERROR', {});
+    }
   };
 
   const downloadDiff = () => {
@@ -198,6 +226,16 @@ export default function DiffTab() {
           </div>
         )}
       </div>
+
+      {isAI && aiReview && (
+        <div className={clsx(
+          "rounded-xl border px-3 py-2 font-mono text-[10px]",
+          aiReview.startsWith('ERROR:') ? "border-red-300 bg-red-50 text-red-700" : "border-amber-300 bg-amber-50 text-amber-800"
+        )}>
+          <div className="mb-1 font-bold uppercase tracking-[0.16em]">AI diff review</div>
+          <div className="whitespace-pre-wrap break-words">{aiReview}</div>
+        </div>
+      )}
     </div>
   );
 }

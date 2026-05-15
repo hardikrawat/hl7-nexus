@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { apiClient } from '../../api/client';
+import { buildAiRequestConfig } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import { Download, Eye, Play, X } from 'lucide-react';
 import clsx from 'clsx';
@@ -340,6 +341,7 @@ export default function ParseTab() {
   const [ast, setAst] = useState(null);
   const [validation, setValidation] = useState(null);
   const [fhir, setFhir] = useState(null);
+  const [aiReview, setAiReview] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [detailView, setDetailView] = useState(null);
 
@@ -347,6 +349,11 @@ export default function ParseTab() {
   const addEvent = useNexusStore((state) => state.addEvent);
   const updateProcessorStatus = useNexusStore((state) => state.updateProcessorStatus);
   const updateAgentStatus = useNexusStore((state) => state.updateAgentStatus);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
+  const setCurrentMessage = useNexusStore((state) => state.setCurrentMessage);
+  const setParsedMessage = useNexusStore((state) => state.setParsedMessage);
+  const setValidationResult = useNexusStore((state) => state.setValidationResult);
+  const setAiAnalysis = useNexusStore((state) => state.setAiAnalysis);
 
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
 
@@ -358,7 +365,12 @@ export default function ParseTab() {
     setAst(null);
     setValidation(null);
     setFhir(null);
+    setAiReview(null);
     setDetailView(null);
+    setCurrentMessage(cleanMessages[0]);
+    setParsedMessage(null);
+    setValidationResult(null);
+    setAiAnalysis(null);
 
     addEvent({
       type: 'EventType.INGEST_MESSAGES',
@@ -379,7 +391,12 @@ export default function ParseTab() {
     setAst(null);
     setValidation(null);
     setFhir(null);
+    setAiReview(null);
     setDetailView(null);
+    setCurrentMessage(inputMessage);
+    setParsedMessage(null);
+    setValidationResult(null);
+    setAiAnalysis(null);
     
     addEvent({
       type: 'EventType.USER_ACTION',
@@ -413,27 +430,44 @@ export default function ParseTab() {
         setAst(res.data.ast);
         setValidation(res.data.validation);
         setFhir(res.data.fhir);
+        setParsedMessage(res.data.ast);
+        setValidationResult(res.data.validation);
+        setAiAnalysis(null);
 
       } else {
-        // --- AI MODE: Update AI agents panel, fast path ---
+        // --- AI MODE: deterministic safety pass + real AI semantic/compliance review ---
         updateAgentStatus('syntax', 'PROCESSING', { lines: inputMessage.split('\n').length });
         updateAgentStatus('semantic', 'PROCESSING', { segments: 0 });
         updateAgentStatus('compliance', 'PROCESSING', { rules: 0 });
         
         const res = await apiClient.post(
-          API.ALGO_PROCESS,
-          { message: inputMessage },
-          { timeout: 30000 }
+          API.ENGINE_AI_PROCESS,
+          {
+            ...buildAiRequestConfig(engineMode, systemConfig),
+            message: inputMessage,
+          },
+          { timeout: 120000 }
         );
         
         setAst(res.data.ast);
         setValidation(res.data.validation);
         setFhir(res.data.fhir);
+        setAiReview(res.data.ai_analysis || null);
+        setParsedMessage(res.data.ast);
+        setValidationResult(res.data.validation);
+        setAiAnalysis(res.data.ai_analysis || null);
 
-        // Update AI agents (not algo processors) to reflect completion
+        const aiStatus = res.data.ai_analysis?.status;
+        const aiConfidence = res.data.ai_analysis?.confidence;
         updateAgentStatus('syntax', 'COMPLETE', { lines: inputMessage.split('\n').length });
-        updateAgentStatus('semantic', 'COMPLETE', { segments: res.data.ast.segments.length });
-        updateAgentStatus('compliance', res.data.validation.status === 'PASS' ? 'COMPLETE' : 'ERROR', { rules: res.data.validation.rules_checked || 0 });
+        updateAgentStatus('semantic', aiStatus === 'ERROR' ? 'ERROR' : 'COMPLETE', {
+          segments: res.data.ast.segments.length,
+          confidence: aiConfidence,
+        });
+        updateAgentStatus('compliance', res.data.validation.status === 'PASS' && aiStatus !== 'ERROR' ? 'COMPLETE' : 'ERROR', {
+          rules: res.data.validation.rules_checked || 0,
+          aiStatus,
+        });
       }
 
     } catch (err) {
@@ -501,6 +535,23 @@ export default function ParseTab() {
           placeholder="Paste raw HL7 v2 message here..."
         />
       </div>
+
+      {isAI && aiReview && (
+        <div className={clsx(
+          "nexus-ai-review rounded-xl border px-3 py-2 font-mono text-[10px]",
+          aiReview.status === 'ERROR' ? "border-red-300 bg-red-50 text-red-700" : "border-amber-300 bg-amber-50 text-amber-800"
+        )}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-bold uppercase tracking-[0.16em]">AI review</span>
+            <span className="font-bold uppercase">
+              {aiReview.model || engineMode} {aiReview.confidence != null ? `· ${aiReview.confidence}%` : ''}
+            </span>
+          </div>
+          <div className="mt-1 break-words">
+            {aiReview.summary || aiReview.error || 'AI review completed.'}
+          </div>
+        </div>
+      )}
 
       {/* Output Area - Split horizontally */}
       <div className="flex-1 flex space-x-4 min-h-0">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { getSelectedModel } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
 import { Loader2 } from 'lucide-react';
@@ -74,6 +75,8 @@ const AgentCard = ({ name, role, agentKey }) => {
 
 export default function AiAgents() {
   const engineMode = useNexusStore((state) => state.engineMode);
+  const systemConfig = useNexusStore((state) => state.systemConfig);
+  const engineStatus = useNexusStore((state) => state.engineStatus);
 
   return (
     <div className="flex flex-col space-y-3 h-full">
@@ -104,12 +107,20 @@ export default function AiAgents() {
           role="Standards audit" 
           agentKey="compliance" 
         />
-        <div className="nexus-pipeline-card nexus-pipeline-card--idle flex flex-col justify-center items-center p-2 text-center">
+        <div className={clsx(
+          "nexus-pipeline-card flex flex-col justify-center items-center p-2 text-center",
+          engineStatus?.available ? "nexus-pipeline-card--complete" : "nexus-pipeline-card--error"
+        )}>
           <span className="nexus-pipeline-name text-[11px] font-semibold mb-1">
             AI Engine
           </span>
           <span className="nexus-pipeline-role font-mono text-[8px] uppercase">
-            {engineMode === 'cloud_ai' ? 'Cloud API connected' : 'Ollama localhost'}
+            {engineMode === 'local_ai'
+              ? `Ollama / ${getSelectedModel(engineMode, systemConfig)}`
+              : `${systemConfig.cloudProvider === 'gateway' ? 'Gateway' : 'Gemini'} / ${getSelectedModel(engineMode, systemConfig)}`}
+          </span>
+          <span className="mt-1 font-mono text-[7px] uppercase">
+            {engineStatus?.available ? 'Connected' : 'Needs config'}
           </span>
         </div>
       </div>

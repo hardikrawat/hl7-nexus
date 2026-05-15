@@ -5,8 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 
 from deps import get_current_username
-from engines.gemini_ai import GeminiProvider
-from engines.local_ai import OllamaProvider
+from engines.providers import resolve_provider
 from services.audit_helpers import client_host_user_agent
 from services.audit_log import append_audit
 from services.event_bus import event_bus
@@ -25,7 +24,11 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     engine_mode: Literal["cloud_ai", "local_ai", "algorithm"]
     model: Optional[str] = ""
+    cloud_provider: Literal["gemini_direct", "gateway"] = "gemini_direct"
     api_key: str = ""
+    gemini_api_key: str = ""
+    gateway_url: str = ""
+    gateway_api_key: str = ""
     ollama_url: str = "http://localhost:11434"
     message: str = Field(min_length=1, max_length=MAX_CHAT_MESSAGE_LENGTH)
     history: List[ChatMessage] = Field(default_factory=list, max_length=MAX_HISTORY_ITEMS)
@@ -40,13 +43,18 @@ class ChatRequest(BaseModel):
 
 
 def get_chat_provider(req: ChatRequest):
-    if req.engine_mode == "cloud_ai":
-        return GeminiProvider(api_key=req.api_key), req.model or "gemini-1.5-flash"
-
-    if req.engine_mode == "local_ai":
-        return OllamaProvider(base_url=req.ollama_url), req.model or "llama3"
-
-    raise ValueError("Assistant chat requires AI Engine. Select Gemini Cloud or Ollama Local.")
+    if req.engine_mode == "algorithm":
+        raise ValueError("Assistant chat requires AI Engine. Select Gemini Cloud or Ollama Local.")
+    return resolve_provider(
+        engine_mode=req.engine_mode,
+        model=req.model,
+        cloud_provider=req.cloud_provider,
+        api_key=req.api_key,
+        gemini_api_key=req.gemini_api_key,
+        gateway_url=req.gateway_url,
+        gateway_api_key=req.gateway_api_key,
+        ollama_url=req.ollama_url,
+    )
 
 
 def build_chat_prompt(req: ChatRequest) -> str:
@@ -83,11 +91,11 @@ async def chat_message(
 ):
     host, ua = client_host_user_agent(request)
     try:
-        provider, model = get_chat_provider(req)
+        provider, model, provider_name = get_chat_provider(req)
         await event_bus.publish(
             "EventType.CHAT_START",
             req.engine_mode,
-            f"Assistant request submitted to {model}",
+            f"Assistant request submitted to {provider_name}:{model}",
         )
 
         reply = await provider.generate(
@@ -99,13 +107,13 @@ async def chat_message(
         await event_bus.publish(
             "EventType.CHAT_COMPLETE",
             req.engine_mode,
-            f"Assistant response completed on {model}",
+            f"Assistant response completed on {provider_name}:{model}",
         )
         await append_audit(
             username,
             "CHAT_MESSAGE",
-            f"mode={req.engine_mode} model={model} prompt_chars={len(req.message)} "
-            f"reply_chars={len(reply)}",
+            f"mode={req.engine_mode} provider={provider_name} model={model} "
+            f"prompt_chars={len(req.message)} reply_chars={len(reply)}",
             client_host=host,
             user_agent=ua,
         )
@@ -113,6 +121,7 @@ async def chat_message(
         return {
             "reply": reply.strip(),
             "engine": req.engine_mode,
+            "provider": provider_name,
             "model": model,
         }
     except ValueError as exc:

@@ -51,12 +51,12 @@ The **Helix System** is a web-based HL7 v2.x message processing platform designe
 
 | Feature | Algorithm Engine | AI Engine |
 |---------|:---------------:|:---------:|
-| Parse & Validate | ✅ Full pipeline with observability | ✅ Fast path |
+| Parse & Validate | ✅ Full pipeline with observability | ✅ Algorithm safety pass + AI review |
 | Build Message | ✅ Template-based generator | ✅ AI inference from JSON |
 | Compare Messages | ✅ Segment-aware diff | ✅ Segment-aware diff |
-| Batch Processing | ✅ Sequential with progress | ✅ Sequential with progress |
+| Batch Processing | ✅ Sequential with progress | ✅ Sequential with AI review |
 | Clinical NLP | ❌ | ✅ Natural language → HL7 |
-| FHIR R4 Export | ✅ Automated conversion | ✅ Automated conversion |
+| FHIR R4 Export | ✅ Automated conversion | ✅ Automated conversion + AI mapping review |
 
 ---
 
@@ -166,7 +166,7 @@ flowchart LR
 | **FastAPI** | REST API + WebSocket server |
 | **Pydantic** | Request validation & serialization |
 | **httpx** | Async HTTP client for external APIs |
-| **google-generativeai** | Gemini Cloud AI integration |
+| **Gemini REST API** | Direct Gemini Cloud AI integration |
 | **uvicorn** | ASGI production server |
 
 ### Frontend
@@ -396,8 +396,10 @@ Click the **⚙️ Settings** icon in the header to access runtime configuration
 
 | Setting | Description | Default |
 |---------|-------------|---------|
+| **Cloud Provider** | Direct Gemini API or OpenAI-compatible Gateway / Proxy | `Direct Gemini API` |
 | **Gemini API Key** | Google Gemini API key for Cloud AI mode | (empty) |
-| **Active Model** | Selected Gemini model for inference | Auto-detected |
+| **Gateway URL / API Key** | Gateway endpoint and bearer token for routed models | (empty) |
+| **Active Model** | Selected cloud model for inference | `gemini-2.5-flash-lite` |
 | **Ollama URL** | Local Ollama server address | `http://localhost:11434` |
 | **Terminology Server** | HL7 data source for validation rules | `HL7 Terminology (THO)` |
 | **Workspace Layout** | UI layout mode (Classic / IDE / Unified) | `Classic` |
@@ -574,9 +576,9 @@ The Helix System operates in one of three engine modes, selectable from the head
 - Intentional processing delays for operational observability
 - Left panel shows **Algorithm Processor** status cards
 
-### ☁️ Cloud AI Mode (Gemini)
-- Requires a Google Gemini API key (configured in Settings)
-- Powers Clinical NLP (natural language → HL7) and AI-assisted message generation
+### ☁️ Cloud AI Mode (Direct Gemini or Gateway)
+- Supports direct Gemini API keys and OpenAI-compatible Gateway / Proxy credentials
+- Powers Clinical NLP, AI-assisted message generation, parse review, batch review, diff review, and FHIR mapping review
 - Left panel shows **AI Agent** status cards
 
 ### ⬡ Local AI Mode (Ollama)

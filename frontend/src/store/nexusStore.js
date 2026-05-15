@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_CLOUD_MODEL, DEFAULT_GEMINI_MODELS } from '../config/models';
 import { DEFAULT_THEME_ID } from '../config/themes';
 
 export const useNexusStore = create((set) => ({
@@ -8,12 +9,15 @@ export const useNexusStore = create((set) => ({
   
   // System Configuration (Replaces .env)
   systemConfig: {
+    cloudProvider: 'gemini_direct', // 'gemini_direct' | 'gateway'
     geminiApiKey: '',
+    gatewayUrl: '',
+    gatewayApiKey: '',
     terminologyServer: 'hl7_tho', // 'hl7_tho' | 'cdc_phin' | 'local_mock'
     ollamaUrl: 'http://localhost:11434',
     localModel: 'llama3',
-    activeModel: '',
-    availableModels: [],
+    activeModel: DEFAULT_CLOUD_MODEL,
+    availableModels: DEFAULT_GEMINI_MODELS,
     layoutMode: 'modern',
     themeId: DEFAULT_THEME_ID,
   },
@@ -35,6 +39,8 @@ export const useNexusStore = create((set) => ({
   currentMessage: '',
   parsedMessage: null,
   validationResult: null,
+  aiAnalysis: null,
+  engineStatus: null,
 
   // Agent/Processor State
   processors: {
@@ -51,7 +57,10 @@ export const useNexusStore = create((set) => ({
   
   // Actions
   setEngineMode: (mode) => set({ engineMode: mode }),
-  setConfigModalOpen: (isOpen) => set({ isConfigModalOpen: isOpen }),
+  setConfigModalOpen: (isOpen) => set((state) => ({
+    isConfigModalOpen: isOpen,
+    isChatAssistantOpen: isOpen ? false : state.isChatAssistantOpen,
+  })),
   setChatAssistantOpen: (isOpen) => set({ isChatAssistantOpen: isOpen }),
   toggleChatAssistant: () => set((state) => ({ isChatAssistantOpen: !state.isChatAssistantOpen })),
   setActiveAssistantField: (field) => set({ activeAssistantField: field }),
@@ -71,6 +80,10 @@ export const useNexusStore = create((set) => ({
   setActiveTab: (tab) => set({ activeTab: tab }),
   setActiveSubTab: (subTab) => set({ activeSubTab: subTab }),
   setCurrentMessage: (msg) => set({ currentMessage: msg }),
+  setParsedMessage: (parsedMessage) => set({ parsedMessage }),
+  setValidationResult: (validationResult) => set({ validationResult }),
+  setAiAnalysis: (aiAnalysis) => set({ aiAnalysis }),
+  setEngineStatus: (engineStatus) => set({ engineStatus }),
   
   addEvent: (event) => set((state) => ({
     // Keep last 200 events to prevent memory leaks

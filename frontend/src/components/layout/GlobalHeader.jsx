@@ -85,7 +85,7 @@ export default function GlobalHeader() {
                 engineMode === 'cloud_ai' ? "bg-[var(--color-nexus-red)] text-white" : "bg-white text-slate-400"
               )}
             >
-              ☁ GEMINI CLOUD
+              ☁ {systemConfig.cloudProvider === 'gateway' ? 'CLOUD GATEWAY' : 'GEMINI CLOUD'}
             </button>
             <button
               onClick={() => setEngineMode('local_ai')}

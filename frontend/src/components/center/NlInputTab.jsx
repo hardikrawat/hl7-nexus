@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiClient } from '../../api/client';
+import { buildAiRequestConfig, getSelectedModel } from '../../api/aiPayload';
 import { useNexusStore } from '../../store/nexusStore';
 import { Play, Copy, Check } from 'lucide-react';
 import clsx from 'clsx';
@@ -15,6 +16,9 @@ export default function NlInputTab() {
   const systemConfig = useNexusStore((state) => state.systemConfig);
   const addEvent = useNexusStore((state) => state.addEvent);
   const updateAgentStatus = useNexusStore((state) => state.updateAgentStatus);
+  const setCurrentMessage = useNexusStore((state) => state.setCurrentMessage);
+  const setValidationResult = useNexusStore((state) => state.setValidationResult);
+  const setAiAnalysis = useNexusStore((state) => state.setAiAnalysis);
 
   // M-08: Working copy button
   const handleCopy = async () => {
@@ -46,16 +50,19 @@ export default function NlInputTab() {
       
       // M-01: Centralized API URL, L-03: timeout
       const res = await apiClient.post(API.ENGINE_NL_PARSE, {
-        engine_mode: engineMode,
-        model: engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'llama3'),
-        api_key: systemConfig.geminiApiKey,
-        ollama_url: systemConfig.ollamaUrl,
+        ...buildAiRequestConfig(engineMode, systemConfig),
         text: inputText
       }, { timeout: 60000 }); // Longer timeout for AI inference
       
       setOutputHL7(res.data.hl7);
+      setCurrentMessage(res.data.hl7);
+      setValidationResult(res.data.validation || null);
+      setAiAnalysis(null);
       
       updateAgentStatus('semantic', 'COMPLETE', { size: res.data.hl7.length });
+      updateAgentStatus('compliance', res.data.validation?.status === 'PASS' ? 'COMPLETE' : 'ERROR', {
+        validation: res.data.validation?.status || 'UNKNOWN'
+      });
     } catch (err) {
       console.error(err);
       const detail = err.response?.data?.detail || err.message;
@@ -78,7 +85,7 @@ export default function NlInputTab() {
     <div className="flex flex-col h-full space-y-4">
       {/* Description / Instructions */}
       <div className="nexus-nl-instructions border p-3 font-mono text-[10px]">
-        Enter natural language clinical text below. The AI Engine ({engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'Ollama')}) will process the semantics and generate a structurally compliant HL7 message.
+        Enter natural language clinical text below. The AI Engine ({getSelectedModel(engineMode, systemConfig)}) will process the semantics and generate a structurally compliant HL7 message.
       </div>
 
       {/* Input Area */}

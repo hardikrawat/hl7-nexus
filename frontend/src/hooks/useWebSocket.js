@@ -6,6 +6,19 @@ import { API } from '../config/api';
 const KEEPALIVE_INTERVAL_MS = 25000;
 const MAX_RECONNECT_DELAY_MS = 30000;
 
+function isJwtExpired(token) {
+  try {
+    const [, payload] = token.split('.');
+    if (!payload) return true;
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+    const decoded = JSON.parse(window.atob(padded));
+    return typeof decoded.exp === 'number' && decoded.exp <= Math.floor(Date.now() / 1000);
+  } catch {
+    return true;
+  }
+}
+
 /**
  * WebSocket to the event bus with exponential backoff.
  * Server requires ?token= JWT from login.
@@ -59,6 +72,21 @@ export function useWebSocket() {
       connectionGeneration.current += 1;
       closeCurrentSocket();
       reconnectDelay.current = 1000;
+      return undefined;
+    }
+
+    if (isJwtExpired(token)) {
+      connectionGeneration.current += 1;
+      closeCurrentSocket();
+      reconnectDelay.current = 1000;
+      addEvent({
+        type: 'EventType.WS_AUTH_EXPIRED',
+        timestamp: new Date().toISOString(),
+        engine: 'system',
+        detail: 'Event Bus token expired. Please sign in again.',
+        severity: 'WARNING',
+      });
+      logout();
       return undefined;
     }
 
