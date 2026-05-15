@@ -47,7 +47,7 @@ export default function NlInputTab() {
       // M-01: Centralized API URL, L-03: timeout
       const res = await apiClient.post(API.ENGINE_NL_PARSE, {
         engine_mode: engineMode,
-        model: engineMode === 'cloud_ai' ? systemConfig.activeModel : 'llama3',
+        model: engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'llama3'),
         api_key: systemConfig.geminiApiKey,
         ollama_url: systemConfig.ollamaUrl,
         text: inputText
@@ -78,7 +78,7 @@ export default function NlInputTab() {
     <div className="flex flex-col h-full space-y-4">
       {/* Description / Instructions */}
       <div className="nexus-nl-instructions border p-3 font-mono text-[10px]">
-        Enter natural language clinical text below. The AI Engine ({engineMode === 'cloud_ai' ? systemConfig.activeModel : 'Ollama'}) will process the semantics and generate a structurally compliant HL7 message.
+        Enter natural language clinical text below. The AI Engine ({engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'Ollama')}) will process the semantics and generate a structurally compliant HL7 message.
       </div>
 
       {/* Input Area */}

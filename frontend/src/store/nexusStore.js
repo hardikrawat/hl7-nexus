@@ -11,6 +11,7 @@ export const useNexusStore = create((set) => ({
     geminiApiKey: '',
     terminologyServer: 'hl7_tho', // 'hl7_tho' | 'cdc_phin' | 'local_mock'
     ollamaUrl: 'http://localhost:11434',
+    localModel: 'llama3',
     activeModel: '',
     availableModels: [],
     layoutMode: 'modern',
@@ -20,6 +21,11 @@ export const useNexusStore = create((set) => ({
   // UI State
   activeTab: 'generate',
   activeSubTab: 'form_builder',
+
+  // Global Assistant State
+  isChatAssistantOpen: false,
+  chatMessages: [],
+  activeAssistantField: null,
   
   // Real-time Event Bus
   eventBus: [],
@@ -46,6 +52,19 @@ export const useNexusStore = create((set) => ({
   // Actions
   setEngineMode: (mode) => set({ engineMode: mode }),
   setConfigModalOpen: (isOpen) => set({ isConfigModalOpen: isOpen }),
+  setChatAssistantOpen: (isOpen) => set({ isChatAssistantOpen: isOpen }),
+  toggleChatAssistant: () => set((state) => ({ isChatAssistantOpen: !state.isChatAssistantOpen })),
+  setActiveAssistantField: (field) => set({ activeAssistantField: field }),
+  clearActiveAssistantField: () => set({ activeAssistantField: null }),
+  addChatMessage: (message) => set((state) => ({
+    chatMessages: [...state.chatMessages, message].slice(-80)
+  })),
+  updateChatMessage: (id, patch) => set((state) => ({
+    chatMessages: state.chatMessages.map((message) => (
+      message.id === id ? { ...message, ...patch } : message
+    ))
+  })),
+  clearChatMessages: () => set({ chatMessages: [] }),
   updateSystemConfig: (updates) => set((state) => ({ 
     systemConfig: { ...state.systemConfig, ...updates } 
   })),

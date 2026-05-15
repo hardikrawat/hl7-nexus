@@ -13,6 +13,9 @@ export const API = {
   ENGINE_NL_PARSE: `${API_BASE_URL}/api/v1/engine/nl_parse`,
   ENGINE_GEMINI_MODELS: `${API_BASE_URL}/api/v1/engine/gemini/models`,
 
+  // Assistant endpoints
+  CHAT_MESSAGE: `${API_BASE_URL}/api/v1/chat/message`,
+
   // Health
   HEALTH: `${API_BASE_URL}/api/v1/health`,
 

@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from services.event_bus import event_bus
 from engines.algorithm.data_fetcher import runtime_data
-from routers import algorithm, audit, auth, engine
+from routers import algorithm, audit, auth, chat, engine
 from security import decode_access_token
 
 
@@ -69,3 +69,4 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(audit.router, prefix="/api/v1/audit", tags=["audit"])
 app.include_router(engine.router, prefix="/api/v1/engine", tags=["engine"])
 app.include_router(algorithm.router, prefix="/api/v1/algo", tags=["algorithm"])
+app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])

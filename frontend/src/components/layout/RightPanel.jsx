@@ -136,7 +136,7 @@ export default function RightPanel() {
                 <div className="flex justify-between items-center">
                   <span className="font-mono text-[9px] font-bold text-slate-800">MODEL</span>
                   <span className="font-mono text-[9px] font-bold uppercase text-blue-800 truncate w-24 text-right">
-                    {engineMode === 'cloud_ai' ? systemConfig.activeModel : 'llama3'}
+                    {engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'llama3')}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">

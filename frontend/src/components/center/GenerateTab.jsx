@@ -74,7 +74,7 @@ export default function GenerateTab() {
 
         const res = await apiClient.post(API.ENGINE_NL_PARSE, {
           engine_mode: engineMode,
-          model: engineMode === 'cloud_ai' ? systemConfig.activeModel : 'llama3',
+          model: engineMode === 'cloud_ai' ? systemConfig.activeModel : (systemConfig.localModel || 'llama3'),
           api_key: systemConfig.geminiApiKey,
           ollama_url: systemConfig.ollamaUrl,
           text: prompt

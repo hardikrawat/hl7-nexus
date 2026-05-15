@@ -26,6 +26,7 @@ import CenterPanel from './CenterPanel';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import { DARK_THEME_ID, LIGHT_THEME_ID, getNextThemeId, getThemeById } from '../../config/themes';
+import { ChatLauncherButton } from '../chat/GlobalChatAssistant';
 
 const formatTime = (seconds) => {
   const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -230,6 +231,7 @@ export default function ModernShell() {
             {rightOpen ? <PanelRightClose size={17} /> : <PanelRightOpen size={17} />}
           </button>
           <UserSessionControls variant="modern" />
+          <ChatLauncherButton compact />
 
           <button
             onClick={toggleTheme}

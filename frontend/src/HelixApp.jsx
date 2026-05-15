@@ -8,6 +8,7 @@ import GlobalFooter from './components/layout/GlobalFooter';
 import ModernShell from './components/layout/ModernShell';
 import ConfigModal from './components/shared/ConfigModal';
 import ErrorBoundary from './components/shared/ErrorBoundary';
+import GlobalChatAssistant from './components/chat/GlobalChatAssistant';
 import { useWebSocket } from './hooks/useWebSocket';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DEFAULT_THEME_ID, getThemeById } from './config/themes';
@@ -146,6 +147,8 @@ function HelixApp() {
           <GlobalFooter />
         </>
       )}
+
+      <GlobalChatAssistant />
 
       {isConfigModalOpen && <ConfigModal />}
     </div>

@@ -28,6 +28,7 @@ USER_RELEVANT_ACTIONS: frozenset[str] = frozenset(
         "ALGO_GENERATE",
         "ENGINE_NL_PARSE",
         "ENGINE_GEMINI_MODELS",
+        "CHAT_MESSAGE",
     }
 )
 

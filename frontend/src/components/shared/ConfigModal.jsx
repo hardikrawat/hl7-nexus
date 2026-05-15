@@ -3,6 +3,7 @@ import { useNexusStore } from '../../store/nexusStore';
 import { Cloud, Database, LayoutDashboard, RefreshCw, Server, X } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { API } from '../../config/api';
+import { ChatLauncherButton } from '../chat/GlobalChatAssistant';
 
 function ConfigSection({ icon: Icon, eyebrow, title, children }) {
   return (
@@ -109,13 +110,16 @@ export default function ConfigModal() {
               Configure engine providers, terminology sources, and workspace layout.
             </p>
           </div>
-          <button
-            onClick={handleCancel}
-            className="nexus-button-secondary flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
-            title="Close settings"
-          >
-            <X size={16} />
-          </button>
+          <div className="flex items-center gap-2">
+            <ChatLauncherButton compact />
+            <button
+              onClick={handleCancel}
+              className="nexus-button-secondary flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              title="Close settings"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -162,14 +166,30 @@ export default function ConfigModal() {
 
           {/* Local AI Config */}
           <ConfigSection icon={Server} eyebrow="Local AI" title="Ollama configuration">
-            <input 
-              type="text"
-              name="ollamaUrl"
-              value={localConfig.ollamaUrl}
-              onChange={handleChange}
-              placeholder="http://localhost:11434"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
-            />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_180px]">
+              <label className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Ollama URL</span>
+                <input
+                  type="text"
+                  name="ollamaUrl"
+                  value={localConfig.ollamaUrl}
+                  onChange={handleChange}
+                  placeholder="http://localhost:11434"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Model</span>
+                <input
+                  type="text"
+                  name="localModel"
+                  value={localConfig.localModel || 'llama3'}
+                  onChange={handleChange}
+                  placeholder="llama3"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                />
+              </label>
+            </div>
           </ConfigSection>
 
           {/* Terminology Server Config */}
