@@ -1,8 +1,20 @@
 // M-01: Centralized API configuration
 // All API URLs are defined here instead of being hardcoded throughout components.
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
+const getDefaultApiBaseUrl = () => {
+  if (typeof window === 'undefined') return 'http://127.0.0.1:8000';
+  const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+  return `${protocol}//${window.location.hostname}:8000`;
+};
+
+const getDefaultWsBaseUrl = () => {
+  if (typeof window === 'undefined') return 'ws://127.0.0.1:8000';
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${window.location.hostname}:8000`;
+};
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || getDefaultApiBaseUrl();
+const WS_BASE_URL = import.meta.env.VITE_WS_URL || getDefaultWsBaseUrl();
 
 export const API = {
   // Algorithm endpoints

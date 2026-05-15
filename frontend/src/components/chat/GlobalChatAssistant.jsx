@@ -116,6 +116,16 @@ const setNativeValue = (element, value) => {
   }
 };
 
+function HelixAssistantMark({ variant = 'default' }) {
+  return (
+    <span className={clsx('nexus-assistant-mark', `nexus-assistant-mark--${variant}`)} aria-hidden="true">
+      <span className="nexus-assistant-mark__orbit" />
+      <Bot className="nexus-assistant-mark__bot" size={variant === 'compact' ? 15 : 17} strokeWidth={2.25} />
+      <Sparkles className="nexus-assistant-mark__spark" size={variant === 'compact' ? 8 : 9} strokeWidth={2.5} />
+    </span>
+  );
+}
+
 function FieldContextBadge({ field }) {
   if (!field) {
     return (
@@ -189,12 +199,13 @@ export function ChatLauncherButton({ compact = false }) {
       onClick={toggleChatAssistant}
       className={clsx(
         'nexus-chat-launcher inline-flex items-center justify-center border transition-colors',
+        isChatAssistantOpen ? 'nexus-chat-launcher--active' : null,
         compact ? 'h-9 w-9' : 'h-8 gap-2 px-2.5'
       )}
       title={isChatAssistantOpen ? 'Close Helix Assistant' : 'Open Helix Assistant'}
       aria-label={isChatAssistantOpen ? 'Close Helix Assistant' : 'Open Helix Assistant'}
     >
-      <Bot size={compact ? 15 : 14} />
+      <HelixAssistantMark variant={compact ? 'compact' : 'default'} />
       {!compact ? <span>Assistant</span> : null}
     </button>
   );
@@ -395,7 +406,7 @@ export default function GlobalChatAssistant() {
         title="Open Helix Assistant"
         aria-label="Open Helix Assistant"
       >
-        <Bot size={18} />
+        <HelixAssistantMark variant="dock" />
       </button>
 
       <AnimatePresence>
@@ -416,7 +427,7 @@ export default function GlobalChatAssistant() {
               <header className="nexus-chat-header">
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="nexus-chat-logo">
-                    <Bot size={18} />
+                    <HelixAssistantMark variant="logo" />
                   </div>
                   <div className="min-w-0">
                     <div className="nexus-chat-title">Helix Assistant</div>

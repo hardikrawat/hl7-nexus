@@ -35,6 +35,13 @@ const formatTime = (seconds) => {
   return `${h}:${m}:${s}`;
 };
 
+const TERMINOLOGY_SERVER_LABELS = {
+  hl7_tho: 'HL7 Terminology (THO) REST API',
+  cdc_phin: 'CDC PHIN VADS',
+  tx_fhir: 'tx.fhir.org Terminology Server',
+  github_raw: 'GitHub Raw (hl7apy profiles)',
+};
+
 function SegmentButton({ active, children, onClick, title }) {
   return (
     <button
@@ -81,6 +88,9 @@ export default function ModernShell() {
   const isAI = engineMode === 'cloud_ai' || engineMode === 'local_ai';
   const themeId = getThemeById(systemConfig?.themeId || LIGHT_THEME_ID).id;
   const isDarkTheme = themeId === DARK_THEME_ID;
+  const terminologyServerLabel = TERMINOLOGY_SERVER_LABELS[systemConfig?.terminologyServer]
+    || systemConfig?.terminologyServer
+    || 'Terminology server';
 
   const selectAiEngine = () => {
     if (!isAI) {
@@ -109,7 +119,7 @@ export default function ModernShell() {
     <div className="modern-shell nexus-orbital-shell flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-950">
       <div className="nexus-orbital-glow nexus-orbital-glow--one" aria-hidden="true" />
       <div className="nexus-orbital-glow nexus-orbital-glow--two" aria-hidden="true" />
-      <header className="nexus-shell-header flex h-[76px] flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
+      <header className="nexus-shell-header relative z-[90] flex h-[76px] flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
         <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
           <button
             onClick={() => setMobileLeftOpen((open) => !open)}
@@ -134,10 +144,7 @@ export default function ModernShell() {
               </div>
               <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
                 <span className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[10px] text-slate-600">
-                  HL7 v2.5.1
-                </span>
-                <span className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[10px] text-slate-600">
-                  FHIR R4
+                  HL7
                 </span>
               </div>
             </div>
@@ -198,10 +205,21 @@ export default function ModernShell() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.16 }}
-                className="nexus-engine-badge inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wider"
+                className="nexus-engine-badge group relative inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wider"
+                title={`Terminology server: ${terminologyServerLabel}`}
               >
                 <Cpu size={13} />
-                Rule Engine v2.1
+                <span className="max-w-[190px] truncate">
+                  {terminologyServerLabel}
+                </span>
+                <span className="pointer-events-none absolute left-1/2 top-[calc(100%+0.55rem)] z-[9999] hidden w-max max-w-[280px] -translate-x-1/2 rounded-xl border border-[var(--nexus-border)] bg-[var(--nexus-panel-strong)] px-3 py-2 text-left font-mono normal-case tracking-normal text-[var(--nexus-panel-strong-text)] shadow-lg group-hover:block group-focus-within:block">
+                  <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--nexus-faint)]">
+                    Terminology server
+                  </span>
+                  <span className="mt-1 block whitespace-normal text-[11px] font-semibold leading-4">
+                    {terminologyServerLabel}
+                  </span>
+                </span>
               </motion.div>
             )}
           </AnimatePresence>

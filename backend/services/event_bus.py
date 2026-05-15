@@ -14,7 +14,7 @@ class EventBus:
         self.active_connections: List[WebSocket] = []
 
     async def connect(self, websocket: WebSocket):
-        await websocket.accept()
+        # The websocket route accepts after authentication; the bus only tracks it.
         self.active_connections.append(websocket)
 
     def disconnect(self, websocket: WebSocket):
