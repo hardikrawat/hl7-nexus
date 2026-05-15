@@ -227,21 +227,11 @@ function PayloadDetailModal({ type, ast, fhir, validation, onClose }) {
       data-detail-overlay="true"
       onClickCapture={handleOverlayClick}
     >
-      <button
-        type="button"
-        onClick={handleClose}
-        data-detail-close="true"
-        aria-label="Close details"
-        className="nexus-detail-close fixed right-6 top-6 z-[10000] flex h-8 w-8 items-center justify-center rounded-xl border"
-        title="Close details"
-      >
-        <X size={15} />
-      </button>
       <div
         className="nexus-detail-dialog flex min-h-0 w-full max-w-5xl flex-col overflow-hidden rounded-3xl border shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="nexus-detail-header flex items-start justify-between gap-4 border-b px-5 py-4 pr-16">
+        <div className="nexus-detail-header flex items-start justify-between gap-4 border-b px-5 py-4">
           <div className="min-w-0">
             <div className="nexus-detail-eyebrow font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
               {modalContent.eyebrow}
@@ -253,6 +243,16 @@ function PayloadDetailModal({ type, ast, fhir, validation, onClose }) {
               {modalContent.description}
             </p>
           </div>
+          <button
+            type="button"
+            onClick={handleClose}
+            data-detail-close="true"
+            aria-label="Close details"
+            className="nexus-detail-close mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border"
+            title="Close details"
+          >
+            <X size={15} />
+          </button>
         </div>
 
         <div className="nexus-detail-body flex min-h-0 flex-1 flex-col overflow-hidden p-5 pb-6">

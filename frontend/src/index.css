@@ -1396,11 +1396,6 @@ body[data-nexus-theme] .nexus-detail-close {
   background-color: var(--nexus-control-bg);
   border-color: var(--nexus-border);
   color: var(--nexus-muted);
-  position: fixed;
-  /* right: max(1.5rem, calc((100vw - 64rem) / 2 + 1rem));
-  top: max(2rem, calc((100dvh - 42rem) / 2 + 1rem)); */
-  top:42px;
-  right:38px;
 }
 
 body[data-nexus-theme] .modern-shell .nexus-detail-close:hover,
