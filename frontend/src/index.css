@@ -634,6 +634,20 @@ body[data-nexus-theme] .nexus-config-icon {
   color: var(--nexus-accent-text);
 }
 
+body[data-nexus-theme] .nexus-key-visibility-button {
+  background-color: var(--nexus-control-bg);
+  border-color: var(--nexus-border);
+  color: var(--nexus-muted);
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+body[data-nexus-theme] .nexus-key-visibility-button:hover,
+body[data-nexus-theme] .nexus-key-visibility-button[aria-pressed="true"] {
+  background-color: var(--nexus-control-hover-bg);
+  border-color: var(--nexus-accent);
+  color: var(--nexus-ink);
+}
+
 body[data-nexus-theme] .nexus-button-secondary {
   background-color: var(--nexus-surface);
   border-color: var(--nexus-border);

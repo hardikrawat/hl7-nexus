@@ -50,6 +50,7 @@ async def websocket_endpoint(
         await websocket.close(code=1008)
         return
 
+    await websocket.accept()
     await event_bus.connect(websocket)
     try:
         while True:

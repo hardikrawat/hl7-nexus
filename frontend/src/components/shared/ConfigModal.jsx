@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNexusStore } from '../../store/nexusStore';
-import { Cloud, Database, LayoutDashboard, RefreshCw, Server, X } from 'lucide-react';
+import { Cloud, Database, Eye, EyeOff, LayoutDashboard, RefreshCw, Server, X } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { API } from '../../config/api';
 import { DEFAULT_CLOUD_MODEL, DEFAULT_GATEWAY_MODELS, DEFAULT_GEMINI_MODELS } from '../../config/models';
@@ -34,12 +34,18 @@ export default function ConfigModal() {
   const [localConfig, setLocalConfig] = useState(systemConfig);
   const [isFetchingModels, setIsFetchingModels] = useState(false);
   const [modelFetchError, setModelFetchError] = useState('');
+  const [showGeminiApiKey, setShowGeminiApiKey] = useState(false);
+  const [showGatewayApiKey, setShowGatewayApiKey] = useState(false);
 
   const updateLocalConfig = (patch) => {
     setLocalConfig((current) => ({ ...current, ...patch }));
   };
 
-  const handleGatewayInput = (fieldName, event) => {
+  const stopConfigKeyPropagation = (event) => {
+    event.stopPropagation();
+  };
+
+  const handleTextInput = (fieldName, event) => {
     updateLocalConfig({ [fieldName]: event.currentTarget.value });
   };
 
@@ -260,9 +266,9 @@ export default function ConfigModal() {
                     <input
                       type="text"
                       name="gatewayUrl"
-                      value={localConfig.gatewayUrl || ''}
-                      onInput={(event) => handleGatewayInput('gatewayUrl', event)}
-                      onChange={(event) => handleGatewayInput('gatewayUrl', event)}
+                      defaultValue={localConfig.gatewayUrl || ''}
+                      onInput={(event) => handleTextInput('gatewayUrl', event)}
+                      onKeyDown={stopConfigKeyPropagation}
                       placeholder="https://gateway.example.com"
                       autoComplete="off"
                       spellCheck={false}
@@ -271,17 +277,29 @@ export default function ConfigModal() {
                   </label>
                   <label className="flex flex-col gap-2">
                     <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Gateway API key</span>
-                    <input
-                      type="password"
-                      name="gatewayApiKey"
-                      value={localConfig.gatewayApiKey || ''}
-                      onInput={(event) => handleGatewayInput('gatewayApiKey', event)}
-                      onChange={(event) => handleGatewayInput('gatewayApiKey', event)}
-                      placeholder="Gateway bearer token"
-                      autoComplete="new-password"
-                      spellCheck={false}
-                      className="relative z-[1] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showGatewayApiKey ? 'text' : 'password'}
+                        name="gatewayApiKey"
+                        defaultValue={localConfig.gatewayApiKey || ''}
+                        onInput={(event) => handleTextInput('gatewayApiKey', event)}
+                        onKeyDown={stopConfigKeyPropagation}
+                        placeholder="Gateway bearer token"
+                        autoComplete="new-password"
+                        spellCheck={false}
+                        className="relative z-[1] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-11 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowGatewayApiKey((visible) => !visible)}
+                        className="nexus-key-visibility-button absolute right-2 top-1/2 z-[2] flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg border"
+                        aria-label={showGatewayApiKey ? 'Hide gateway API key' : 'Show gateway API key'}
+                        aria-pressed={showGatewayApiKey}
+                        title={showGatewayApiKey ? 'Hide key' : 'Show key'}
+                      >
+                        {showGatewayApiKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                      </button>
+                    </div>
                   </label>
                 </div>
                 <button
@@ -295,14 +313,29 @@ export default function ConfigModal() {
               </div>
             ) : (
               <div className="flex gap-2">
-                <input
-                  type="password"
-                  name="geminiApiKey"
-                  value={localConfig.geminiApiKey}
-                  onChange={handleChange}
-                  placeholder="Enter Google Gemini API Key"
-                  className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
-                />
+                <div className="relative min-w-0 flex-1">
+                  <input
+                    type={showGeminiApiKey ? 'text' : 'password'}
+                    name="geminiApiKey"
+                    defaultValue={localConfig.geminiApiKey || ''}
+                    onInput={(event) => handleTextInput('geminiApiKey', event)}
+                    onKeyDown={stopConfigKeyPropagation}
+                    placeholder="Enter Google Gemini API Key"
+                    autoComplete="new-password"
+                    spellCheck={false}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-11 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowGeminiApiKey((visible) => !visible)}
+                    className="nexus-key-visibility-button absolute right-2 top-1/2 z-[2] flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg border"
+                    aria-label={showGeminiApiKey ? 'Hide Gemini API key' : 'Show Gemini API key'}
+                    aria-pressed={showGeminiApiKey}
+                    title={showGeminiApiKey ? 'Hide key' : 'Show key'}
+                  >
+                    {showGeminiApiKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
                 <button
                   onClick={fetchGeminiModels}
                   disabled={!localConfig.geminiApiKey || isFetchingModels}
@@ -349,8 +382,9 @@ export default function ConfigModal() {
                 <input
                   type="text"
                   name="ollamaUrl"
-                  value={localConfig.ollamaUrl}
-                  onChange={handleChange}
+                  defaultValue={localConfig.ollamaUrl || ''}
+                  onInput={(event) => handleTextInput('ollamaUrl', event)}
+                  onKeyDown={stopConfigKeyPropagation}
                   placeholder="http://localhost:11434"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
                 />
@@ -360,8 +394,9 @@ export default function ConfigModal() {
                 <input
                   type="text"
                   name="localModel"
-                  value={localConfig.localModel || 'llama3'}
-                  onChange={handleChange}
+                  defaultValue={localConfig.localModel || 'llama3'}
+                  onInput={(event) => handleTextInput('localModel', event)}
+                  onKeyDown={stopConfigKeyPropagation}
                   placeholder="llama3"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
                 />
