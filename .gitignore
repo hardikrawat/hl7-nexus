@@ -51,6 +51,10 @@ ehthumbs.db
 *.log
 logs/
 
+# ──────────────── Local Runtime Data ────────────────
+backend/data/*.db
+backend/data/*.db-*
+
 # ──────────────── Testing ────────────────
 .coverage
 htmlcov/

@@ -39,6 +39,7 @@ export const API = {
   AUTH_LOGOUT: `${API_BASE_URL}/api/v1/auth/logout`,
   AUTH_ME: `${API_BASE_URL}/api/v1/auth/me`,
   AUDIT: `${API_BASE_URL}/api/v1/audit`,
+  LOCAL_DB_HL7_MESSAGES: `${API_BASE_URL}/api/v1/local-db/hl7-messages`,
 
   // WebSocket (append ?token=JWT after login)
   WS_EVENTBUS: `${WS_BASE_URL}/ws/eventbus`,

@@ -3,8 +3,9 @@ from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from services.event_bus import event_bus
+from services.local_hl7_db import init_local_hl7_db
 from engines.algorithm.data_fetcher import runtime_data
-from routers import algorithm, audit, auth, chat, engine
+from routers import algorithm, audit, auth, chat, engine, local_db
 from security import decode_access_token
 
 
@@ -12,6 +13,7 @@ from security import decode_access_token
 async def lifespan(app: FastAPI):
     """M-02: Modern lifespan handler replacing deprecated @app.on_event."""
     # Startup
+    init_local_hl7_db()
     asyncio.create_task(runtime_data.fetch_data("hl7_tho"))
     yield
     # Shutdown (cleanup if needed)
@@ -70,3 +72,4 @@ app.include_router(audit.router, prefix="/api/v1/audit", tags=["audit"])
 app.include_router(engine.router, prefix="/api/v1/engine", tags=["engine"])
 app.include_router(algorithm.router, prefix="/api/v1/algo", tags=["algorithm"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
+app.include_router(local_db.router, prefix="/api/v1/local-db", tags=["local-db"])

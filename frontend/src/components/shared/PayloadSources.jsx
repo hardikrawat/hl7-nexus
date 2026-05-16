@@ -1,31 +1,9 @@
 import React, { useState } from 'react';
 import { ChevronRight, Database, FileUp, ListPlus } from 'lucide-react';
 import clsx from 'clsx';
+import { apiClient } from '../../api/client';
+import { API } from '../../config/api';
 import { useNexusStore } from '../../store/nexusStore';
-
-const LOCAL_DB_ROWS = [
-  {
-    id: 'DB_001',
-    type: 'ADT^A01',
-    patient: 'DOE, JOHN',
-    receivedAt: '2026-05-11 08:12',
-    message: 'MSH|^~\\&|LOCAL_DB|HOSPITAL|HELIX|NEXUS|202605110812||ADT^A01|DB001|P|2.5.1\nPID|1||12345||DOE^JOHN||19800101|M\nPV1|1|I|WARD^101^A',
-  },
-  {
-    id: 'DB_002',
-    type: 'ORU^R01',
-    patient: 'SMITH, ANNA',
-    receivedAt: '2026-05-11 08:34',
-    message: 'MSH|^~\\&|LAB|HOSPITAL|HELIX|NEXUS|202605110834||ORU^R01|DB002|P|2.5.1\nPID|1||67890||SMITH^ANNA||19751202|F\nOBR|1||LAB123|CBC^Complete Blood Count\nOBX|1|NM|WBC^White Blood Count||6.7|10*3/uL',
-  },
-  {
-    id: 'DB_003',
-    type: 'ORM^O01',
-    patient: 'PATEL, RAVI',
-    receivedAt: '2026-05-11 09:03',
-    message: 'MSH|^~\\&|ORDER_ENTRY|CLINIC|HELIX|NEXUS|202605110903||ORM^O01|DB003|P|2.5.1\nPID|1||24680||PATEL^RAVI||19920314|M\nORC|NW|ORD4488\nOBR|1|ORD4488||XRAYCHEST^Chest X-Ray',
-  },
-];
 
 const CSV_MESSAGE_FIELDS = new Set([
   'hl7',
@@ -163,6 +141,7 @@ export default function PayloadSources({
   const [dbStatus, setDbStatus] = useState('idle');
   const [dbRows, setDbRows] = useState([]);
   const [selectedDbIds, setSelectedDbIds] = useState([]);
+  const [dbError, setDbError] = useState('');
   const [importRows, setImportRows] = useState([]);
   const [selectedImportIndex, setSelectedImportIndex] = useState(0);
   const [importSummary, setImportSummary] = useState('');
@@ -171,16 +150,50 @@ export default function PayloadSources({
   const addEvent = useNexusStore((state) => state.addEvent);
   const isSingleSelect = selectionMode === 'single';
 
-  const handleConnectDatabase = () => {
-    setDbStatus('connected');
-    setDbRows(LOCAL_DB_ROWS);
-    setSelectedDbIds(isSingleSelect ? [LOCAL_DB_ROWS[0].id] : LOCAL_DB_ROWS.map((row) => row.id));
-    addEvent({
-      type: 'EventType.LOCAL_DB_CONNECTED',
-      engine: 'system',
-      detail: `Connected to ${dbConfig.driver} source ${dbConfig.connection} and listed ${LOCAL_DB_ROWS.length} HL7 rows`,
-      severity: 'INFO',
-    });
+  const updateDbConfig = (patch) => {
+    setDbConfig((config) => ({ ...config, ...patch }));
+    setDbStatus('idle');
+    setDbRows([]);
+    setSelectedDbIds([]);
+    setDbError('');
+  };
+
+  const handleConnectDatabase = async () => {
+    setDbStatus('connecting');
+    setDbError('');
+    setDbRows([]);
+    setSelectedDbIds([]);
+
+    try {
+      const response = await apiClient.get(API.LOCAL_DB_HL7_MESSAGES, {
+        params: {
+          driver: dbConfig.driver,
+          connection: dbConfig.connection,
+          table: dbConfig.table,
+        },
+      });
+
+      const rows = response.data.items || [];
+      setDbRows(rows);
+      setSelectedDbIds(isSingleSelect ? (rows[0] ? [rows[0].id] : []) : rows.map((row) => row.id));
+      setDbStatus('connected');
+      addEvent({
+        type: 'EventType.LOCAL_DB_CONNECTED',
+        engine: 'system',
+        detail: `Connected to ${response.data.driver || dbConfig.driver} source ${dbConfig.connection} and listed ${rows.length} HL7 rows from ${dbConfig.table}`,
+        severity: 'INFO',
+      });
+    } catch (err) {
+      const detail = err.response?.data?.detail || err.message || 'Database connection failed.';
+      setDbStatus('error');
+      setDbError(detail);
+      addEvent({
+        type: 'EventType.LOCAL_DB_ERROR',
+        engine: 'system',
+        detail,
+        severity: 'ERROR',
+      });
+    }
   };
 
   const toggleDbRow = (rowId) => {
@@ -270,7 +283,7 @@ export default function PayloadSources({
             </span>
           </div>
           <span className={clsx('nexus-ingest-status rounded-full px-2 py-0.5 font-mono text-[9px] uppercase', dbStatus === 'connected' && 'nexus-ingest-status--connected')}>
-            {dbStatus === 'connected' ? 'Connected' : 'Not connected'}
+            {dbStatus === 'connecting' ? 'Connecting' : dbStatus === 'connected' ? 'Connected' : dbStatus === 'error' ? 'Error' : 'Not connected'}
           </span>
         </div>
 
@@ -279,19 +292,17 @@ export default function PayloadSources({
             <span className="nexus-ingest-label text-[9px] font-bold uppercase tracking-wider">Driver</span>
             <select
               value={dbConfig.driver}
-              onChange={(event) => setDbConfig((config) => ({ ...config, driver: event.target.value }))}
+              onChange={(event) => updateDbConfig({ driver: event.target.value })}
               className="nexus-ingest-input rounded-xl border px-3 py-2 font-mono text-[11px]"
             >
               <option>SQLite</option>
-              <option>PostgreSQL</option>
-              <option>MySQL</option>
             </select>
           </label>
           <label className="flex flex-col gap-1">
             <span className="nexus-ingest-label text-[9px] font-bold uppercase tracking-wider">Connection</span>
             <input
               value={dbConfig.connection}
-              onChange={(event) => setDbConfig((config) => ({ ...config, connection: event.target.value }))}
+              onChange={(event) => updateDbConfig({ connection: event.target.value })}
               className="nexus-ingest-input rounded-xl border px-3 py-2 font-mono text-[11px]"
             />
           </label>
@@ -299,15 +310,20 @@ export default function PayloadSources({
             <span className="nexus-ingest-label text-[9px] font-bold uppercase tracking-wider">Table</span>
             <input
               value={dbConfig.table}
-              onChange={(event) => setDbConfig((config) => ({ ...config, table: event.target.value }))}
+              onChange={(event) => updateDbConfig({ table: event.target.value })}
               className="nexus-ingest-input rounded-xl border px-3 py-2 font-mono text-[11px]"
             />
           </label>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <button type="button" onClick={handleConnectDatabase} className="nexus-tool-secondary-action border px-3 py-2 font-mono text-[10px] font-bold uppercase">
-            Connect and list HL7
+          <button
+            type="button"
+            onClick={handleConnectDatabase}
+            disabled={dbStatus === 'connecting'}
+            className="nexus-tool-secondary-action border px-3 py-2 font-mono text-[10px] font-bold uppercase disabled:opacity-50"
+          >
+            {dbStatus === 'connecting' ? 'Connecting...' : 'Connect and list HL7'}
           </button>
           <button
             type="button"
@@ -319,6 +335,12 @@ export default function PayloadSources({
             {loadSelectedLabel}
           </button>
         </div>
+
+        {dbError && (
+          <div className="nexus-import-error mt-3 rounded-xl border px-3 py-2 font-mono text-[10px]">
+            {dbError}
+          </div>
+        )}
 
         {dbRows.length > 0 && (
           <div className={clsx('nexus-db-list mt-3 space-y-2 overflow-y-auto pr-1', compact ? 'max-h-28' : 'max-h-36')}>
