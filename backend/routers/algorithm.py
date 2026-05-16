@@ -1,6 +1,9 @@
+from typing import Literal
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, field_validator
 from deps import get_current_username
+from engines.algorithm.data_fetcher import runtime_data
 from engines.algorithm.lexer import lexer
 from engines.algorithm.parser import parser
 from engines.algorithm.validator import validator
@@ -14,10 +17,12 @@ router = APIRouter()
 
 # H-04: Input size limits
 MAX_MESSAGE_LENGTH = 1_000_000  # 1 MB max per message
+TerminologyServer = Literal["hl7_tho", "cdc_phin", "tx_fhir", "github_raw"]
 
 
 class ParseRequest(BaseModel):
     message: str
+    terminology_server: TerminologyServer = "hl7_tho"
 
     @field_validator('message')
     @classmethod
@@ -32,6 +37,7 @@ class ParseRequest(BaseModel):
 class GenerateRequest(BaseModel):
     template: str
     data: dict
+    terminology_server: TerminologyServer = "hl7_tho"
 
 
 @router.post("/process")
@@ -42,6 +48,8 @@ async def process_message(
 ):
     host, ua = client_host_user_agent(request)
     try:
+        await runtime_data.ensure_data(req.terminology_server)
+
         # 1. Lexer
         lexer_output = await lexer.tokenize(req.message)
 
@@ -57,14 +65,15 @@ async def process_message(
         await append_audit(
             username,
             "ALGO_PROCESS",
-            f"chars={len(req.message)} status={val_result.get('status', '')}",
+            f"terminology={req.terminology_server} chars={len(req.message)} status={val_result.get('status', '')}",
             client_host=host,
             user_agent=ua,
         )
         return {
             "ast": ast,
             "validation": val_result,
-            "fhir": fhir
+            "fhir": fhir,
+            "terminology_server": req.terminology_server,
         }
     except ValueError as e:
         await append_audit(
@@ -98,15 +107,16 @@ async def generate_message(
 ):
     host, ua = client_host_user_agent(request)
     try:
+        await runtime_data.ensure_data(req.terminology_server)
         msg = await generator.generate(req.data, req.template)
         await append_audit(
             username,
             "ALGO_GENERATE",
-            f"template={req.template} out_chars={len(msg)}",
+            f"terminology={req.terminology_server} template={req.template} out_chars={len(msg)}",
             client_host=host,
             user_agent=ua,
         )
-        return {"message": msg}
+        return {"message": msg, "terminology_server": req.terminology_server}
     except ValueError as e:
         await append_audit(
             username,

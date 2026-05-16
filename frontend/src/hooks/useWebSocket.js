@@ -145,7 +145,7 @@ export function useWebSocket() {
           type: 'EventType.WS_CONNECTED',
           timestamp: new Date().toISOString(),
           engine: 'system',
-          detail: 'Connected to Helix System Event Bus',
+          detail: 'Connected to HL7 Event Bus',
           severity: 'INFO',
         });
 

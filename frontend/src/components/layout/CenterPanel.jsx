@@ -40,7 +40,7 @@ export default function CenterPanel() {
               disabled={isDisabled}
               onClick={() => setActiveTab(tab.route)}
               title={isDisabled ? (tab.aiOnly ? "Requires AI Engine" : "Requires Algorithm Engine") : ""}
-              className={`nexus-workbench-tab flex-none px-4 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-colors inline-flex items-center justify-center gap-2 ${
+              className={`nexus-workbench-tab px-4 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-colors inline-flex items-center justify-center gap-2 ${
                 isActive 
                   ? 'nexus-workbench-tab--active border-[var(--color-nexus-red)] text-[var(--color-nexus-red)] font-bold bg-gray-50'
                   : 'nexus-workbench-tab--idle border-transparent text-slate-400 hover:text-slate-600 hover:bg-gray-50'

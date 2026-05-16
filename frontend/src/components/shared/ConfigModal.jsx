@@ -7,6 +7,13 @@ import { DEFAULT_CLOUD_MODEL, DEFAULT_GATEWAY_MODELS, DEFAULT_GEMINI_MODELS } fr
 import { ChatLauncherButton } from '../chat/GlobalChatAssistant';
 import clsx from 'clsx';
 
+const TERMINOLOGY_OPTIONS = [
+  { value: 'hl7_tho', label: 'HL7 Terminology (THO) REST API' },
+  { value: 'cdc_phin', label: 'CDC PHIN VADS' },
+  { value: 'tx_fhir', label: 'tx.fhir.org Terminology Server' },
+  { value: 'github_raw', label: 'GitHub Raw (hl7apy profiles)' },
+];
+
 function ConfigSection({ icon: Icon, eyebrow, title, children }) {
   return (
     <section className="nexus-config-section rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -36,6 +43,7 @@ export default function ConfigModal() {
   const [modelFetchError, setModelFetchError] = useState('');
   const [showGeminiApiKey, setShowGeminiApiKey] = useState(false);
   const [showGatewayApiKey, setShowGatewayApiKey] = useState(false);
+  const [isTerminologyOpen, setTerminologyOpen] = useState(false);
 
   const updateLocalConfig = (patch) => {
     setLocalConfig((current) => ({ ...current, ...patch }));
@@ -91,14 +99,21 @@ export default function ConfigModal() {
 
     setLocalConfig(nextConfig);
 
-    if (name === 'layoutMode') {
+    if (name === 'layoutMode' || name === 'terminologyServer') {
       updateSystemConfig(patch);
     }
+  };
+
+  const selectTerminologyServer = (terminologyServer) => {
+    updateLocalConfig({ terminologyServer });
+    updateSystemConfig({ terminologyServer });
+    setTerminologyOpen(false);
   };
 
   const handleCancel = () => {
     updateSystemConfig({
       layoutMode: initialConfig.layoutMode || 'modern',
+      terminologyServer: initialConfig.terminologyServer || 'hl7_tho',
     });
     setConfigModalOpen(false);
   };
@@ -197,7 +212,7 @@ export default function ConfigModal() {
   };
 
   return (
-    <div className="nexus-config-overlay fixed inset-0 z-[11000] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md">
+    <div className="nexus-config-overlay fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div className="nexus-config-dialog relative z-[11001] flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]">
         {/* Header */}
         <div className="nexus-config-dialog-header flex items-start justify-between border-b border-slate-200 bg-white px-6 py-5">
@@ -406,17 +421,62 @@ export default function ConfigModal() {
 
           {/* Terminology Server Config */}
           <ConfigSection icon={Database} eyebrow="Algorithm" title="Terminology server">
-            <select 
-              name="terminologyServer"
-              value={localConfig.terminologyServer}
-              onChange={handleChange}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+            <div
+              className="relative"
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setTerminologyOpen(false);
+                }
+              }}
             >
-              <option value="hl7_tho">HL7 Terminology (THO) REST API</option>
-              <option value="cdc_phin">CDC PHIN VADS</option>
-              <option value="tx_fhir">tx.fhir.org Terminology Server</option>
-              <option value="github_raw">GitHub Raw (hl7apy profiles)</option>
-            </select>
+              <button
+                type="button"
+                onClick={() => setTerminologyOpen((open) => !open)}
+                className="nexus-config-select-button flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-left font-mono text-sm outline-none transition focus:border-[var(--color-nexus-red)] focus:ring-4 focus:ring-red-900/10"
+                aria-haspopup="listbox"
+                aria-expanded={isTerminologyOpen}
+              >
+                <span className="min-w-0 truncate">
+                  {TERMINOLOGY_OPTIONS.find((option) => option.value === (localConfig.terminologyServer || 'hl7_tho'))?.label}
+                </span>
+                <span className={clsx(
+                  "text-[10px] transition-transform",
+                  isTerminologyOpen ? "rotate-180" : "rotate-0"
+                )}>
+                  ▼
+                </span>
+              </button>
+              {isTerminologyOpen && (
+                <div
+                  className="nexus-config-select-menu absolute left-0 right-0 top-[calc(100%+0.35rem)] z-[11020] overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-xl"
+                  role="listbox"
+                  aria-label="Terminology server"
+                >
+                  {TERMINOLOGY_OPTIONS.map((option) => {
+                    const selected = option.value === (localConfig.terminologyServer || 'hl7_tho');
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={selected}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => selectTerminologyServer(option.value)}
+                        className={clsx(
+                          "flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left font-mono text-sm transition-colors",
+                          selected
+                            ? "bg-red-50 font-bold text-[var(--color-nexus-red)]"
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                        )}
+                      >
+                        <span className="min-w-0 truncate">{option.label}</span>
+                        {selected ? <span className="text-[10px]">SELECTED</span> : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
             <p className="mt-2 text-xs text-slate-500">
               The system dynamically downloads rules and tables from this source at runtime.
             </p>

@@ -312,6 +312,46 @@ Navigate to **http://localhost:5173** in your browser. Both the backend and fron
 
 > **WSL Users:** If accessing from a Windows browser, use `http://localhost:5173` — WSL2 automatically forwards ports. If that doesn't work, use the WSL IP: `hostname -I` and navigate to `http://<wsl-ip>:5173`.
 
+### Dockerfile Flow
+
+Build one Docker image that contains the production frontend build and the FastAPI backend:
+
+```bash
+docker build -t hl7-nexus .
+```
+
+Run the container:
+
+```bash
+docker run --rm --name hl7-nexus -p 8000:8000 hl7-nexus
+```
+
+Open the app:
+
+```text
+http://localhost:8000
+```
+
+Flow:
+
+```text
+Dockerfile
+  ↓
+docker build
+  ↓
+Docker image created
+  ↓
+docker run
+  ↓
+Docker container created
+  ↓
+Frontend is served by FastAPI
+  ↓
+Backend APIs run in FastAPI
+  ↓
+App listens on port 8000
+```
+
 ### 🚀 One-Command Launch (Clone → Install → Run → Open Browser)
 
 Copy-paste **one command** right after cloning — it sets up both servers and opens the app:

@@ -100,7 +100,8 @@ export default function GenerateTab() {
         
         const res = await apiClient.post(API.ALGO_GENERATE, {
           template,
-          data: parsedData
+          data: parsedData,
+          terminology_server: systemConfig.terminologyServer || 'hl7_tho',
         }, { timeout: 30000 });
         
         setOutputMessage(res.data.message);
@@ -126,10 +127,10 @@ export default function GenerateTab() {
   };
 
   return (
-    <div className="nexus-generator flex h-full flex-col space-y-4">
+    <div className="nexus-generator flex h-full min-h-0 min-w-0 flex-col space-y-4">
       {/* Controls */}
-      <div className="nexus-generator-controls flex items-end gap-4 rounded-xl border p-3 shadow-sm">
-        <div className="flex flex-col space-y-1">
+      <div className="nexus-generator-controls flex flex-wrap items-end gap-4 rounded-xl border p-3 shadow-sm">
+        <div className="flex min-w-[13rem] flex-1 flex-col space-y-1">
           <span className="nexus-generator-label mb-2 border-b border-gray-200 pb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
             Message template
           </span>
@@ -147,7 +148,7 @@ export default function GenerateTab() {
         </div>
 
         {/* Engine mode indicator */}
-        <div className="flex flex-col space-y-1">
+        <div className="flex min-w-[9rem] flex-col space-y-1">
           <span className="nexus-generator-kicker font-mono text-[9px] uppercase tracking-widest text-slate-400">
             ENGINE
           </span>
@@ -159,7 +160,7 @@ export default function GenerateTab() {
           </span>
         </div>
 
-        <div className="flex justify-end space-x-2 mt-4">
+        <div className="mt-4 flex min-w-[10rem] flex-1 justify-end">
           <button 
             onClick={handleGenerate}
             disabled={isProcessing || !!jsonError}
@@ -171,12 +172,12 @@ export default function GenerateTab() {
       </div>
 
       {/* Split View */}
-      <div className="flex-1 flex space-x-4 min-h-0">
+      <div className="nexus-generator-split flex min-h-0 min-w-0 flex-1 gap-4">
         
         {/* JSON Input */}
-        <div className="nexus-generator-panel flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="nexus-generator-panel-header flex items-center justify-between border-b-2 border-black bg-slate-900 px-3 py-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+        <div className="nexus-generator-panel flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="nexus-generator-panel-header flex items-center justify-between gap-3 border-b-2 border-black bg-slate-900 px-3 py-1.5">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               Patient data JSON
             </span>
             {jsonError && (
@@ -196,9 +197,9 @@ export default function GenerateTab() {
         </div>
 
         {/* HL7 Output */}
-        <div className="nexus-generator-panel nexus-generator-panel--output flex flex-1 flex-col overflow-hidden rounded-2xl border border-red-200 bg-white shadow-sm">
-          <div className="nexus-generator-panel-header nexus-generator-panel-header--accent flex items-center justify-between border-b-2 border-[var(--color-nexus-red)] bg-[var(--color-nexus-red)] px-3 py-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+        <div className="nexus-generator-panel nexus-generator-panel--output flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-red-200 bg-white shadow-sm">
+          <div className="nexus-generator-panel-header nexus-generator-panel-header--accent flex items-center justify-between gap-3 border-b-2 border-[var(--color-nexus-red)] bg-[var(--color-nexus-red)] px-3 py-1.5">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               Generated HL7 output
             </span>
             <button onClick={handleCopy} className="nexus-generator-copy-button text-red-200 transition-colors hover:text-white" title="Copy to clipboard">

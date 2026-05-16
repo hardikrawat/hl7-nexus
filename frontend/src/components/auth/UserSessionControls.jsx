@@ -29,8 +29,8 @@ export default function UserSessionControls({ variant = 'classic' }) {
     <div
       className={
         isModern
-          ? 'flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5'
-          : 'flex items-center gap-2 border border-slate-200 bg-slate-50 px-2 py-1'
+          ? 'nexus-session-control flex min-w-0 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5'
+          : 'nexus-session-control flex min-w-0 items-center gap-2 border border-slate-200 bg-slate-50 px-2 py-1'
       }
     >
       <User size={isModern ? 15 : 13} className="text-slate-500" aria-hidden />

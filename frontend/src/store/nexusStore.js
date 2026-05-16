@@ -13,7 +13,7 @@ export const useNexusStore = create((set) => ({
     geminiApiKey: '',
     gatewayUrl: '',
     gatewayApiKey: '',
-    terminologyServer: 'hl7_tho', // 'hl7_tho' | 'cdc_phin' | 'local_mock'
+    terminologyServer: 'hl7_tho', // 'hl7_tho' | 'cdc_phin' | 'tx_fhir' | 'github_raw'
     ollamaUrl: 'http://localhost:11434',
     localModel: 'llama3',
     activeModel: DEFAULT_CLOUD_MODEL,

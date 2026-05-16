@@ -221,7 +221,7 @@ function PayloadDetailModal({ type, ast, fhir, validation, onClose }) {
 
   return (
     <div
-      className="nexus-detail-overlay fixed inset-0 z-[9999] flex items-center justify-center p-6 backdrop-blur-md"
+      className="nexus-detail-overlay fixed inset-0 z-[9999] flex items-center justify-center p-6"
       role="dialog"
       aria-modal="true"
       aria-label={modalContent.ariaLabel}
@@ -417,7 +417,10 @@ export default function ParseTab() {
         
         const res = await apiClient.post(
           API.ALGO_PROCESS,
-          { message: inputMessage },
+          {
+            message: inputMessage,
+            terminology_server: systemConfig.terminologyServer || 'hl7_tho',
+          },
           { timeout: 30000 }
         );
         
@@ -498,7 +501,7 @@ export default function ParseTab() {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4 min-h-0">
+    <div className="flex h-full min-h-0 min-w-0 flex-col space-y-4">
       <PayloadSources
         compact
         loadSelectedLabel="Use selected"
@@ -507,10 +510,10 @@ export default function ParseTab() {
       />
 
       {/* Input Area */}
-      <div className="flex flex-col space-y-2">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+      <div className="flex min-w-0 flex-col space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
               HL7 message input
             </span>
             <span className={clsx(
@@ -541,9 +544,9 @@ export default function ParseTab() {
           "nexus-ai-review rounded-xl border px-3 py-2 font-mono text-[10px]",
           aiReview.status === 'ERROR' ? "border-red-300 bg-red-50 text-red-700" : "border-amber-300 bg-amber-50 text-amber-800"
         )}>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="font-bold uppercase tracking-[0.16em]">AI review</span>
-            <span className="font-bold uppercase">
+            <span className="min-w-0 break-words font-bold uppercase">
               {aiReview.model || engineMode} {aiReview.confidence != null ? `· ${aiReview.confidence}%` : ''}
             </span>
           </div>
@@ -554,12 +557,12 @@ export default function ParseTab() {
       )}
 
       {/* Output Area - Split horizontally */}
-      <div className="flex-1 flex space-x-4 min-h-0">
+      <div className="nexus-parse-workspace flex min-h-0 min-w-0 flex-1 gap-4 overflow-hidden">
         
         {/* Segment Tree */}
         <div className="nexus-parse-panel nexus-parse-panel--ast flex-1 flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white min-w-0">
           <div className="nexus-parse-panel-header flex items-center justify-between gap-3 bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               AST parse tree
             </span>
             <button
@@ -584,9 +587,9 @@ export default function ParseTab() {
         </div>
 
         {/* Validation Matrix */}
-        <div className="nexus-parse-panel nexus-parse-panel--validation w-64 flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white flex-shrink-0">
+        <div className="nexus-parse-panel nexus-parse-panel--validation flex w-64 max-w-full flex-shrink-0 flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
           <div className="nexus-parse-panel-header flex items-center justify-between gap-3 bg-slate-900 px-3 py-1.5 border-b-2 border-black">
-            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               Compliance validation
             </span>
             <button
@@ -625,7 +628,7 @@ export default function ParseTab() {
                     ERRORS ({validation.errors.length})
                   </span>
                   {validation.errors.length > 0 ? validation.errors.map((err, i) => (
-                    <div key={i} className="text-[10px] font-mono text-red-600 border-l-2 border-red-600 pl-2 bg-red-50 p-1">
+                    <div key={i} className="break-words text-[10px] font-mono text-red-600 border-l-2 border-red-600 pl-2 bg-red-50 p-1">
                       <strong>{err.rule}: {err.segment}-{err.field}:</strong> {err.message}
                     </div>
                   )) : (
@@ -640,7 +643,7 @@ export default function ParseTab() {
                       WARNINGS ({validation.warnings.length})
                     </span>
                     {validation.warnings.map((warn, i) => (
-                      <div key={i} className="text-[10px] font-mono text-amber-700 border-l-2 border-amber-500 pl-2 bg-amber-50 p-1">
+                      <div key={i} className="break-words text-[10px] font-mono text-amber-700 border-l-2 border-amber-500 pl-2 bg-amber-50 p-1">
                         <strong>{warn.rule}:</strong> {warn.message}
                       </div>
                     ))}
@@ -658,10 +661,10 @@ export default function ParseTab() {
         {/* FHIR Bridge Output */}
         <div className="nexus-fhir-panel flex-1 flex flex-col overflow-hidden rounded-2xl border-2 border-[var(--color-nexus-red)] bg-white min-w-0">
           <div className="nexus-fhir-header flex items-center justify-between gap-3 bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)]">
-            <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
               FHIR bundle export details
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
                 onClick={() => setDetailView('fhir')}
@@ -683,7 +686,7 @@ export default function ParseTab() {
               </button>
             </div>
           </div>
-          <div className="nexus-fhir-body flex-1 overflow-y-auto p-3 font-mono text-[10px] whitespace-pre">
+          <div className="nexus-fhir-body flex-1 overflow-y-auto whitespace-pre-wrap p-3 font-mono text-[10px] break-words">
             {fhir ? JSON.stringify(fhir, null, 2) : (
               <span className="text-slate-400">Awaiting payload</span>
             )}

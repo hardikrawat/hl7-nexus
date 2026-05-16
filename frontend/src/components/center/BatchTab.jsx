@@ -68,7 +68,10 @@ export default function BatchTab() {
           isAI ? API.ENGINE_AI_PROCESS : API.ALGO_PROCESS,
           isAI
             ? { ...buildAiRequestConfig(engineMode, systemConfig), message: messages[i] }
-            : { message: messages[i] },
+            : {
+              message: messages[i],
+              terminology_server: systemConfig.terminologyServer || 'hl7_tho',
+            },
           { timeout: isAI ? 120000 : 30000 }
         );
         
@@ -149,15 +152,15 @@ export default function BatchTab() {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex h-full min-h-0 min-w-0 flex-col space-y-4">
       {/* Data Sources */}
       <PayloadSources onLoadMessages={appendMessages} />
 
       {/* Input Area */}
-      <div className="flex flex-col space-y-2">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+      <div className="flex min-w-0 flex-col space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
               Batch processing payload
             </span>
             <span className={clsx(
@@ -215,9 +218,9 @@ export default function BatchTab() {
       )}
 
       {/* Output Stream */}
-      <div className="nexus-tool-panel nexus-batch-panel flex-1 flex flex-col border-2 border-black bg-white min-h-0">
+      <div className="nexus-tool-panel nexus-batch-panel flex min-h-0 min-w-0 flex-1 flex-col border-2 border-black bg-white">
         <div className="nexus-tool-panel-header nexus-batch-results-header bg-slate-900 px-3 py-1.5 border-b-2 border-black flex items-center justify-between gap-3">
-          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+          <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
             Batch validation results
           </span>
           <button
@@ -233,14 +236,14 @@ export default function BatchTab() {
             <div className="font-mono text-[11px] space-y-2">
               {results.map((res, i) => (
                 <div key={i} className={clsx(
-                  "nexus-batch-result border p-2 flex justify-between items-center",
+                  "nexus-batch-result flex flex-col gap-2 border p-2 sm:flex-row sm:items-center sm:justify-between",
                   res.status === 'PASS' ? "nexus-batch-result--pass" : "nexus-batch-result--fail"
                 )}>
-                  <div className="flex items-center space-x-4">
-                    <span className="nexus-batch-message-id font-bold w-16">MSG_{res.id.toString().padStart(4, '0')}</span>
-                    <span className="nexus-batch-preview truncate w-96">{res.preview}</span>
+                  <div className="flex min-w-0 flex-1 items-center gap-4">
+                    <span className="nexus-batch-message-id w-16 shrink-0 font-bold">MSG_{res.id.toString().padStart(4, '0')}</span>
+                    <span className="nexus-batch-preview min-w-0 flex-1 truncate">{res.preview}</span>
                   </div>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1">
                     <span className="nexus-batch-metrics text-[9px]">
                       {res.rulesChecked}R/{res.segments}S/{res.fhirResources}F
                       {res.aiConfidence != null ? `/${res.aiConfidence}%AI` : ''}

@@ -41,6 +41,13 @@ const TERMINOLOGY_SERVER_LABELS = {
   github_raw: 'GitHub Raw (hl7apy profiles)',
 };
 
+const TERMINOLOGY_SERVER_HEADER_LABELS = {
+  hl7_tho: 'HL7 THO REST API',
+  cdc_phin: 'CDC PHIN VADS',
+  tx_fhir: 'tx.fhir.org',
+  github_raw: 'GitHub profiles',
+};
+
 function SegmentButton({ active, children, onClick, title }) {
   return (
     <button
@@ -90,6 +97,8 @@ export default function ModernShell() {
   const terminologyServerLabel = TERMINOLOGY_SERVER_LABELS[systemConfig?.terminologyServer]
     || systemConfig?.terminologyServer
     || 'Terminology server';
+  const terminologyServerHeaderLabel = TERMINOLOGY_SERVER_HEADER_LABELS[systemConfig?.terminologyServer]
+    || terminologyServerLabel;
 
   const selectAiEngine = () => {
     if (!isAI) {
@@ -118,8 +127,8 @@ export default function ModernShell() {
     <div className="modern-shell nexus-orbital-shell flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-950">
       <div className="nexus-orbital-glow nexus-orbital-glow--one" aria-hidden="true" />
       <div className="nexus-orbital-glow nexus-orbital-glow--two" aria-hidden="true" />
-      <header className="nexus-shell-header relative z-[90] flex h-[76px] flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
-        <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
+      <header className="nexus-shell-header relative z-[90] grid min-h-[76px] flex-shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 border-b border-slate-200 bg-white px-5 shadow-sm">
+        <div className="nexus-header-brand-zone flex min-w-0 items-center gap-4 justify-self-start overflow-hidden">
           <button
             onClick={() => setMobileLeftOpen((open) => !open)}
             className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
@@ -133,11 +142,11 @@ export default function ModernShell() {
               <Activity size={19} className="nexus-brand-logo-icon" />
             </div>
             <div className="min-w-0 max-w-[210px]">
-              <div className="flex items-baseline gap-2">
+              <div className="flex min-w-0 items-baseline gap-2">
                 <h1 className="nexus-brand-title truncate text-lg font-semibold tracking-tight text-slate-950">
-                  Helix System
+                  HL7
                 </h1>
-                <span className="hidden text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:inline">
+                <span className="hidden shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:inline">
                   Nexus
                 </span>
               </div>
@@ -150,12 +159,12 @@ export default function ModernShell() {
           </div>
         </div>
 
-        <div className="nexus-topology hidden min-w-0 items-center gap-2 md:flex lg:-ml-6 xl:-ml-10">
-          <div className="hidden whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:block">
+        <div className="nexus-topology hidden min-w-0 max-w-full items-center justify-center gap-2 justify-self-center overflow-hidden md:flex">
+          <div className="hidden shrink-0 whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400 xl:block">
             Engine Mode
           </div>
 
-          <div className="nexus-engine-tabs flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
+          <div className="nexus-engine-tabs flex min-w-0 items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
             <SegmentButton active={isAI} onClick={selectAiEngine} title="Use AI Engine">
               <Cloud size={13} />
               AI Engine
@@ -178,7 +187,7 @@ export default function ModernShell() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.16 }}
-                className="nexus-engine-tabs nexus-engine-subtabs flex items-center gap-2 rounded-xl border p-1"
+                className="nexus-engine-tabs nexus-engine-subtabs flex min-w-0 items-center gap-2 rounded-xl border p-1"
               >
                 <SegmentButton
                   active={engineMode === 'cloud_ai'}
@@ -204,12 +213,12 @@ export default function ModernShell() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.16 }}
-                className="nexus-engine-badge group relative inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wider"
+                className="nexus-engine-badge nexus-terminology-badge group relative inline-flex h-9 min-w-0 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wider"
                 title={`Terminology server: ${terminologyServerLabel}`}
               >
-                <Cpu size={13} />
-                <span className="max-w-[190px] truncate">
-                  {terminologyServerLabel}
+                <Cpu size={13} className="shrink-0" />
+                <span className="nexus-terminology-badge-label min-w-0 truncate">
+                  {terminologyServerHeaderLabel}
                 </span>
                 <span className="pointer-events-none absolute left-1/2 top-[calc(100%+0.55rem)] z-[9999] hidden w-max max-w-[280px] -translate-x-1/2 rounded-xl border border-[var(--nexus-border)] bg-[var(--nexus-panel-strong)] px-3 py-2 text-left font-mono normal-case tracking-normal text-[var(--nexus-panel-strong-text)] shadow-lg group-hover:block group-focus-within:block">
                   <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--nexus-faint)]">
@@ -224,7 +233,7 @@ export default function ModernShell() {
           </AnimatePresence>
         </div>
 
-        <div className="nexus-header-actions flex flex-shrink-0 items-center gap-3">
+        <div className="nexus-header-actions nexus-header-actions-zone flex min-w-0 items-center justify-end gap-2 justify-self-end">
           <div className="nexus-status-pill hidden items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 sm:flex">
             <Wifi size={14} />
             Connected
@@ -241,28 +250,28 @@ export default function ModernShell() {
                 setMobileRightOpen(true);
               }
             }}
-            className="nexus-inspector-toggle inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-inspector-toggle nexus-header-action-button inline-flex h-12 w-12 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
             title={rightOpen ? 'Hide inspector' : 'Show inspector'}
             aria-label={rightOpen ? 'Hide inspector' : 'Show inspector'}
           >
-            {rightOpen ? <PanelRightClose size={17} /> : <PanelRightOpen size={17} />}
+            {rightOpen ? <PanelRightClose size={20} /> : <PanelRightOpen size={20} />}
           </button>
           <UserSessionControls variant="modern" />
 
           <button
             onClick={toggleTheme}
-            className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-icon-button nexus-header-action-button inline-flex h-12 w-12 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
             title={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
             aria-label={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {isDarkTheme ? <Sun size={17} /> : <Moon size={17} />}
+            {isDarkTheme ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           <button
             onClick={() => setConfigModalOpen(true)}
-            className="nexus-icon-button inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
+            className="nexus-icon-button nexus-header-action-button inline-flex h-12 w-12 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50"
             title="System configuration"
           >
-            <Settings size={17} />
+            <Settings size={20} />
           </button>
         </div>
       </header>
@@ -292,7 +301,7 @@ export default function ModernShell() {
           {rightOpen && (
             <motion.aside
               initial={{ opacity: 0, width: 0, x: 20 }}
-              animate={{ opacity: 1, width: 336, x: 0 }}
+              animate={{ opacity: 1, width: 384, x: 0 }}
               exit={{ opacity: 0, width: 0, x: 20 }}
               transition={{ duration: 0.18 }}
               className="hidden min-h-0 flex-shrink-0 overflow-hidden xl:block"
@@ -348,11 +357,11 @@ export default function ModernShell() {
             exit={{ opacity: 0 }}
           >
             <motion.aside
-              initial={{ x: 360 }}
+              initial={{ x: 400 }}
               animate={{ x: 0 }}
-              exit={{ x: 360 }}
+              exit={{ x: 400 }}
               transition={{ duration: 0.18 }}
-              className="nexus-mobile-drawer ml-auto h-full w-[min(360px,calc(100vw-32px))] border-l border-slate-200 bg-white shadow-2xl"
+              className="nexus-mobile-drawer ml-auto h-full w-[min(400px,calc(100vw-32px))] border-l border-slate-200 bg-white shadow-2xl"
             >
               <div className="flex h-12 items-center justify-between border-b border-slate-200 px-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
@@ -380,7 +389,7 @@ export default function ModernShell() {
               {engineMode.replace('_', ' ')}
             </span>
             <span className="truncate text-xs text-slate-500">
-              {latestEvent ? latestEvent.detail : 'Helix workspace ready'}
+              {latestEvent ? latestEvent.detail : 'HL7 workspace ready'}
             </span>
           </div>
           <div className="flex items-center gap-2 text-[11px] font-medium text-slate-500">

@@ -82,16 +82,16 @@ export default function NlInputTab() {
   }
 
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex h-full min-h-0 min-w-0 flex-col space-y-4">
       {/* Description / Instructions */}
-      <div className="nexus-nl-instructions border p-3 font-mono text-[10px]">
+      <div className="nexus-nl-instructions min-w-0 break-words border p-3 font-mono text-[10px]">
         Enter natural language clinical text below. The AI Engine ({getSelectedModel(engineMode, systemConfig)}) will process the semantics and generate a structurally compliant HL7 message.
       </div>
 
       {/* Input Area */}
-      <div className="flex flex-col space-y-2 flex-1">
-        <div className="flex justify-between items-center">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
             Clinical text input
           </span>
           <button 
@@ -111,9 +111,9 @@ export default function NlInputTab() {
       </div>
 
       {/* Output Area */}
-      <div className="nexus-tool-panel nexus-tool-panel--accent flex-1 flex flex-col border-2 border-[var(--color-nexus-red)] bg-white">
-        <div className="nexus-tool-panel-header nexus-tool-panel-header--accent bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)] flex justify-between items-center">
-          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+      <div className="nexus-tool-panel nexus-tool-panel--accent flex min-h-0 min-w-0 flex-1 flex-col border-2 border-[var(--color-nexus-red)] bg-white">
+        <div className="nexus-tool-panel-header nexus-tool-panel-header--accent flex items-center justify-between gap-3 bg-[var(--color-nexus-red)] px-3 py-1.5 border-b-2 border-[var(--color-nexus-red)]">
+          <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
             Synthesized HL7 output
           </span>
           <button onClick={handleCopy} className="nexus-tool-copy-button text-red-200 hover:text-white transition-colors" title="Copy to clipboard">

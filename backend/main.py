@@ -1,7 +1,12 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
+import os
 import asyncio
+
+from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from services.event_bus import event_bus
 from services.local_hl7_db import init_local_hl7_db
 from engines.algorithm.data_fetcher import runtime_data
@@ -73,3 +78,21 @@ app.include_router(engine.router, prefix="/api/v1/engine", tags=["engine"])
 app.include_router(algorithm.router, prefix="/api/v1/algo", tags=["algorithm"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
 app.include_router(local_db.router, prefix="/api/v1/local-db", tags=["local-db"])
+
+
+FRONTEND_DIST = Path(os.getenv("FRONTEND_DIST", Path(__file__).resolve().parent / "frontend_dist"))
+if FRONTEND_DIST.exists():
+    assets_dir = FRONTEND_DIST / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend-assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_frontend(full_path: str):
+        if full_path.startswith(("api/", "ws/")):
+            raise HTTPException(status_code=404, detail="Not found")
+
+        requested_file = FRONTEND_DIST / full_path
+        if full_path and requested_file.is_file():
+            return FileResponse(requested_file)
+
+        return FileResponse(FRONTEND_DIST / "index.html")

@@ -83,17 +83,26 @@ class RuntimeDataFetcher:
         self.tables = HL7_TABLES
         self.segments_schema = SEGMENT_DEFINITIONS
         self.is_loaded = False
+        self.active_terminology_server = None
         self.network_bytes_fetched = 0
+
+    async def ensure_data(self, terminology_server: str = "hl7_tho"):
+        terminology_server = terminology_server or "hl7_tho"
+        if self.is_loaded and self.active_terminology_server == terminology_server:
+            return
+        await self.fetch_data(terminology_server)
 
     async def fetch_data(self, terminology_server: str):
         """
         H-01: Loads validation data. We embed the core tables locally for reliability,
         and optionally enrich from network sources.
         """
+        terminology_server = terminology_server or "hl7_tho"
         await event_bus.publish(
             "EventType.FETCH_START",
             "algorithm",
-            f"Initializing HL7 terminology data ({len(self.tables)} tables, {len(self.segments_schema)} segment schemas)..."
+            f"Initializing HL7 terminology data from {terminology_server} "
+            f"({len(self.tables)} tables, {len(self.segments_schema)} segment schemas)..."
         )
 
         # Local tables are already loaded via HL7_TABLES constant above.
@@ -112,7 +121,8 @@ class RuntimeDataFetcher:
                 await event_bus.publish(
                     "EventType.FETCH_COMPLETE",
                     "algorithm",
-                    f"Loaded {len(self.tables)} validation tables, {len(self.segments_schema)} segment schemas. "
+                    f"Loaded {len(self.tables)} validation tables, {len(self.segments_schema)} segment schemas "
+                    f"from {terminology_server}. "
                     f"Network enrichment: {self.network_bytes_fetched:,} bytes."
                 )
         except Exception as e:
@@ -120,10 +130,12 @@ class RuntimeDataFetcher:
             await event_bus.publish(
                 "EventType.FETCH_COMPLETE",
                 "algorithm",
-                f"Loaded {len(self.tables)} validation tables, {len(self.segments_schema)} segment schemas (offline mode)."
+                f"Loaded {len(self.tables)} validation tables, {len(self.segments_schema)} segment schemas "
+                f"from {terminology_server} (offline mode)."
             )
 
         self.is_loaded = True
+        self.active_terminology_server = terminology_server
 
     def get_table(self, table_id: str) -> dict:
         """Get a specific HL7 table by ID."""

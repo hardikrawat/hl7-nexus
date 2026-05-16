@@ -145,10 +145,10 @@ export default function DiffTab() {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex h-full min-h-0 min-w-0 flex-col space-y-4">
       {/* Controls */}
-      <div className="flex justify-between items-center">
-        <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.16em]">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
           Segment-aware comparison
         </span>
         <button 
@@ -160,32 +160,32 @@ export default function DiffTab() {
       </div>
 
       {/* Input Split */}
-      <div className="flex space-x-4 h-48">
+      <div className="nexus-diff-input-grid flex h-48 min-w-0 gap-4">
         <textarea 
           value={msg1}
           onChange={(e) => setMsg1(e.target.value)}
-          className="nexus-tool-textarea flex-1 resize-none border-2 border-black p-3 font-mono text-[10px] focus:outline-none"
+          className="nexus-tool-textarea min-w-0 flex-1 resize-none border-2 border-black p-3 font-mono text-[10px] focus:outline-none"
           placeholder="Original HL7 message..."
         />
         <textarea 
           value={msg2}
           onChange={(e) => setMsg2(e.target.value)}
-          className="nexus-tool-textarea flex-1 resize-none border-2 border-black p-3 font-mono text-[10px] focus:outline-none"
+          className="nexus-tool-textarea min-w-0 flex-1 resize-none border-2 border-black p-3 font-mono text-[10px] focus:outline-none"
           placeholder="Modified HL7 message..."
         />
       </div>
 
       {/* Output */}
-      <div className="nexus-tool-panel nexus-diff-panel flex-1 flex flex-col border-2 border-black min-h-0">
+      <div className="nexus-tool-panel nexus-diff-panel flex min-h-0 min-w-0 flex-1 flex-col border-2 border-black">
         <div className="nexus-tool-panel-header nexus-tool-panel-header--accent px-3 py-1.5 border-b-2 border-black bg-[var(--color-nexus-red)]">
-          <span className="text-white text-[11px] font-semibold uppercase tracking-[0.14em]">
+          <span className="min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
             Comparison output
           </span>
         </div>
         <div className="nexus-diff-body flex-1 overflow-y-auto p-4 font-mono text-[11px] space-y-1">
           {diffResult ? diffResult.map((entry, i) => (
-            <div key={i}>
-              <div className={clsx("px-2 py-0.5", {
+            <div key={i} className="min-w-0">
+              <div className={clsx("break-words px-2 py-0.5", {
                 'bg-green-900/50 text-green-400': entry.type === 'added',
                 'bg-red-900/50 text-red-400': entry.type === 'removed',
                 'bg-amber-900/30 text-amber-300': entry.type === 'modified',
@@ -193,12 +193,12 @@ export default function DiffTab() {
                 <span className="mr-2 inline-block w-4 text-center font-bold">
                   {entry.type === 'added' ? '+' : entry.type === 'removed' ? '-' : entry.type === 'modified' ? '~' : ' '}
                 </span>
-                <span className="nexus-diff-segment mr-2">[{entry.segment}]</span>
+                <span className="nexus-diff-segment mr-2 break-words">[{entry.segment}]</span>
                 {entry.type === 'modified' ? entry.oldText : entry.text}
               </div>
               {/* Show field-level diffs for modified segments */}
               {entry.type === 'modified' && entry.fields.map((f, fi) => (
-                <div key={fi} className="pl-8 py-0.5 text-[10px]">
+                <div key={fi} className="break-words pl-8 py-0.5 text-[10px]">
                   <span className="nexus-diff-segment">Field {f.index}:</span>{' '}
                   <span className="text-red-400 line-through">{f.old || '(empty)'}</span>
                   {' → '}
@@ -213,8 +213,8 @@ export default function DiffTab() {
           )}
         </div>
         {diffResult && (
-          <div className="nexus-diff-footer p-2 border-t-2 border-black flex justify-between items-center">
-            <span className="nexus-diff-meta font-mono text-[9px]">
+          <div className="nexus-diff-footer flex flex-wrap items-center justify-between gap-2 border-t-2 border-black p-2">
+            <span className="nexus-diff-meta min-w-0 font-mono text-[9px]">
               {diffResult.filter(d => d.type === 'unchanged').length} unchanged · 
               {diffResult.filter(d => d.type === 'modified').length} modified · 
               {diffResult.filter(d => d.type === 'added').length} added · 

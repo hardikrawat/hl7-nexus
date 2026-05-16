@@ -17,5 +17,6 @@ export function buildAiRequestConfig(engineMode, systemConfig) {
     gateway_url: systemConfig.gatewayUrl || '',
     gateway_api_key: systemConfig.gatewayApiKey || '',
     ollama_url: systemConfig.ollamaUrl || 'http://localhost:11434',
+    terminology_server: systemConfig.terminologyServer || 'hl7_tho',
   };
 }

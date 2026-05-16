@@ -47,17 +47,17 @@ export default function AuditTab() {
   const canGoOlder = skip + PAGE_SIZE < total;
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3">
+    <div className="flex h-full min-h-0 min-w-0 flex-col gap-3">
       <div className="flex flex-shrink-0 flex-col gap-2 border-b border-slate-200 pb-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-slate-500">
+          <div className="flex min-w-0 items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-slate-500">
             <ScrollText size={14} className="text-[var(--color-nexus-red)]" />
-            <span>
+            <span className="min-w-0 break-words">
               User audit — rows {skip + 1}–{skip + items.length} of {total}
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="flex cursor-pointer items-center gap-2 font-mono text-[10px] text-slate-600">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <label className="flex min-w-0 cursor-pointer items-center gap-2 font-mono text-[10px] text-slate-600">
               <input
                 type="checkbox"
                 checked={includeAll}
@@ -96,7 +96,7 @@ export default function AuditTab() {
             </button>
           </div>
         </div>
-        <p className="font-mono text-[10px] leading-relaxed text-slate-500">
+        <p className="font-mono text-[10px] leading-relaxed text-slate-500 break-words">
           {includeAll
             ? 'Showing every row still in memory (including legacy types if any).'
             : 'Showing sign-in/out, HL7 parse & generate, clinical NLP, and “fetch Gemini models” from settings — not live WebSocket telemetry.'}
@@ -108,7 +108,7 @@ export default function AuditTab() {
       ) : null}
 
       <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-[var(--nexus-border)] bg-[var(--nexus-panel)]">
-        <table className="w-full border-collapse text-left font-mono text-[11px]">
+        <table className="min-w-[720px] w-full table-fixed border-collapse text-left font-mono text-[11px]">
           <thead className="sticky top-0 z-10 bg-[var(--nexus-panel-strong)] text-[10px] uppercase tracking-wider text-[var(--nexus-panel-strong-text)] shadow-sm">
             <tr>
               <th className="border-b border-[var(--nexus-border-strong)] px-2 py-2">ID</th>
@@ -131,7 +131,7 @@ export default function AuditTab() {
               items.map((row) => (
                 <tr key={row.id} className="border-b border-slate-200 bg-white hover:bg-slate-50">
                   <td className="whitespace-nowrap px-2 py-1.5 text-slate-600">{row.id}</td>
-                  <td className="whitespace-nowrap px-2 py-1.5 text-slate-600">{row.timestamp}</td>
+                  <td className="break-words px-2 py-1.5 text-slate-600">{row.timestamp}</td>
                   <td className="max-w-[100px] truncate px-2 py-1.5 text-slate-800" title={row.username}>
                     {row.username}
                   </td>

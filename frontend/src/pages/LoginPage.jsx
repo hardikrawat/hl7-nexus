@@ -82,7 +82,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <h1 className="nexus-brand-title text-lg font-semibold tracking-tight text-[var(--nexus-ink)]">
-                    Helix System
+                    HL7
                   </h1>
                   <div className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--nexus-muted)]">
                     Nexus
@@ -140,7 +140,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <h1 className="nexus-brand-title text-lg font-semibold tracking-tight text-[var(--nexus-ink)]">
-                    Helix System
+                    HL7
                   </h1>
                   <div className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--nexus-muted)]">
                     Nexus

@@ -5,6 +5,7 @@ from typing import Any, Literal, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 from deps import get_current_username
+from engines.algorithm.data_fetcher import runtime_data
 from engines.algorithm.fhir_bridge import fhir_bridge
 from engines.algorithm.lexer import lexer
 from engines.algorithm.parser import parser
@@ -18,6 +19,7 @@ from services.audit_log import append_audit
 from services.event_bus import event_bus
 
 router = APIRouter()
+TerminologyServer = Literal["hl7_tho", "cdc_phin", "tx_fhir", "github_raw"]
 
 class GeminiConfigRequest(BaseModel):
     api_key: str
@@ -30,6 +32,7 @@ class GatewayConfigRequest(BaseModel):
 
 class EngineStatusRequest(BaseModel):
     engine_mode: Literal["cloud_ai", "local_ai", "algorithm"] = "algorithm"
+    model: str = ""
     cloud_provider: Literal["gemini_direct", "gateway"] = "gemini_direct"
     api_key: str = ""
     gemini_api_key: str = ""
@@ -116,14 +119,64 @@ async def engine_status(
                 "detail": "Deterministic algorithm engine is available",
             }
         elif config.engine_mode == "local_ai":
-            provider = OllamaProvider(base_url=config.ollama_url)
-            models = await provider.get_models()
-            payload = {
-                "engine": "local_ai",
-                "available": len(models) > 0,
-                "detail": "Ollama reachable" if models else "Ollama not reachable or no models installed",
-                "models": models,
-            }
+            ollama_url = config.ollama_url.strip()
+            requested_model = (config.model or "llama3").strip()
+            missing = []
+
+            if not ollama_url:
+                missing.append("Ollama URL")
+            if not requested_model:
+                missing.append("Local model name")
+
+            if missing:
+                payload = {
+                    "engine": "local_ai",
+                    "available": False,
+                    "detail": "Local AI configuration is incomplete",
+                    "missing": missing,
+                    "required": [
+                        "Install and run Ollama",
+                        "Configure the Ollama URL",
+                        "Install the configured local model",
+                    ],
+                }
+            else:
+                provider = OllamaProvider(base_url=ollama_url)
+                models = await provider.get_models()
+                installed_model_ids = [
+                    model.get("id") for model in models
+                    if isinstance(model, dict) and model.get("id")
+                ]
+                has_models = len(installed_model_ids) > 0
+                has_requested_model = local_model_is_installed(requested_model, installed_model_ids)
+
+                if not has_models:
+                    detail = "Ollama is not reachable or no local models are installed"
+                elif not has_requested_model:
+                    detail = f"Configured model '{requested_model}' is not installed in Ollama"
+                else:
+                    detail = f"Ollama reachable with model '{requested_model}'"
+
+                missing = []
+                if not has_models:
+                    missing.append("Running Ollama server with at least one installed model")
+                elif not has_requested_model:
+                    missing.append(f"Ollama model '{requested_model}'")
+
+                payload = {
+                    "engine": "local_ai",
+                    "available": has_models and has_requested_model,
+                    "detail": detail,
+                    "model": requested_model,
+                    "models": models,
+                    "installed_model_ids": installed_model_ids,
+                    "missing": missing,
+                    "required": [
+                        "Install and run Ollama",
+                        f"Pull the configured model with: ollama pull {requested_model}",
+                        f"Confirm Ollama responds at: {ollama_url}/api/tags",
+                    ],
+                }
         elif normalize_cloud_provider(config.cloud_provider) == "gateway":
             provider = GatewayProvider(
                 base_url=config.gateway_url,
@@ -170,6 +223,7 @@ async def engine_status(
 class NLParseRequest(BaseModel):
     engine_mode: Literal["cloud_ai", "local_ai"]
     model: Optional[str] = ""
+    terminology_server: TerminologyServer = "hl7_tho"
     cloud_provider: Literal["gemini_direct", "gateway"] = "gemini_direct"
     api_key: str = ""
     gemini_api_key: str = ""
@@ -189,6 +243,7 @@ class NLParseRequest(BaseModel):
 class AIProcessRequest(BaseModel):
     engine_mode: Literal["cloud_ai", "local_ai"]
     model: Optional[str] = ""
+    terminology_server: TerminologyServer = "hl7_tho"
     cloud_provider: Literal["gemini_direct", "gateway"] = "gemini_direct"
     api_key: str = ""
     gemini_api_key: str = ""
@@ -224,17 +279,39 @@ def parse_ai_json(text: str) -> dict[str, Any]:
         raise
 
 
-async def run_algorithm_pipeline(message: str) -> dict[str, Any]:
+def local_model_is_installed(requested_model: str, installed_models: list[str]) -> bool:
+    requested = requested_model.strip()
+    if not requested:
+        return False
+
+    normalized = {model.strip() for model in installed_models if model}
+    if requested in normalized:
+        return True
+
+    if ":" not in requested and f"{requested}:latest" in normalized:
+        return True
+
+    requested_base = requested.split(":", 1)[0]
+    return any(model.split(":", 1)[0] == requested_base for model in normalized)
+
+
+async def run_algorithm_pipeline(message: str, terminology_server: str = "hl7_tho") -> dict[str, Any]:
+    await runtime_data.ensure_data(terminology_server)
     lexer_output = await lexer.tokenize(message)
     ast = await parser.parse(lexer_output)
     validation = await validator.validate(ast)
     fhir = await fhir_bridge.to_fhir(ast)
-    return {"ast": ast, "validation": validation, "fhir": fhir}
+    return {
+        "ast": ast,
+        "validation": validation,
+        "fhir": fhir,
+        "terminology_server": terminology_server,
+    }
 
 
-async def validate_generated_hl7(message: str) -> dict[str, Any]:
+async def validate_generated_hl7(message: str, terminology_server: str = "hl7_tho") -> dict[str, Any]:
     try:
-        return await run_algorithm_pipeline(message)
+        return await run_algorithm_pipeline(message, terminology_server)
     except Exception as exc:
         return {
             "ast": None,
@@ -365,12 +442,13 @@ Ensure fields are pipe-delimited and segments are newline-separated."""
         
         # Clean up any potential markdown formatting the model might still return
         hl7_msg = clean_model_text(hl7_msg)
-        pipeline = await validate_generated_hl7(hl7_msg)
+        pipeline = await validate_generated_hl7(hl7_msg, req.terminology_server)
         
         await append_audit(
             username,
             "ENGINE_NL_PARSE",
             f"mode={req.engine_mode} provider={provider_name} model={model} "
+            f"terminology={req.terminology_server} "
             f"prompt_chars={len(req.text)} out_chars={len(hl7_msg)} "
             f"validation={pipeline['validation'].get('status')}",
             client_host=host,
@@ -411,7 +489,7 @@ async def ai_process_hl7(
             req.engine_mode,
             "AI-assisted HL7 review started",
         )
-        pipeline = await run_algorithm_pipeline(req.message)
+        pipeline = await run_algorithm_pipeline(req.message, req.terminology_server)
         ai_analysis = await build_ai_analysis(req, pipeline)
         await event_bus.publish(
             "EventType.AI_CALL_COMPLETE",
@@ -424,6 +502,7 @@ async def ai_process_hl7(
             username,
             "ENGINE_AI_PROCESS",
             f"mode={req.engine_mode} model={req.model or DEFAULT_GEMINI_MODEL} "
+            f"terminology={req.terminology_server} "
             f"chars={len(req.message)} validation={pipeline['validation'].get('status')} "
             f"ai_status={ai_analysis.get('status')}",
             client_host=host,
