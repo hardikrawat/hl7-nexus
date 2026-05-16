@@ -4,7 +4,6 @@ import UserSessionControls from '../auth/UserSessionControls';
 import { useNexusStore } from '../../store/nexusStore';
 import clsx from 'clsx';
 import { DARK_THEME_ID, LIGHT_THEME_ID, getNextThemeId, getThemeById } from '../../config/themes';
-import { ChatLauncherButton } from '../chat/GlobalChatAssistant';
 
 export default function GlobalHeader() {
   const { engineMode, setEngineMode, setConfigModalOpen, systemConfig, updateSystemConfig } = useNexusStore();
@@ -118,7 +117,6 @@ export default function GlobalHeader() {
         </div>
 
         <UserSessionControls variant="classic" />
-        <ChatLauncherButton compact />
 
         <button
           onClick={toggleTheme}

@@ -118,11 +118,24 @@ const setNativeValue = (element, value) => {
 };
 
 function HelixAssistantMark({ variant = 'default' }) {
+  const iconSizes = {
+    compact: 15,
+    default: 17,
+    dock: 28,
+    logo: 18,
+  };
+  const sparkSizes = {
+    compact: 8,
+    default: 9,
+    dock: 13,
+    logo: 9,
+  };
+
   return (
     <span className={clsx('nexus-assistant-mark', `nexus-assistant-mark--${variant}`)} aria-hidden="true">
       <span className="nexus-assistant-mark__orbit" />
-      <Bot className="nexus-assistant-mark__bot" size={variant === 'compact' ? 15 : 17} strokeWidth={2.25} />
-      <Sparkles className="nexus-assistant-mark__spark" size={variant === 'compact' ? 8 : 9} strokeWidth={2.5} />
+      <Bot className="nexus-assistant-mark__bot" size={iconSizes[variant] || iconSizes.default} strokeWidth={2.25} />
+      <Sparkles className="nexus-assistant-mark__spark" size={sparkSizes[variant] || sparkSizes.default} strokeWidth={2.5} />
     </span>
   );
 }
@@ -404,15 +417,23 @@ export default function GlobalChatAssistant() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setChatAssistantOpen(true)}
-        className="nexus-chat-mobile-dock nexus-chat-assistant sm:hidden"
-        title="Open Helix Assistant"
-        aria-label="Open Helix Assistant"
-      >
-        <HelixAssistantMark variant="dock" />
-      </button>
+      <AnimatePresence>
+        {!isChatAssistantOpen && (
+          <motion.button
+            type="button"
+            onClick={() => setChatAssistantOpen(true)}
+            className="nexus-chat-floating-dock nexus-chat-assistant"
+            title="Open Helix Assistant"
+            aria-label="Open Helix Assistant"
+            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.96 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+          >
+            <HelixAssistantMark variant="dock" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isChatAssistantOpen && (
